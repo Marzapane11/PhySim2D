@@ -1,0 +1,91 @@
+.theory-page {
+  padding: 30px 40px;
+  max-width: 800px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.theory-page h1 {
+  font-size: 24px;
+  color: var(--text-accent);
+  margin-bottom: 24px;
+}
+
+.theory-category {
+  margin-bottom: 30px;
+}
+
+.theory-category-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.theory-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.theory-card:hover {
+  border-color: var(--accent);
+}
+
+.theory-card.expanded {
+  border-color: var(--accent);
+}
+
+.theory-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.theory-card-content {
+  display: none;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.theory-card.expanded .theory-card-content {
+  display: block;
+}
+
+.theory-card-content p {
+  margin-bottom: 8px;
+}
+
+.theory-formula-block {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-family: var(--font-mono);
+  color: var(--text-accent);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.theory-example-block {
+  background: var(--bg-primary);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}

@@ -39,7 +39,7 @@ export function renderSidebar(container) {
   `;
 
   function updateActive() {
-    const currentPath = window.location.hash.slice(1) || '/home';
+    const currentPath = (window.location.hash.slice(1) || '/home').split('?')[0];
     sidebar.querySelectorAll('.sidebar-link').forEach((link) => {
       link.classList.toggle('active', link.dataset.path === currentPath);
     });

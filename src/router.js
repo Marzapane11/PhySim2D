@@ -11,7 +11,8 @@ export function navigateTo(path) {
 
 export function initRouter(container) {
   function onHashChange() {
-    const path = window.location.hash.slice(1) || '/home';
+    const raw = window.location.hash.slice(1) || '/home';
+    const path = raw.split('?')[0];
 
     if (currentCleanup) {
       currentCleanup();
