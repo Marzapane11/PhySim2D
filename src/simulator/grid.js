@@ -35,22 +35,25 @@ export function createGrid(scene) {
     group.add(new THREE.Line(hGeo, majorMat));
   }
 
-  // X axis (red, extends across entire grid)
+  // Axes (can be hidden separately)
+  const axesGroup = new THREE.Group();
+  axesGroup.name = 'axes';
+
   const xGeo = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(-halfSize, 0, 0.01), new THREE.Vector3(halfSize, 0, 0.01)
   ]);
-  group.add(new THREE.Line(xGeo, new THREE.LineBasicMaterial({ color: 0xff4444 })));
+  axesGroup.add(new THREE.Line(xGeo, new THREE.LineBasicMaterial({ color: 0xff4444 })));
 
-  // Y axis (green, extends across entire grid)
   const yGeo = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(0, -halfSize, 0.01), new THREE.Vector3(0, halfSize, 0.01)
   ]);
-  group.add(new THREE.Line(yGeo, new THREE.LineBasicMaterial({ color: 0x44ff44 })));
+  axesGroup.add(new THREE.Line(yGeo, new THREE.LineBasicMaterial({ color: 0x44ff44 })));
 
-  // Axis labels
-  group.add(createTextSprite('X', halfSize - 1, -0.8, 0.01, 0xff4444));
-  group.add(createTextSprite('Y', 0.8, halfSize - 1, 0.01, 0x44ff44));
-  group.add(createTextSprite('O', -0.5, -0.5, 0.01, 0x888888));
+  axesGroup.add(createTextSprite('X', halfSize - 1, -0.8, 0.01, 0xff4444));
+  axesGroup.add(createTextSprite('Y', 0.8, halfSize - 1, 0.01, 0x44ff44));
+  axesGroup.add(createTextSprite('O', -0.5, -0.5, 0.01, 0x888888));
+
+  group.add(axesGroup);
 
   scene.add(group);
   return group;
@@ -76,4 +79,9 @@ function createTextSprite(text, x, y, z, color) {
 
 export function setGridVisible(gridGroup, visible) {
   gridGroup.visible = visible;
+}
+
+export function setAxesVisible(gridGroup, visible) {
+  const axes = gridGroup.getObjectByName('axes');
+  if (axes) axes.visible = visible;
 }
