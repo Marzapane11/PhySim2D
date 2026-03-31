@@ -2,6 +2,8 @@ import './styles/global.css';
 import './styles/sidebar.css';
 import { renderSidebar } from './components/sidebar.js';
 import { initRouter, registerRoute } from './router.js';
+import { renderVectorsPage } from './simulator/vectors/vectors-page.js';
+import { renderTheoryPage } from './theory/theory-page.js';
 import './state.js';
 
 const app = document.getElementById('app');
@@ -19,17 +21,13 @@ registerRoute('/home', (container) => {
   container.innerHTML = '<div style="padding:40px;"><h1>Simulatore Forze e Vettori</h1><p>Benvenuto!</p></div>';
 });
 
-registerRoute('/vectors', (container) => {
-  container.innerHTML = '<div style="padding:40px;"><h1>Simulatore Vettori</h1><p>In costruzione...</p></div>';
-});
+registerRoute('/vectors', renderVectorsPage);
 
 registerRoute('/forces', (container) => {
   container.innerHTML = '<div style="padding:40px;"><h1>Simulatore Forze</h1><p>In costruzione...</p></div>';
 });
 
-registerRoute('/theory', (container) => {
-  container.innerHTML = '<div style="padding:40px;"><h1>Teoria</h1><p>In costruzione...</p></div>';
-});
+registerRoute('/theory', renderTheoryPage);
 
 registerRoute('/settings', (container) => {
   container.innerHTML = '<div style="padding:40px;"><h1>Impostazioni</h1><p>In costruzione...</p></div>';
