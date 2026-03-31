@@ -1,7 +1,7 @@
 import '../../styles/simulator.css';
 import { createSimulatorLayout } from '../simulator-layout.js';
 import { SceneManager } from '../scene-manager.js';
-import { createGrid, setGridVisible } from '../grid.js';
+// Grid not used in forces page
 import { LabelManager } from '../label-renderer.js';
 import { renderToolbar } from '../toolbar.js';
 import { renderPropertiesPanel, createPropertyRow, createInputRow } from '../properties-panel.js';
@@ -56,8 +56,7 @@ export function renderForcesPage(container) {
   const { canvasContainer, toolbar, rightPanel } = createSimulatorLayout(container);
 
   const sceneManager = new SceneManager(canvasContainer);
-  const gridGroup = createGrid(sceneManager.scene);
-  setGridVisible(gridGroup, false); // No grid for force scenarios
+  // No grid/axes for force scenarios
   const labelManager = new LabelManager(canvasContainer);
 
   let activeScenario = 'point-forces';
@@ -76,7 +75,6 @@ export function renderForcesPage(container) {
     labelManager.clear();
 
     const vis = getState().visibility;
-    setGridVisible(gridGroup, vis.grid);
 
     switch (activeScenario) {
       case 'point-forces':
