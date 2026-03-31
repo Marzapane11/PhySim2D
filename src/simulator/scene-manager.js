@@ -23,7 +23,7 @@ export class SceneManager {
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.setSize(w, h);
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.setClearColor(0x0a0a1a, 1);
+    this.renderer.setClearColor(0x111827, 1);
     canvasContainer.appendChild(this.renderer.domElement);
 
     // Simple zoom with mouse wheel

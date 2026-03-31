@@ -16,7 +16,8 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
   const height = base * Math.tan(angleRad);
 
   // Triangle vertices: C (bottom-left), A (bottom-right), B (top-left)
-  const C = { x: -3, y: -3 };
+  // Centered nicely in view
+  const C = { x: -base / 2, y: -height / 2 };
   const A = { x: C.x + base, y: C.y };
   const B = { x: C.x, y: C.y + height };
 
