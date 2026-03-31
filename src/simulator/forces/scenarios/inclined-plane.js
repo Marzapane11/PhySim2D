@@ -83,9 +83,9 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
     const slopeLen = Math.sqrt((B.x - A.x) ** 2 + (B.y - A.y) ** 2);
     const sdx = (B.x - A.x) / slopeLen;
     const sdy = (B.y - A.y) / slopeLen;
-    // Normal direction (perpendicular, outward from surface) — rotate slope 90° CCW
-    const ndx = -sdy;
-    const ndy = sdx;
+    // Normal direction (perpendicular, outward from surface) — rotate slope 90° CW
+    const ndx = sdy;
+    const ndy = -sdx;
 
     // Box corners: bottom edge sits on the slope surface
     const hw = boxW / 2;
