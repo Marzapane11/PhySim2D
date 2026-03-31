@@ -44,7 +44,7 @@ export function renderSpring(sceneManager, state, visibility) {
 
     if (visibility.forceArrows && calc.force > 0.01) {
       const forceDir = state.x > 0 ? -1 : 1;
-      const arrow = createArrow({ x: springEnd + 0.5, y: 0 }, { x: forceDir * calc.force * 0.03, y: 0 }, 0x66bb6a, 'F elastica');
+      const arrow = createArrow({ x: springEnd + 0.5, y: 0 }, { x: forceDir * calc.force * 0.03, y: 0 }, 0x66bb6a, 'Fe');
       if (arrow) sceneManager.objects.add(arrow);
     }
   }

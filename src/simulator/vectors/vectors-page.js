@@ -89,7 +89,7 @@ export function renderVectorsPage(container) {
           if (vis.forceNames) labelText += v.name;
           if (vis.forceValues) {
             const mag = magnitude({ x: v.x, y: v.y });
-            labelText += (labelText ? ' ' : '') + `(${mag.toFixed(2)})`;
+            labelText += (labelText ? ': ' : '') + mag.toFixed(2);
           }
           labelManager.addLabel(labelText, arrow, sceneManager.camera, sceneManager.renderer);
         }
@@ -100,7 +100,7 @@ export function renderVectorsPage(container) {
             { x: v.originX, y: v.originY },
             { x: v.x, y: 0 },
             0xff4444,
-            v.name + 'x'
+            'Vx'
           );
           if (xArrow) sceneManager.objects.add(xArrow);
 
@@ -108,7 +108,7 @@ export function renderVectorsPage(container) {
             { x: v.originX, y: v.originY },
             { x: 0, y: v.y },
             0x44ff44,
-            v.name + 'y'
+            'Vy'
           );
           if (yArrow) sceneManager.objects.add(yArrow);
         }
@@ -180,22 +180,22 @@ export function renderVectorsPage(container) {
           { x: v.originX, y: v.originY },
           { x: v.x, y: 0 },
           0xff4444,
-          v.name + 'x'
+          'Vx'
         );
         if (xArrow) {
           sceneManager.objects.add(xArrow);
-          labelManager.addLabel(`${v.name}x = ${v.x.toFixed(2)}`, xArrow, sceneManager.camera, sceneManager.renderer);
+          labelManager.addLabel(`Vx = ${v.x.toFixed(2)}`, xArrow, sceneManager.camera, sceneManager.renderer);
         }
 
         const yArrow = createArrow(
           { x: v.originX, y: v.originY },
           { x: 0, y: v.y },
           0x44ff44,
-          v.name + 'y'
+          'Vy'
         );
         if (yArrow) {
           sceneManager.objects.add(yArrow);
-          labelManager.addLabel(`${v.name}y = ${v.y.toFixed(2)}`, yArrow, sceneManager.camera, sceneManager.renderer);
+          labelManager.addLabel(`Vy = ${v.y.toFixed(2)}`, yArrow, sceneManager.camera, sceneManager.renderer);
         }
       }
     }

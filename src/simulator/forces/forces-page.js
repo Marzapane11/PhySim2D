@@ -155,10 +155,10 @@ export function renderForcesPage(container) {
         sections.push({
           title: 'Risultati',
           content:
-            createPropertyRow('Peso', calc.weight.toFixed(2) + ' N') +
-            createPropertyRow('Normale', calc.normal.toFixed(2) + ' N') +
-            createPropertyRow('F parallela', calc.parallel.toFixed(2) + ' N') +
-            createPropertyRow('Attrito', calc.friction.toFixed(2) + ' N') +
+            createPropertyRow('P (peso)', calc.weight.toFixed(2) + ' N') +
+            createPropertyRow('N (normale)', calc.normal.toFixed(2) + ' N') +
+            createPropertyRow('Px (parallela)', calc.parallel.toFixed(2) + ' N') +
+            createPropertyRow('Fa (attrito)', calc.friction.toFixed(2) + ' N') +
             createPropertyRow('F netta', calc.netForce.toFixed(2) + ' N') +
             createPropertyRow('Scivola?', calc.slides ? 'Si' : 'No'),
         });
@@ -176,7 +176,7 @@ export function renderForcesPage(container) {
         sections.push({
           title: 'Risultati',
           content:
-            createPropertyRow('Forza', calc.force.toFixed(2) + ' N') +
+            createPropertyRow('Fe (elastica)', calc.force.toFixed(2) + ' N') +
             createPropertyRow('F = -kx', calc.signedForce.toFixed(2) + ' N') +
             createPropertyRow('Direzione', calc.direction === 'restore' ? 'Richiamo' : 'Nessuna'),
         });
@@ -188,7 +188,7 @@ export function renderForcesPage(container) {
           title: 'Parametri',
           content:
             createInputRow('Massa', 'fr-mass', scenarioState.mass, 'kg', 'step="1" min="0.1"') +
-            createInputRow('F applicata', 'fr-applied', scenarioState.appliedForce, 'N', 'step="5"') +
+            createInputRow('F (applicata)', 'fr-applied', scenarioState.appliedForce, 'N', 'step="5"') +
             createInputRow('\u03bcs', 'fr-static', scenarioState.staticCoeff, '', 'step="0.05" min="0" max="1"') +
             createInputRow('\u03bcd', 'fr-dynamic', scenarioState.dynamicCoeff, '', 'step="0.05" min="0" max="1"'),
         });
@@ -197,7 +197,7 @@ export function renderForcesPage(container) {
           title: 'Risultati',
           content:
             createPropertyRow('Tipo attrito', calc.type === 'static' ? 'Statico' : 'Dinamico') +
-            createPropertyRow('F attrito', calc.frictionValue.toFixed(2) + ' N') +
+            createPropertyRow('Fa (attrito)', calc.frictionValue.toFixed(2) + ' N') +
             createPropertyRow('Max statico', calc.maxStatic.toFixed(2) + ' N') +
             createPropertyRow('Si muove?', calc.moves ? 'Si' : 'No') +
             createPropertyRow('F netta', calc.netForce.toFixed(2) + ' N'),

@@ -34,13 +34,13 @@ export function renderFriction(sceneManager, state, visibility) {
 
   const origin = { x: 0, y: 0 };
   if (visibility.forceArrows) {
-    const wArrow = createArrow(origin, { x: 0, y: -W * scale }, 0xff4444, 'Peso');
+    const wArrow = createArrow(origin, { x: 0, y: -W * scale }, 0xff4444, 'P');
     if (wArrow) sceneManager.objects.add(wArrow);
-    const nArrow = createArrow(origin, { x: 0, y: W * scale }, 0x66bb6a, 'Normale');
+    const nArrow = createArrow(origin, { x: 0, y: W * scale }, 0x66bb6a, 'N');
     if (nArrow) sceneManager.objects.add(nArrow);
-    const aArrow = createArrow(origin, { x: state.appliedForce * scale, y: 0 }, 0x4fc3f7, 'F applicata');
+    const aArrow = createArrow(origin, { x: state.appliedForce * scale, y: 0 }, 0x4fc3f7, 'F');
     if (aArrow) sceneManager.objects.add(aArrow);
-    const fArrow = createArrow(origin, { x: -calc.frictionValue * scale, y: 0 }, 0xffa726, 'Attrito');
+    const fArrow = createArrow(origin, { x: -calc.frictionValue * scale, y: 0 }, 0xffa726, 'Fa');
     if (fArrow) sceneManager.objects.add(fArrow);
   }
 }

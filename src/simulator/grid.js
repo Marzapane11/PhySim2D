@@ -4,26 +4,41 @@ export function createGrid(scene) {
   const group = new THREE.Group();
   group.name = 'grid';
 
-  const gridHelper = new THREE.GridHelper(20, 20, 0x2a3a5c, 0x1a2a4c);
-  gridHelper.rotation.x = Math.PI / 2;
-  group.add(gridHelper);
+  // Draw grid lines manually on XY plane
+  const gridSize = 20;
+  const divisions = 20;
+  const step = gridSize / divisions;
+  const halfSize = gridSize / 2;
+  const gridMat = new THREE.LineBasicMaterial({ color: 0x1a2a4c });
 
-  const xMaterial = new THREE.LineBasicMaterial({ color: 0xff4444 });
-  const xGeometry = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(-10, 0, 0.01),
-    new THREE.Vector3(10, 0, 0.01),
+  for (let i = -halfSize; i <= halfSize; i += step) {
+    // Vertical lines
+    const vGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(i, -halfSize, 0), new THREE.Vector3(i, halfSize, 0)
+    ]);
+    group.add(new THREE.Line(vGeo, gridMat));
+    // Horizontal lines
+    const hGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(-halfSize, i, 0), new THREE.Vector3(halfSize, i, 0)
+    ]);
+    group.add(new THREE.Line(hGeo, gridMat));
+  }
+
+  // X axis (red)
+  const xGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-halfSize, 0, 0.01), new THREE.Vector3(halfSize, 0, 0.01)
   ]);
-  group.add(new THREE.Line(xGeometry, xMaterial));
+  group.add(new THREE.Line(xGeo, new THREE.LineBasicMaterial({ color: 0xff4444 })));
 
-  const yMaterial = new THREE.LineBasicMaterial({ color: 0x44ff44 });
-  const yGeometry = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(0, -10, 0.01),
-    new THREE.Vector3(0, 10, 0.01),
+  // Y axis (green)
+  const yGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(0, -halfSize, 0.01), new THREE.Vector3(0, halfSize, 0.01)
   ]);
-  group.add(new THREE.Line(yGeometry, yMaterial));
+  group.add(new THREE.Line(yGeo, new THREE.LineBasicMaterial({ color: 0x44ff44 })));
 
-  group.add(createTextSprite('X', 10.5, 0, 0.01, 0xff4444));
-  group.add(createTextSprite('Y', 0, 10.5, 0.01, 0x44ff44));
+  // Labels
+  group.add(createTextSprite('X', halfSize + 0.5, 0, 0.01, 0xff4444));
+  group.add(createTextSprite('Y', 0, halfSize + 0.5, 0.01, 0x44ff44));
 
   scene.add(group);
   return group;
@@ -39,12 +54,11 @@ function createTextSprite(text, x, y, z, color) {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(text, 32, 32);
-
   const texture = new THREE.CanvasTexture(canvas);
   const material = new THREE.SpriteMaterial({ map: texture });
   const sprite = new THREE.Sprite(material);
   sprite.position.set(x, y, z);
-  sprite.scale.set(0.5, 0.5, 1);
+  sprite.scale.set(0.8, 0.8, 1);
   return sprite;
 }
 
