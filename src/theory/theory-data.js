@@ -113,10 +113,10 @@ export const THEORY_TOPICS = {
     category: 'forze',
     content: `<p>Il <strong>piano inclinato</strong> e una superficie piana che forma un angolo \u03b1 con l'orizzontale.</p>
 <p>La forza peso si scompone in due componenti:</p>
-<p><strong>Componente parallela</strong> al piano: tende a far scivolare il corpo verso il basso.</p>
-<p><strong>Componente perpendicolare</strong> al piano: viene equilibrata dalla forza normale.</p>`,
-    formula: 'F parallela = m \u00b7 g \u00b7 sin(\u03b1)\nF perpendicolare = m \u00b7 g \u00b7 cos(\u03b1)\nN = m \u00b7 g \u00b7 cos(\u03b1)',
-    example: 'm = 10 kg, \u03b1 = 30\u00b0\nF\u2225 = 10 \u00b7 9.81 \u00b7 sin(30\u00b0) = 49.05 N\nF\u22a5 = 10 \u00b7 9.81 \u00b7 cos(30\u00b0) = 84.96 N',
+<p><strong>Px</strong> (componente parallela al piano): tende a far scivolare il corpo verso il basso.</p>
+<p><strong>Py</strong> (componente perpendicolare al piano): viene equilibrata dalla forza normale.</p>`,
+    formula: 'Px = P \u00b7 sin(\u03b1) = m \u00b7 g \u00b7 sin(\u03b1)\nPy = P \u00b7 cos(\u03b1) = m \u00b7 g \u00b7 cos(\u03b1)\nN = Py = m \u00b7 g \u00b7 cos(\u03b1)',
+    example: 'm = 10 kg, \u03b1 = 30\u00b0\nP = 10 \u00b7 9.81 = 98.1 N\nPx = 98.1 \u00b7 sin(30\u00b0) = 49.05 N\nPy = 98.1 \u00b7 cos(30\u00b0) = 84.96 N',
   },
 
   'force-tension': {

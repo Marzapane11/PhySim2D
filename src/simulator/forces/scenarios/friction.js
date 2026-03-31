@@ -13,26 +13,55 @@ export function renderFriction(sceneManager, state, visibility) {
   const W = weight(state.mass);
   const scale = 0.03;
 
-  // Ground
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(16, 0.3), new THREE.MeshBasicMaterial({ color: 0x3a3a5a, side: THREE.DoubleSide }));
-  ground.position.set(0, -0.65, 0);
-  sceneManager.objects.add(ground);
+  const groundY = -1;
+
+  // Ground line
+  const groundLine = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-7, groundY, 0.01), new THREE.Vector3(8, groundY, 0.01)
+  ]);
+  sceneManager.objects.add(new THREE.Line(groundLine, new THREE.LineBasicMaterial({ color: 0x4a4a6a })));
 
   // Hatching
   for (let i = -7; i < 8; i++) {
     const lineGeo = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(i, -0.8, 0.01), new THREE.Vector3(i - 0.4, -1.2, 0.01),
+      new THREE.Vector3(i, groundY, 0.01), new THREE.Vector3(i - 0.4, groundY - 0.4, 0.01),
     ]);
-    sceneManager.objects.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0x5a5a7a })));
+    sceneManager.objects.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0x3a3a5a })));
   }
 
   if (visibility.body) {
-    const box = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1, 1), new THREE.MeshPhongMaterial({ color: 0xff7043 }));
-    box.position.set(0, 0, 0);
-    sceneManager.objects.add(box);
+    // Box sitting ON the ground (2D ShapeGeometry)
+    const boxW = 1.5;
+    const boxH = 1;
+    const boxLeft = -boxW / 2;
+    const boxBottom = groundY;
+    const bShape = new THREE.Shape();
+    bShape.moveTo(boxLeft, boxBottom);
+    bShape.lineTo(boxLeft + boxW, boxBottom);
+    bShape.lineTo(boxLeft + boxW, boxBottom + boxH);
+    bShape.lineTo(boxLeft, boxBottom + boxH);
+    bShape.closePath();
+    sceneManager.objects.add(new THREE.Mesh(
+      new THREE.ShapeGeometry(bShape),
+      new THREE.MeshBasicMaterial({ color: 0xff7043, side: THREE.DoubleSide })
+    ));
+    // Box outline
+    const boxOutline = [
+      new THREE.Vector3(boxLeft, boxBottom, 0.02),
+      new THREE.Vector3(boxLeft + boxW, boxBottom, 0.02),
+      new THREE.Vector3(boxLeft + boxW, boxBottom + boxH, 0.02),
+      new THREE.Vector3(boxLeft, boxBottom + boxH, 0.02),
+      new THREE.Vector3(boxLeft, boxBottom, 0.02),
+    ];
+    sceneManager.objects.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(boxOutline),
+      new THREE.LineBasicMaterial({ color: 0xff8a65 })
+    ));
   }
 
-  const origin = { x: 0, y: 0 };
+  // Force arrows from center of box
+  const originY = groundY + 0.5; // center of the box
+  const origin = { x: 0, y: originY };
   if (visibility.forceArrows) {
     const wArrow = createArrow(origin, { x: 0, y: -W * scale }, 0xff4444, 'P');
     if (wArrow) sceneManager.objects.add(wArrow);
