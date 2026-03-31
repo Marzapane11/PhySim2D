@@ -3,6 +3,7 @@ import './styles/sidebar.css';
 import { renderSidebar } from './components/sidebar.js';
 import { initRouter, registerRoute } from './router.js';
 import { renderVectorsPage } from './simulator/vectors/vectors-page.js';
+import { renderForcesPage } from './simulator/forces/forces-page.js';
 import { renderTheoryPage } from './theory/theory-page.js';
 import './state.js';
 
@@ -23,9 +24,7 @@ registerRoute('/home', (container) => {
 
 registerRoute('/vectors', renderVectorsPage);
 
-registerRoute('/forces', (container) => {
-  container.innerHTML = '<div style="padding:40px;"><h1>Simulatore Forze</h1><p>In costruzione...</p></div>';
-});
+registerRoute('/forces', renderForcesPage);
 
 registerRoute('/theory', renderTheoryPage);
 

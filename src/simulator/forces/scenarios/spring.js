@@ -1,0 +1,60 @@
+import * as THREE from 'three';
+import { springForce } from '../../../math/force-math.js';
+import { createArrow } from '../../vector-renderer.js';
+
+export function computeSpring(params) { return springForce(params); }
+
+export function getSpringConfig() {
+  return { id: 'spring', label: 'Molla (Hooke)', defaults: { k: 100, x: 0.5 } };
+}
+
+export function renderSpring(sceneManager, state, visibility) {
+  const calc = computeSpring(state);
+  const restLength = 3;
+  const displacement = state.x * 3;
+
+  // Wall
+  const wallGeo = new THREE.PlaneGeometry(0.3, 3);
+  const wall = new THREE.Mesh(wallGeo, new THREE.MeshBasicMaterial({ color: 0x4a4a6a, side: THREE.DoubleSide }));
+  wall.position.set(-4, 0, 0);
+  sceneManager.objects.add(wall);
+
+  // Spring coils
+  const springStart = -3.85;
+  const springEnd = springStart + restLength + displacement;
+  const coils = 8;
+  const coilWidth = 0.4;
+  const points = [new THREE.Vector3(springStart, 0, 0.01)];
+  const segLen = (springEnd - springStart) / (coils * 2);
+  for (let i = 0; i < coils * 2; i++) {
+    const x = springStart + segLen * (i + 1);
+    const y = i % 2 === 0 ? coilWidth : -coilWidth;
+    points.push(new THREE.Vector3(x, y, 0.01));
+  }
+  points.push(new THREE.Vector3(springEnd, 0, 0.01));
+  sceneManager.objects.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(points),
+    new THREE.LineBasicMaterial({ color: 0x4fc3f7 })
+  ));
+
+  if (visibility.body) {
+    const box = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial({ color: 0xff7043 }));
+    box.position.set(springEnd + 0.5, 0, 0);
+    sceneManager.objects.add(box);
+
+    if (visibility.forceArrows && calc.force > 0.01) {
+      const forceDir = state.x > 0 ? -1 : 1;
+      const arrow = createArrow({ x: springEnd + 0.5, y: 0 }, { x: forceDir * calc.force * 0.03, y: 0 }, 0x66bb6a, 'F elastica');
+      if (arrow) sceneManager.objects.add(arrow);
+    }
+  }
+
+  // Rest position marker
+  const restPos = springStart + restLength;
+  const restGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(restPos, -1.5, 0.01), new THREE.Vector3(restPos, 1.5, 0.01),
+  ]);
+  const restLine = new THREE.Line(restGeo, new THREE.LineDashedMaterial({ color: 0xffff00, dashSize: 0.2, gapSize: 0.1 }));
+  restLine.computeLineDistances();
+  sceneManager.objects.add(restLine);
+}
