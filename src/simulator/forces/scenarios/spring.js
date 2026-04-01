@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { springForce } from '../../../math/force-math.js';
 import { createArrow } from '../../vector-renderer.js';
+import { getState } from '../../../state.js';
 
 export function computeSpring(params) { return springForce(params); }
 
@@ -9,6 +10,7 @@ export function getSpringConfig() {
 }
 
 export function renderSpring(sceneManager, state, visibility) {
+  const isLight = getState().theme === 'light';
   const calc = computeSpring(state);
   const restLength = 3;
   const displacement = state.x * 3;
@@ -21,13 +23,13 @@ export function renderSpring(sceneManager, state, visibility) {
   const groundGeo = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(-5, groundY, 0.01), new THREE.Vector3(8, groundY, 0.01)
   ]);
-  sceneManager.objects.add(new THREE.Line(groundGeo, new THREE.LineBasicMaterial({ color: 0x4a4a6a })));
+  sceneManager.objects.add(new THREE.Line(groundGeo, new THREE.LineBasicMaterial({ color: isLight ? 0x8090a0 : 0x4a4a6a })));
   // Ground hatching
   for (let i = -5; i < 8; i++) {
     const hGeo = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(i, groundY, 0.01), new THREE.Vector3(i - 0.3, groundY - 0.4, 0.01)
     ]);
-    sceneManager.objects.add(new THREE.Line(hGeo, new THREE.LineBasicMaterial({ color: 0x3a3a5a })));
+    sceneManager.objects.add(new THREE.Line(hGeo, new THREE.LineBasicMaterial({ color: isLight ? 0x9aa0b0 : 0x3a3a5a })));
   }
 
   // Wall (taller, touching ground)
@@ -39,7 +41,7 @@ export function renderSpring(sceneManager, state, visibility) {
   wallShape.closePath();
   const wallMesh = new THREE.Mesh(
     new THREE.ShapeGeometry(wallShape),
-    new THREE.MeshBasicMaterial({ color: 0x4a4a6a, side: THREE.DoubleSide })
+    new THREE.MeshBasicMaterial({ color: isLight ? 0x8090a0 : 0x4a4a6a, side: THREE.DoubleSide })
   );
   wallMesh.position.z = 0.005;
   sceneManager.objects.add(wallMesh);
@@ -48,7 +50,7 @@ export function renderSpring(sceneManager, state, visibility) {
     const hGeo = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(-4.15, y, 0.01), new THREE.Vector3(-4.35, y + 0.2, 0.01)
     ]);
-    sceneManager.objects.add(new THREE.Line(hGeo, new THREE.LineBasicMaterial({ color: 0x3a3a5a })));
+    sceneManager.objects.add(new THREE.Line(hGeo, new THREE.LineBasicMaterial({ color: isLight ? 0x9aa0b0 : 0x3a3a5a })));
   }
 
   // Spring coils (horizontal, at mid-box height)

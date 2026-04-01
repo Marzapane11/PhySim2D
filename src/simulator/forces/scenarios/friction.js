@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { frictionForce, weight } from '../../../math/force-math.js';
 import { createArrow } from '../../vector-renderer.js';
+import { getState } from '../../../state.js';
 
 export function computeFriction(params) { return frictionForce(params); }
 
@@ -9,6 +10,7 @@ export function getFrictionConfig() {
 }
 
 export function renderFriction(sceneManager, state, visibility) {
+  const isLight = getState().theme === 'light';
   const calc = computeFriction(state);
   const W = weight(state.mass);
   const scale = 0.03;
@@ -19,14 +21,14 @@ export function renderFriction(sceneManager, state, visibility) {
   const groundLine = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(-7, groundY, 0.01), new THREE.Vector3(8, groundY, 0.01)
   ]);
-  sceneManager.objects.add(new THREE.Line(groundLine, new THREE.LineBasicMaterial({ color: 0x4a4a6a })));
+  sceneManager.objects.add(new THREE.Line(groundLine, new THREE.LineBasicMaterial({ color: isLight ? 0x8090a0 : 0x4a4a6a })));
 
   // Hatching
   for (let i = -7; i < 8; i++) {
     const lineGeo = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(i, groundY, 0.01), new THREE.Vector3(i - 0.4, groundY - 0.4, 0.01),
     ]);
-    sceneManager.objects.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0x3a3a5a })));
+    sceneManager.objects.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: isLight ? 0x9aa0b0 : 0x3a3a5a })));
   }
 
   if (visibility.body) {

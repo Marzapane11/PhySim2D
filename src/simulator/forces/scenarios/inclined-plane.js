@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { inclinedPlane } from '../../../math/force-math.js';
 import { createArrow } from '../../vector-renderer.js';
+import { getState } from '../../../state.js';
 
 export function computeInclinedPlane(params) { return inclinedPlane(params); }
 
@@ -9,6 +10,7 @@ export function getInclinedPlaneConfig() {
 }
 
 export function renderInclinedPlane(sceneManager, state, visibility) {
+  const isLight = getState().theme === 'light';
   const calc = computeInclinedPlane(state);
   const angleRad = (state.angleDeg * Math.PI) / 180;
 
@@ -29,7 +31,7 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
   shape.closePath();
   sceneManager.objects.add(new THREE.Mesh(
     new THREE.ShapeGeometry(shape),
-    new THREE.MeshBasicMaterial({ color: 0x1a2a4c, side: THREE.DoubleSide })
+    new THREE.MeshBasicMaterial({ color: isLight ? 0xc8d4e0 : 0x1a2a4c, side: THREE.DoubleSide })
   ));
 
   // === Triangle outline ===

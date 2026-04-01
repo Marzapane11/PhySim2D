@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { pulleySystem } from '../../../math/force-math.js';
 import { createArrow } from '../../vector-renderer.js';
+import { getState } from '../../../state.js';
 
 export function computePulley(params) { return pulleySystem(params); }
 
@@ -9,6 +10,7 @@ export function getPulleyConfig() {
 }
 
 export function renderPulley(sceneManager, state, visibility) {
+  const isLight = getState().theme === 'light';
   const calc = computePulley(state);
   const scale = 0.02;
 
@@ -23,7 +25,7 @@ export function renderPulley(sceneManager, state, visibility) {
   sceneManager.objects.add(axle);
 
   // Support
-  const supportMat = new THREE.LineBasicMaterial({ color: 0x6a6a8a });
+  const supportMat = new THREE.LineBasicMaterial({ color: isLight ? 0x8090a0 : 0x6a6a8a });
   sceneManager.objects.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(-2, 5, 0.01), new THREE.Vector3(2, 5, 0.01)
   ]), supportMat));
