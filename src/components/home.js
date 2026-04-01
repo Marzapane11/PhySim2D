@@ -5,37 +5,49 @@ export function renderHomePage(container) {
         Simulatore Forze e Vettori
       </h1>
       <p style="color: var(--text-secondary); margin-bottom: 32px; font-size: 15px;">
-        Strumento interattivo per lo studio della fisica — prima superiore
+        Programma di Fisica — Liceo Enrico Medi, Cicciano
       </p>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-        <a href="#/vectors" class="home-card" style="
+        <a href="#/mod0" class="home-card" style="
           background: var(--bg-surface); border: 1px solid var(--border-color);
           border-radius: var(--radius); padding: 24px; text-decoration: none;
           color: inherit; transition: border-color 0.15s;
         ">
           <div style="font-size: 17px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">
-            Simulatore Vettori
+            Mod. 0 — Grandezze Fisiche
           </div>
           <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
-            Somma, differenza, scomposizione, moltiplicazione scalare e molto altro.
+            Sistema Internazionale, grandezze fondamentali e derivate, misure e teoria degli errori.
           </div>
         </a>
-        <a href="#/forces" class="home-card" style="
+        <a href="#/mod1" class="home-card" style="
           background: var(--bg-surface); border: 1px solid var(--border-color);
           border-radius: var(--radius); padding: 24px; text-decoration: none;
           color: inherit; transition: border-color 0.15s;
         ">
           <div style="font-size: 17px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">
-            Simulatore Forze
+            Mod. 1 — Vettori e Forze
           </div>
           <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
-            Piano inclinato, molle, attrito, equilibrio, carrucole e forze su un punto.
+            Somma, differenza, scomposizione di vettori. Forza peso, elastica, attrito, piano inclinato.
+          </div>
+        </a>
+        <a href="#/mod2" class="home-card" style="
+          background: var(--bg-surface); border: 1px solid var(--border-color);
+          border-radius: var(--radius); padding: 24px; text-decoration: none;
+          color: inherit; transition: border-color 0.15s;
+        ">
+          <div style="font-size: 17px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">
+            Mod. 2 — Equilibrio
+          </div>
+          <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+            Equilibrio dei corpi, momento di una forza, pressione, leggi di Pascal, Stevino e Archimede.
           </div>
         </a>
         <a href="#/theory" class="home-card" style="
           background: var(--bg-surface); border: 1px solid var(--border-color);
           border-radius: var(--radius); padding: 24px; text-decoration: none;
-          color: inherit; grid-column: 1 / -1; transition: border-color 0.15s;
+          color: inherit; transition: border-color 0.15s;
         ">
           <div style="font-size: 17px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">
             Teoria

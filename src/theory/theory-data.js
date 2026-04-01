@@ -1,4 +1,32 @@
 export const THEORY_TOPICS = {
+  'grandezze-fisiche': {
+    title: 'Sistema Internazionale (S.I.)',
+    category: 'grandezze',
+    content: `<p>Il <strong>Sistema Internazionale</strong> (S.I.) definisce 7 grandezze fondamentali: lunghezza (m), massa (kg), tempo (s), corrente elettrica (A), temperatura (K), quantita di sostanza (mol), intensita luminosa (cd).</p>
+<p>Le <strong>grandezze derivate</strong> si ottengono combinando le grandezze fondamentali. Ad esempio: velocita (m/s), accelerazione (m/s\u00b2), forza (N = kg\u00b7m/s\u00b2), pressione (Pa = N/m\u00b2), energia (J = N\u00b7m).</p>`,
+    formula: 'v = s/t    [m/s]\na = v/t    [m/s\u00b2]\nF = m\u00b7a    [N]\np = F/A    [Pa]\nL = F\u00b7s    [J]',
+    example: 'Forza: m = 5 kg, a = 3 m/s\u00b2 \u2192 F = 15 N\nPressione: F = 100 N, A = 0.5 m\u00b2 \u2192 p = 200 Pa',
+  },
+
+  'misure-errori': {
+    title: 'Misure e Teoria degli errori',
+    category: 'grandezze',
+    content: `<p><strong>Misurare</strong> significa confrontare una grandezza con un'unita di misura omogenea.</p>
+<p>Ogni strumento ha: <strong>portata</strong> (valore massimo misurabile), <strong>sensibilita</strong> (minima variazione rilevabile), <strong>prontezza</strong> (velocita di risposta).</p>
+<p>Gli <strong>errori sistematici</strong> si ripetono sempre uguali; gli <strong>errori casuali</strong> variano ad ogni misura.</p>`,
+    formula: 'Errore assoluto: Ea = (x_max - x_min) / 2\nErrore relativo: Er = Ea / x_medio\nErrore percentuale: E% = Er \u00b7 100',
+    example: 'Misure: 10.2, 10.4, 10.1, 10.3, 10.5 cm\nx_medio = 10.3 cm\nEa = (10.5 - 10.1) / 2 = 0.2 cm\nEr = 0.2 / 10.3 = 0.019\nE% = 1.9%\nRisultato: (10.3 \u00b1 0.2) cm',
+  },
+
+  'proporzionalita': {
+    title: 'Proporzionalita diretta e inversa',
+    category: 'grandezze',
+    content: `<p><strong>Proporzionalita diretta</strong>: quando una grandezza aumenta, l'altra aumenta in modo proporzionale. Il grafico e una retta passante per l'origine.</p>
+<p><strong>Proporzionalita inversa</strong>: quando una grandezza aumenta, l'altra diminuisce in modo proporzionale. Il grafico e un'iperbole.</p>`,
+    formula: 'Diretta: y = k \u00b7 x    (k = costante)\nInversa: y = k / x    (k = costante)',
+    example: 'Diretta: se k = 3 e x = 4 \u2192 y = 12\nInversa: se k = 12 e x = 4 \u2192 y = 3',
+  },
+
   'vector-basics': {
     title: 'Vettori e Scalari',
     category: 'vettori',
@@ -148,6 +176,87 @@ export const THEORY_TOPICS = {
 <p>La risultante ha lo stesso effetto di tutte le forze agenti insieme.</p>`,
     formula: 'Rx = \u03a3Fix = F1x + F2x + ... + Fnx\nRy = \u03a3Fiy = F1y + F2y + ... + Fny\n|R| = \u221a(Rx\u00b2 + Ry\u00b2)\n\u03b8 = arctan(Ry / Rx)',
     example: 'F1 = (3, 0) N, F2 = (0, 4) N\nRx = 3 + 0 = 3 N\nRy = 0 + 4 = 4 N\n|R| = \u221a(9 + 16) = 5 N\n\u03b8 = arctan(4/3) \u2248 53.1\u00b0',
+  },
+
+  'equilibrio-punto': {
+    title: 'Equilibrio del punto materiale',
+    category: 'equilibrio',
+    content: `<p>Un punto materiale e in <strong>equilibrio</strong> quando la somma vettoriale di tutte le forze applicate e nulla.</p>
+<p>Si scompongono tutte le forze lungo due assi perpendicolari e si impone che la somma delle componenti su ciascun asse sia zero.</p>`,
+    formula: '\u03a3F = 0\n\u03a3Fx = 0   e   \u03a3Fy = 0',
+    example: 'Lampadario di 8 kg appeso al soffitto:\nP = 8 \u00b7 9.81 = 78.5 N (verso il basso)\nT = 78.5 N (verso l\'alto)\n\u03a3F = T - P = 0 \u2192 equilibrio',
+  },
+
+  'piano-inclinato-equilibrio': {
+    title: 'Equilibrio su piano orizzontale e inclinato',
+    category: 'equilibrio',
+    content: `<p><strong>Piano orizzontale</strong>: N = P = m\u00b7g.</p>
+<p><strong>Piano inclinato</strong> (angolo \u03b1): il peso si scompone in Px (parallela) e Py (perpendicolare). Per l'equilibrio con attrito: tan(\u03b1) = \u03bcs.</p>`,
+    formula: 'Px = m\u00b7g\u00b7sin(\u03b1)\nPy = m\u00b7g\u00b7cos(\u03b1)\nN = Py\nEquilibrio con attrito: tan(\u03b1) = \u03bcs',
+    example: 'm = 5 kg, \u03b1 = 20\u00b0, \u03bcs = 0.4\nPx = 5\u00b79.81\u00b7sin(20\u00b0) = 16.8 N\nFa max = 0.4\u00b75\u00b79.81\u00b7cos(20\u00b0) = 18.4 N\nFa > Px \u2192 equilibrio',
+  },
+
+  'momento-forza': {
+    title: 'Momento di una forza e coppia di forze',
+    category: 'equilibrio',
+    content: `<p>Il <strong>momento</strong> di una forza rispetto a un polo misura la tendenza della forza a far ruotare il corpo. L'unita di misura e il N\u00b7m.</p>
+<p>Una <strong>coppia di forze</strong> e formata da due forze uguali e contrarie applicate in punti diversi; produce solo rotazione.</p>`,
+    formula: 'M = F \u00b7 d\n(d = braccio della forza)',
+    example: 'F = 20 N, d = 0.5 m\nM = 20 \u00b7 0.5 = 10 N\u00b7m',
+  },
+
+  'corpo-rigido': {
+    title: 'Equilibrio del corpo rigido e baricentro',
+    category: 'equilibrio',
+    content: `<p>Un corpo rigido e in equilibrio quando: <strong>\u03a3F = 0</strong> (equilibrio alla traslazione) e <strong>\u03a3M = 0</strong> (equilibrio alla rotazione).</p>
+<p>Il <strong>baricentro</strong> e il punto in cui si puo considerare applicata tutta la forza peso. Un corpo appoggiato e in equilibrio stabile se la verticale dal baricentro cade nella base di appoggio.</p>`,
+    formula: '\u03a3F = 0   e   \u03a3M = 0',
+    example: 'Asta di 2 m con fulcro al centro:\nF1 = 30 N a 1 m dal fulcro\n\u03a3M = 0 \u2192 F2 = F1 \u00b7 d1/d2 = 30 N',
+  },
+
+  'pressione': {
+    title: 'La pressione',
+    category: 'equilibrio',
+    content: `<p>La <strong>pressione</strong> e il rapporto tra la forza applicata perpendicolarmente a una superficie e l'area della superficie.</p>
+<p>L'unita di misura nel S.I. e il <strong>Pascal</strong> (Pa): 1 Pa = 1 N/m\u00b2.</p>`,
+    formula: 'p = F / A',
+    example: 'F = 500 N, A = 0.25 m\u00b2\np = 500 / 0.25 = 2000 Pa',
+  },
+
+  'pascal': {
+    title: 'Legge di Pascal',
+    category: 'equilibrio',
+    content: `<p><strong>Legge di Pascal</strong>: la pressione esercitata su un fluido in equilibrio in un recipiente chiuso si trasmette con uguale intensita in tutte le direzioni.</p>
+<p>Applicazione principale: il <strong>torchio idraulico</strong>.</p>`,
+    formula: 'F1 / A1 = F2 / A2',
+    example: 'Torchio idraulico:\nA1 = 0.01 m\u00b2, A2 = 0.5 m\u00b2, F1 = 100 N\nF2 = 100 \u00b7 0.5 / 0.01 = 5000 N',
+  },
+
+  'stevino': {
+    title: 'Legge di Stevino',
+    category: 'equilibrio',
+    content: `<p><strong>Legge di Stevino</strong>: la pressione in un fluido aumenta con la profondita.</p>
+<p>dove p0 e la pressione sulla superficie, \u03c1 e la densita del fluido, g l'accelerazione di gravita e h la profondita.</p>`,
+    formula: 'p = p0 + \u03c1 \u00b7 g \u00b7 h',
+    example: 'Acqua (\u03c1 = 1000 kg/m\u00b3), h = 10 m\np = 101325 + 1000\u00b79.81\u00b710 = 199425 Pa \u2248 2 atm',
+  },
+
+  'archimede': {
+    title: 'Legge di Archimede',
+    category: 'equilibrio',
+    content: `<p><strong>Legge di Archimede</strong>: un corpo immerso in un fluido riceve una spinta verso l'alto uguale al peso del fluido spostato.</p>
+<p>Se Fa > P il corpo galleggia; se Fa = P resta sospeso; se Fa < P affonda.</p>`,
+    formula: 'Fa = \u03c1f \u00b7 g \u00b7 V',
+    example: 'Cubo di legno (V = 0.001 m\u00b3), massa 0.6 kg, in acqua:\nP = 0.6\u00b79.81 = 5.89 N\nFa = 1000\u00b79.81\u00b70.001 = 9.81 N\nFa > P \u2192 galleggia',
+  },
+
+  'pressione-atmosferica': {
+    title: 'La pressione atmosferica',
+    category: 'equilibrio',
+    content: `<p>La <strong>pressione atmosferica</strong> e la pressione esercitata dall'aria sulla superficie terrestre. Fu misurata da <strong>Torricelli</strong> nel 1644.</p>
+<p>La pressione atmosferica diminuisce con l'altitudine.</p>`,
+    formula: '1 atm = 101325 Pa = 760 mmHg',
+    example: 'Esperimento di Torricelli:\np_atm = \u03c1_Hg \u00b7 g \u00b7 h\n101325 = 13600 \u00b7 9.81 \u00b7 h\nh \u2248 0.76 m = 760 mm',
   },
 };
 

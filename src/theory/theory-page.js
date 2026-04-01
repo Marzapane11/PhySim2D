@@ -8,8 +8,10 @@ export function renderTheoryPage(container) {
   page.innerHTML = '<h1>Teoria</h1>';
 
   const categories = [
-    { id: 'vettori', title: 'Vettori e Scalari' },
-    { id: 'forze', title: 'Forze' },
+    { id: 'grandezze', title: 'Mod. 0 — Grandezze Fisiche' },
+    { id: 'vettori', title: 'Mod. 1 — Vettori' },
+    { id: 'forze', title: 'Mod. 1 — Forze' },
+    { id: 'equilibrio', title: 'Mod. 2 — Equilibrio' },
   ];
 
   const hash = window.location.hash;

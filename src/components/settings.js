@@ -24,7 +24,8 @@ export function renderSettingsPage(container) {
         <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">Info</div>
         <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;">
           Simulatore Forze e Vettori v1.0 Beta<br>
-          Per studenti delle superiori<br>
+          Programma di Fisica — Liceo Enrico Medi, Cicciano (NA)<br>
+          Coordinatore: Prof.ssa Loreta Lembo<br>
           Sviluppatore: Mataro M.
         </p>
         <div style="margin-top: 12px; padding: 10px; background: var(--bg-primary); border-radius: var(--radius-sm); border: 1px dashed var(--accent);">
