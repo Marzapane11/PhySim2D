@@ -50,10 +50,12 @@ export function renderPulley(sceneManager, state, visibility) {
     box1Shape.lineTo(-0.65 + box1W / 2, -1 + box1H);
     box1Shape.lineTo(-0.65 - box1W / 2, -1 + box1H);
     box1Shape.closePath();
-    sceneManager.objects.add(new THREE.Mesh(
+    const box1Mesh = new THREE.Mesh(
       new THREE.ShapeGeometry(box1Shape),
       new THREE.MeshBasicMaterial({ color: 0xff7043, side: THREE.DoubleSide })
-    ));
+    );
+    box1Mesh.position.z = 0.01;
+    sceneManager.objects.add(box1Mesh);
     // Box 1 outline
     const box1Outline = [
       new THREE.Vector3(-0.65 - box1W / 2, -1, 0.02),
@@ -76,10 +78,12 @@ export function renderPulley(sceneManager, state, visibility) {
     box2Shape.lineTo(0.65 + box2W / 2, 0.2 + box2H);
     box2Shape.lineTo(0.65 - box2W / 2, 0.2 + box2H);
     box2Shape.closePath();
-    sceneManager.objects.add(new THREE.Mesh(
+    const box2Mesh = new THREE.Mesh(
       new THREE.ShapeGeometry(box2Shape),
       new THREE.MeshBasicMaterial({ color: 0x66bb6a, side: THREE.DoubleSide })
-    ));
+    );
+    box2Mesh.position.z = 0.01;
+    sceneManager.objects.add(box2Mesh);
     // Box 2 outline
     const box2Outline = [
       new THREE.Vector3(0.65 - box2W / 2, 0.2, 0.02),

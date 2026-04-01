@@ -104,10 +104,12 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
     boxShape.lineTo(corners[2].x, corners[2].y);
     boxShape.lineTo(corners[3].x, corners[3].y);
     boxShape.closePath();
-    sceneManager.objects.add(new THREE.Mesh(
+    const boxMesh = new THREE.Mesh(
       new THREE.ShapeGeometry(boxShape),
       new THREE.MeshBasicMaterial({ color: 0xff7043, side: THREE.DoubleSide })
-    ));
+    );
+    boxMesh.position.z = 0.02;
+    sceneManager.objects.add(boxMesh);
     // Box outline
     const boxOutlinePts = [...corners, corners[0]].map(c => new THREE.Vector3(c.x, c.y, 0.04));
     sceneManager.objects.add(new THREE.Line(

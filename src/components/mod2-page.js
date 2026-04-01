@@ -15,7 +15,7 @@ export function renderMod2Page(container) {
       <div class="theory-card expanded">
         <div class="theory-card-title">Equilibrio del punto materiale</div>
         <div class="theory-card-content" style="display:block">
-          <p>Un punto materiale e in <strong>equilibrio</strong> quando la somma vettoriale di tutte le forze applicate e nulla.</p>
+          <p>Un punto materiale è in <strong>equilibrio</strong> quando la somma vettoriale di tutte le forze applicate è nulla.</p>
           <div class="theory-formula-block">\u03a3F = 0
 \u03a3Fx = 0   e   \u03a3Fy = 0</div>
           <p>In pratica, si scompongono tutte le forze lungo due assi perpendicolari e si impone che la somma delle componenti su ciascun asse sia zero.</p>
@@ -29,7 +29,7 @@ T = 78.5 N (verso l'alto, tensione del filo)
       <div class="theory-card expanded">
         <div class="theory-card-title">Equilibrio su piano orizzontale e inclinato</div>
         <div class="theory-card-content" style="display:block">
-          <p><strong>Piano orizzontale</strong>: un corpo e in equilibrio quando la forza normale N equilibra il peso P.</p>
+          <p><strong>Piano orizzontale</strong>: un corpo è in equilibrio quando la forza normale N equilibra il peso P.</p>
           <div class="theory-formula-block">N = P = m \u00b7 g</div>
           <p><strong>Piano inclinato</strong> (angolo \u03b1): il peso si scompone in componente parallela Px e perpendicolare Py al piano.</p>
           <div class="theory-formula-block">Px = P \u00b7 sin(\u03b1) = m \u00b7 g \u00b7 sin(\u03b1)
@@ -50,9 +50,9 @@ Fa max > Px \u2192 il corpo resta in equilibrio</div>
         <div class="theory-card-content" style="display:block">
           <p>Il <strong>momento</strong> di una forza rispetto a un punto (polo) misura la tendenza della forza a far ruotare il corpo attorno a quel punto.</p>
           <div class="theory-formula-block">M = F \u00b7 d</div>
-          <p>dove <strong>d</strong> e il braccio della forza, cioe la distanza tra la retta d'azione della forza e il polo.</p>
-          <p>L'unita di misura e il Newton-metro (N\u00b7m).</p>
-          <p>Il momento e positivo se la rotazione e antioraria, negativo se oraria.</p>
+          <p>dove <strong>d</strong> è il braccio della forza, cioè la distanza tra la retta d'azione della forza e il polo.</p>
+          <p>L'unità di misura è il Newton-metro (N\u00b7m).</p>
+          <p>Il momento è positivo se la rotazione è antioraria, negativo se oraria.</p>
           <div class="theory-example-block">Una forza F = 20 N applicata a una distanza d = 0.5 m dal fulcro:
 M = 20 \u00b7 0.5 = 10 N\u00b7m</div>
         </div>
@@ -61,20 +61,20 @@ M = 20 \u00b7 0.5 = 10 N\u00b7m</div>
       <div class="theory-card expanded">
         <div class="theory-card-title">Coppia di forze</div>
         <div class="theory-card-content" style="display:block">
-          <p>Una <strong>coppia di forze</strong> e formata da due forze uguali e contrarie, applicate in punti diversi.</p>
-          <p>La coppia produce solo rotazione (nessuna traslazione), e il suo momento e:</p>
+          <p>Una <strong>coppia di forze</strong> è formata da due forze uguali e contrarie, applicate in punti diversi.</p>
+          <p>La coppia produce solo rotazione (nessuna traslazione), e il suo momento è:</p>
           <div class="theory-formula-block">M = F \u00b7 d</div>
-          <p>dove d e la distanza tra le rette d'azione delle due forze.</p>
+          <p>dove d è la distanza tra le rette d'azione delle due forze.</p>
         </div>
       </div>
 
       <div class="theory-card expanded">
         <div class="theory-card-title">Equilibrio del corpo rigido</div>
         <div class="theory-card-content" style="display:block">
-          <p>Un <strong>corpo rigido</strong> e in equilibrio quando sono soddisfatte due condizioni:</p>
+          <p>Un <strong>corpo rigido</strong> è in equilibrio quando sono soddisfatte due condizioni:</p>
           <ol style="margin:8px 0 8px 20px;">
-            <li>La risultante di tutte le forze e nulla: <strong>\u03a3F = 0</strong> (equilibrio alla traslazione)</li>
-            <li>La somma di tutti i momenti rispetto a qualsiasi polo e nulla: <strong>\u03a3M = 0</strong> (equilibrio alla rotazione)</li>
+            <li>La risultante di tutte le forze è nulla: <strong>\u03a3F = 0</strong> (equilibrio alla traslazione)</li>
+            <li>La somma di tutti i momenti rispetto a qualsiasi polo è nulla: <strong>\u03a3M = 0</strong> (equilibrio alla rotazione)</li>
           </ol>
           <div class="theory-formula-block">\u03a3F = 0   e   \u03a3M = 0</div>
           <div class="theory-example-block">Un'asta lunga 2 m con fulcro al centro:
@@ -87,9 +87,9 @@ F2 = ? a destra (distanza 1 m dal fulcro)
       <div class="theory-card expanded">
         <div class="theory-card-title">Il baricentro</div>
         <div class="theory-card-content" style="display:block">
-          <p>Il <strong>baricentro</strong> (o centro di gravita) e il punto in cui si puo considerare applicata tutta la forza peso del corpo.</p>
+          <p>Il <strong>baricentro</strong> (o centro di gravità) è il punto in cui si può considerare applicata tutta la forza peso del corpo.</p>
           <p>Per un corpo omogeneo, il baricentro coincide con il centro geometrico.</p>
-          <p>Un corpo appoggiato e in equilibrio stabile se la verticale passante per il baricentro cade all'interno della base di appoggio.</p>
+          <p>Un corpo appoggiato è in equilibrio stabile se la verticale passante per il baricentro cade all'interno della base di appoggio.</p>
           <p>Tipi di equilibrio:</p>
           <ul style="margin:8px 0 8px 20px;">
             <li><strong>Stabile</strong>: il corpo torna alla posizione iniziale dopo una piccola perturbazione</li>
@@ -106,9 +106,9 @@ F2 = ? a destra (distanza 1 m dal fulcro)
       <div class="theory-card expanded">
         <div class="theory-card-title">La pressione</div>
         <div class="theory-card-content" style="display:block">
-          <p>La <strong>pressione</strong> e il rapporto tra la forza applicata perpendicolarmente a una superficie e l'area della superficie stessa.</p>
+          <p>La <strong>pressione</strong> è il rapporto tra la forza applicata perpendicolarmente a una superficie e l'area della superficie stessa.</p>
           <div class="theory-formula-block">p = F / A</div>
-          <p>L'unita di misura nel S.I. e il <strong>Pascal</strong> (Pa): 1 Pa = 1 N/m\u00b2</p>
+          <p>L'unità di misura nel S.I. è il <strong>Pascal</strong> (Pa): 1 Pa = 1 N/m\u00b2</p>
           <div class="theory-example-block">F = 500 N, A = 0.25 m\u00b2
 p = 500 / 0.25 = 2000 Pa</div>
         </div>
@@ -117,7 +117,7 @@ p = 500 / 0.25 = 2000 Pa</div>
       <div class="theory-card expanded">
         <div class="theory-card-title">Legge di Pascal</div>
         <div class="theory-card-content" style="display:block">
-          <p><strong>Legge di Pascal</strong>: la pressione esercitata su un fluido in equilibrio in un recipiente chiuso si trasmette con uguale intensita in tutte le direzioni e su tutte le pareti del recipiente.</p>
+          <p><strong>Legge di Pascal</strong>: la pressione esercitata su un fluido in equilibrio in un recipiente chiuso si trasmette con uguale intensità in tutte le direzioni e su tutte le pareti del recipiente.</p>
           <p>Applicazione: il <strong>torchio idraulico</strong>.</p>
           <div class="theory-formula-block">F1 / A1 = F2 / A2</div>
           <div class="theory-example-block">Torchio idraulico:
@@ -129,9 +129,9 @@ F2 = F1 \u00b7 A2 / A1 = 100 \u00b7 0.5 / 0.01 = 5000 N</div>
       <div class="theory-card expanded">
         <div class="theory-card-title">Legge di Stevino</div>
         <div class="theory-card-content" style="display:block">
-          <p><strong>Legge di Stevino</strong>: la pressione in un fluido aumenta con la profondita.</p>
+          <p><strong>Legge di Stevino</strong>: la pressione in un fluido aumenta con la profondità.</p>
           <div class="theory-formula-block">p = p0 + \u03c1 \u00b7 g \u00b7 h</div>
-          <p>dove p0 e la pressione sulla superficie, \u03c1 e la densita del fluido, g l'accelerazione di gravita e h la profondita.</p>
+          <p>dove p0 è la pressione sulla superficie, \u03c1 è la densità del fluido, g l'accelerazione di gravità e h la profondità.</p>
           <div class="theory-example-block">Acqua (\u03c1 = 1000 kg/m\u00b3), h = 10 m
 p = 101325 + 1000 \u00b7 9.81 \u00b7 10
 p = 101325 + 98100 = 199425 Pa \u2248 2 atm</div>
@@ -141,8 +141,8 @@ p = 101325 + 98100 = 199425 Pa \u2248 2 atm</div>
       <div class="theory-card expanded">
         <div class="theory-card-title">Vasi comunicanti</div>
         <div class="theory-card-content" style="display:block">
-          <p>In un sistema di <strong>vasi comunicanti</strong> contenenti lo stesso liquido in equilibrio, il livello del liquido e lo stesso in tutti i rami, indipendentemente dalla forma dei vasi.</p>
-          <p>Se i vasi contengono liquidi diversi (non miscibili), le altezze sono inversamente proporzionali alle densita:</p>
+          <p>In un sistema di <strong>vasi comunicanti</strong> contenenti lo stesso liquido in equilibrio, il livello del liquido è lo stesso in tutti i rami, indipendentemente dalla forma dei vasi.</p>
+          <p>Se i vasi contengono liquidi diversi (non miscibili), le altezze sono inversamente proporzionali alle densità:</p>
           <div class="theory-formula-block">\u03c11 \u00b7 h1 = \u03c12 \u00b7 h2</div>
           <div class="theory-example-block">Acqua (\u03c11 = 1000 kg/m\u00b3) e olio (\u03c12 = 800 kg/m\u00b3)
 Se h1 = 20 cm (acqua):
@@ -155,7 +155,7 @@ h2 = \u03c11 \u00b7 h1 / \u03c12 = 1000 \u00b7 20 / 800 = 25 cm (olio)</div>
         <div class="theory-card-content" style="display:block">
           <p><strong>Legge di Archimede</strong>: un corpo immerso in un fluido riceve una spinta verso l'alto (spinta di Archimede) uguale al peso del fluido spostato.</p>
           <div class="theory-formula-block">Fa = \u03c1f \u00b7 g \u00b7 V</div>
-          <p>dove \u03c1f e la densita del fluido e V e il volume della parte immersa del corpo.</p>
+          <p>dove \u03c1f è la densità del fluido e V è il volume della parte immersa del corpo.</p>
           <ul style="margin:8px 0 8px 20px;">
             <li>Se Fa > P: il corpo <strong>galleggia</strong> (sale)</li>
             <li>Se Fa = P: il corpo <strong>resta sospeso</strong></li>
@@ -172,10 +172,10 @@ Fa > P \u2192 il cubo galleggia</div>
       <div class="theory-card expanded">
         <div class="theory-card-title">La pressione atmosferica</div>
         <div class="theory-card-content" style="display:block">
-          <p>La <strong>pressione atmosferica</strong> e la pressione esercitata dall'aria sulla superficie terrestre.</p>
+          <p>La <strong>pressione atmosferica</strong> è la pressione esercitata dall'aria sulla superficie terrestre.</p>
           <p>Fu misurata per la prima volta da <strong>Torricelli</strong> nel 1644 con un tubo di mercurio.</p>
           <div class="theory-formula-block">1 atm = 101325 Pa = 760 mmHg</div>
-          <p>La pressione atmosferica diminuisce con l'altitudine, perche lo strato d'aria sovrastante diventa piu sottile.</p>
+          <p>La pressione atmosferica diminuisce con l'altitudine, perché lo strato d'aria sovrastante diventa più sottile.</p>
           <div class="theory-example-block">Esperimento di Torricelli:
 p_atm = \u03c1_Hg \u00b7 g \u00b7 h
 101325 = 13600 \u00b7 9.81 \u00b7 h

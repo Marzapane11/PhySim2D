@@ -37,10 +37,12 @@ export function renderSpring(sceneManager, state, visibility) {
   wallShape.lineTo(-4, 1.5);
   wallShape.lineTo(-4.15, 1.5);
   wallShape.closePath();
-  sceneManager.objects.add(new THREE.Mesh(
+  const wallMesh = new THREE.Mesh(
     new THREE.ShapeGeometry(wallShape),
     new THREE.MeshBasicMaterial({ color: 0x4a4a6a, side: THREE.DoubleSide })
-  ));
+  );
+  wallMesh.position.z = 0.005;
+  sceneManager.objects.add(wallMesh);
   // Wall hatching
   for (let y = groundY; y < 1.5; y += 0.3) {
     const hGeo = new THREE.BufferGeometry().setFromPoints([
@@ -78,10 +80,12 @@ export function renderSpring(sceneManager, state, visibility) {
     bShape.lineTo(boxLeft + boxW, boxBottom + boxH);
     bShape.lineTo(boxLeft, boxBottom + boxH);
     bShape.closePath();
-    sceneManager.objects.add(new THREE.Mesh(
+    const boxMesh = new THREE.Mesh(
       new THREE.ShapeGeometry(bShape),
       new THREE.MeshBasicMaterial({ color: 0xff7043, side: THREE.DoubleSide })
-    ));
+    );
+    boxMesh.position.z = 0.01;
+    sceneManager.objects.add(boxMesh);
     // Box outline
     const boxOutline = [
       new THREE.Vector3(boxLeft, boxBottom, 0.02),

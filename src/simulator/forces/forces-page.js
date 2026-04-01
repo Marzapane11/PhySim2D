@@ -140,7 +140,7 @@ export function renderForcesPage(container) {
             createPropertyRow('Px (parallela)', calc.parallel.toFixed(2) + ' N') +
             createPropertyRow('Fa (attrito)', calc.friction.toFixed(2) + ' N') +
             createPropertyRow('F netta', calc.netForce.toFixed(2) + ' N') +
-            createPropertyRow('Scivola?', calc.slides ? 'Si' : 'No'),
+            createPropertyRow('Scivola?', calc.slides ? 'Sì' : 'No'),
         });
         break;
       }

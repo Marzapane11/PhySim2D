@@ -220,7 +220,7 @@ export function renderVectorsPage(container) {
       });
     } else {
       sections.push({
-        title: 'Proprieta',
+        title: 'Proprietà',
         content: '<p style="color:var(--text-secondary);font-size:13px;">Clicca sul canvas per creare un vettore, poi selezionalo dalla lista.</p>',
       });
     }

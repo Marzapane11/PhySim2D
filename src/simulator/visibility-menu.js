@@ -11,9 +11,13 @@ const VISIBILITY_LABELS = {
 };
 
 export function renderVisibilityMenu(container) {
+  // Remove existing visibility section if present
+  const existing = container.querySelector('.visibility-section');
+  if (existing) existing.remove();
+
   const section = document.createElement('div');
-  section.className = 'panel-section';
-  section.innerHTML = '<div class="panel-section-title">Visibilita</div>';
+  section.className = 'panel-section visibility-section';
+  section.innerHTML = '<div class="panel-section-title">Visibilità</div>';
 
   const state = getState();
 

@@ -31,7 +31,7 @@ export function renderSettingsPage(container) {
         <div style="margin-top: 12px; padding: 10px; background: var(--bg-primary); border-radius: var(--radius-sm); border: 1px dashed var(--accent);">
           <p style="font-size: 12px; color: var(--text-accent); font-weight: 600; margin-bottom: 4px;">Accesso anticipato — Solo Beta Testers</p>
           <p style="font-size: 11px; color: var(--text-secondary); line-height: 1.5;">
-            Stai utilizzando una versione in fase di sviluppo. Nuove funzionalita e scenari verranno aggiunti nei prossimi aggiornamenti. Segnala bug e suggerimenti per migliorare l'app!
+            Stai utilizzando una versione in fase di sviluppo. Nuove funzionalità e scenari verranno aggiunti nei prossimi aggiornamenti. Segnala bug e suggerimenti per migliorare l'app!
           </p>
         </div>
       </div>

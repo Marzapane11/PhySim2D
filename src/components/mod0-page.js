@@ -18,7 +18,7 @@ export function renderMod0Page(container) {
           <table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;">
             <tr style="border-bottom:1px solid var(--border-color);">
               <th style="text-align:left;padding:6px;color:var(--text-accent);">Grandezza</th>
-              <th style="text-align:left;padding:6px;color:var(--text-accent);">Unita</th>
+              <th style="text-align:left;padding:6px;color:var(--text-accent);">Unità</th>
               <th style="text-align:left;padding:6px;color:var(--text-accent);">Simbolo</th>
             </tr>
             <tr style="border-bottom:1px solid var(--border-color);">
@@ -37,10 +37,10 @@ export function renderMod0Page(container) {
               <td style="padding:6px;">Temperatura</td><td style="padding:6px;">kelvin</td><td style="padding:6px;">K</td>
             </tr>
             <tr style="border-bottom:1px solid var(--border-color);">
-              <td style="padding:6px;">Quantita di sostanza</td><td style="padding:6px;">mole</td><td style="padding:6px;">mol</td>
+              <td style="padding:6px;">Quantità di sostanza</td><td style="padding:6px;">mole</td><td style="padding:6px;">mol</td>
             </tr>
             <tr>
-              <td style="padding:6px;">Intensita luminosa</td><td style="padding:6px;">candela</td><td style="padding:6px;">cd</td>
+              <td style="padding:6px;">Intensità luminosa</td><td style="padding:6px;">candela</td><td style="padding:6px;">cd</td>
             </tr>
           </table>
         </div>
@@ -54,10 +54,10 @@ export function renderMod0Page(container) {
             <tr style="border-bottom:1px solid var(--border-color);">
               <th style="text-align:left;padding:6px;color:var(--text-accent);">Grandezza</th>
               <th style="text-align:left;padding:6px;color:var(--text-accent);">Formula</th>
-              <th style="text-align:left;padding:6px;color:var(--text-accent);">Unita S.I.</th>
+              <th style="text-align:left;padding:6px;color:var(--text-accent);">Unità S.I.</th>
             </tr>
             <tr style="border-bottom:1px solid var(--border-color);">
-              <td style="padding:6px;">Velocita</td><td style="padding:6px;">v = s/t</td><td style="padding:6px;">m/s</td>
+              <td style="padding:6px;">Velocità</td><td style="padding:6px;">v = s/t</td><td style="padding:6px;">m/s</td>
             </tr>
             <tr style="border-bottom:1px solid var(--border-color);">
               <td style="padding:6px;">Accelerazione</td><td style="padding:6px;">a = v/t</td><td style="padding:6px;">m/s²</td>
@@ -81,12 +81,12 @@ export function renderMod0Page(container) {
       <div class="theory-card expanded">
         <div class="theory-card-title">La misura delle grandezze</div>
         <div class="theory-card-content" style="display:block">
-          <p><strong>Misurare</strong> significa confrontare una grandezza con un'altra grandezza omogenea scelta come unita di misura.</p>
+          <p><strong>Misurare</strong> significa confrontare una grandezza con un'altra grandezza omogenea scelta come unità di misura.</p>
           <p>Ogni strumento di misura ha:</p>
           <ul style="margin:8px 0 8px 20px;">
-            <li><strong>Portata</strong>: il valore massimo che puo misurare</li>
-            <li><strong>Sensibilita</strong>: la piu piccola variazione che puo rilevare</li>
-            <li><strong>Prontezza</strong>: la velocita di risposta</li>
+            <li><strong>Portata</strong>: il valore massimo che può misurare</li>
+            <li><strong>Sensibilità</strong>: la più piccola variazione che può rilevare</li>
+            <li><strong>Prontezza</strong>: la velocità di risposta</li>
           </ul>
         </div>
       </div>
@@ -94,7 +94,7 @@ export function renderMod0Page(container) {
       <div class="theory-card expanded">
         <div class="theory-card-title">Teoria degli errori</div>
         <div class="theory-card-content" style="display:block">
-          <p>Ogni misura e affetta da <strong>errori</strong>:</p>
+          <p>Ogni misura è affetta da <strong>errori</strong>:</p>
           <ul style="margin:8px 0 8px 20px;">
             <li><strong>Errori sistematici</strong>: dovuti allo strumento o al metodo di misura, si ripetono sempre uguali</li>
             <li><strong>Errori casuali</strong>: dovuti a cause imprevedibili, variano ad ogni misura</li>
@@ -112,14 +112,14 @@ Risultato: (10.3 ± 0.2) cm</div>
       </div>
 
       <div class="theory-card expanded">
-        <div class="theory-card-title">Proporzionalita diretta e inversa</div>
+        <div class="theory-card-title">Proporzionalità diretta e inversa</div>
         <div class="theory-card-content" style="display:block">
-          <p><strong>Proporzionalita diretta</strong>: quando una grandezza aumenta, l'altra aumenta in modo proporzionale.</p>
+          <p><strong>Proporzionalità diretta</strong>: quando una grandezza aumenta, l'altra aumenta in modo proporzionale.</p>
           <div class="theory-formula-block">y = k · x    (k = costante)</div>
-          <p>Il grafico e una retta passante per l'origine.</p>
-          <p><strong>Proporzionalita inversa</strong>: quando una grandezza aumenta, l'altra diminuisce in modo proporzionale.</p>
+          <p>Il grafico è una retta passante per l'origine.</p>
+          <p><strong>Proporzionalità inversa</strong>: quando una grandezza aumenta, l'altra diminuisce in modo proporzionale.</p>
           <div class="theory-formula-block">y = k / x    (k = costante)</div>
-          <p>Il grafico e un'iperbole.</p>
+          <p>Il grafico è un'iperbole.</p>
         </div>
       </div>
     </div>
