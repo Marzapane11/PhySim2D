@@ -12,12 +12,12 @@ export function renderSettingsPage(container) {
             flex: 1; padding: 14px; border-radius: var(--radius);
             border: 2px solid ${state.theme === 'dark' ? 'var(--accent)' : 'var(--border-color)'};
             background: #1a1a2e; color: #e0e0e0; font-size: 14px; cursor: pointer;
-          ">Dark</button>
+          ">Scuro</button>
           <button id="theme-light" style="
             flex: 1; padding: 14px; border-radius: var(--radius);
             border: 2px solid ${state.theme === 'light' ? 'var(--accent)' : 'var(--border-color)'};
             background: #f5f5f5; color: #212121; font-size: 14px; cursor: pointer;
-          ">Light</button>
+          ">Chiaro</button>
         </div>
       </div>
       <div style="margin-top: 24px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 20px;">
