@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { getState, subscribe } from '../state.js';
 
 export class SceneManager {
   constructor(canvasContainer) {
@@ -23,8 +24,11 @@ export class SceneManager {
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.setSize(w, h);
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.setClearColor(0x111827, 1);
+    this._updateClearColor();
     canvasContainer.appendChild(this.renderer.domElement);
+
+    // Update canvas color when theme changes
+    this._unsubTheme = subscribe(() => this._updateClearColor());
 
     // Simple zoom with mouse wheel
     this._viewSize = viewSize;
@@ -73,6 +77,11 @@ export class SceneManager {
     this._animate();
   }
 
+  _updateClearColor() {
+    const theme = getState().theme;
+    this.renderer.setClearColor(theme === 'light' ? 0xe8ecf0 : 0x111827, 1);
+  }
+
   _updateCamera() {
     const w = this.container.clientWidth;
     const h = this.container.clientHeight;
@@ -117,6 +126,7 @@ export class SceneManager {
 
   dispose() {
     this._animating = false;
+    if (this._unsubTheme) this._unsubTheme();
     window.removeEventListener('resize', this._onResize);
     this._resizeObserver.disconnect();
     this.renderer.dispose();

@@ -15,7 +15,7 @@
 .canvas-container {
   flex: 1;
   position: relative;
-  background: #0a0a1a;
+  background: var(--bg-primary);
 }
 
 .toolbar {

@@ -1,4 +1,13 @@
 import * as THREE from 'three';
+import { getState } from '../state.js';
+
+function getGridColors() {
+  const theme = getState().theme;
+  if (theme === 'light') {
+    return { minor: 0xc8d0dc, major: 0xb0b8c8, xAxis: 0xdd3333, yAxis: 0x33aa33, label: 0x888888 };
+  }
+  return { minor: 0x1e2d4d, major: 0x2a3d5c, xAxis: 0xff4444, yAxis: 0x44ff44, label: 0x888888 };
+}
 
 export function createGrid(scene) {
   const group = new THREE.Group();
@@ -6,11 +15,12 @@ export function createGrid(scene) {
 
   const size = 100;
   const halfSize = size / 2;
+  const colors = getGridColors();
 
   // Minor grid lines (every 1 unit)
-  const minorMat = new THREE.LineBasicMaterial({ color: 0x1e2d4d, transparent: true, opacity: 0.5 });
+  const minorMat = new THREE.LineBasicMaterial({ color: colors.minor, transparent: true, opacity: 0.5 });
   for (let i = -halfSize; i <= halfSize; i += 1) {
-    if (i === 0) continue; // skip axes
+    if (i === 0) continue;
     const vGeo = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(i, -halfSize, 0), new THREE.Vector3(i, halfSize, 0)
     ]);
@@ -22,7 +32,7 @@ export function createGrid(scene) {
   }
 
   // Major grid lines (every 5 units)
-  const majorMat = new THREE.LineBasicMaterial({ color: 0x2a3d5c, transparent: true, opacity: 0.7 });
+  const majorMat = new THREE.LineBasicMaterial({ color: colors.major, transparent: true, opacity: 0.7 });
   for (let i = -halfSize; i <= halfSize; i += 5) {
     if (i === 0) continue;
     const vGeo = new THREE.BufferGeometry().setFromPoints([
@@ -42,16 +52,16 @@ export function createGrid(scene) {
   const xGeo = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(-halfSize, 0, 0.01), new THREE.Vector3(halfSize, 0, 0.01)
   ]);
-  axesGroup.add(new THREE.Line(xGeo, new THREE.LineBasicMaterial({ color: 0xff4444 })));
+  axesGroup.add(new THREE.Line(xGeo, new THREE.LineBasicMaterial({ color: colors.xAxis })));
 
   const yGeo = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(0, -halfSize, 0.01), new THREE.Vector3(0, halfSize, 0.01)
   ]);
-  axesGroup.add(new THREE.Line(yGeo, new THREE.LineBasicMaterial({ color: 0x44ff44 })));
+  axesGroup.add(new THREE.Line(yGeo, new THREE.LineBasicMaterial({ color: colors.yAxis })));
 
-  axesGroup.add(createTextSprite('X', halfSize - 1, -0.8, 0.01, 0xff4444));
-  axesGroup.add(createTextSprite('Y', 0.8, halfSize - 1, 0.01, 0x44ff44));
-  axesGroup.add(createTextSprite('O', -0.5, -0.5, 0.01, 0x888888));
+  axesGroup.add(createTextSprite('X', halfSize - 1, -0.8, 0.01, colors.xAxis));
+  axesGroup.add(createTextSprite('Y', 0.8, halfSize - 1, 0.01, colors.yAxis));
+  axesGroup.add(createTextSprite('O', -0.5, -0.5, 0.01, colors.label));
 
   group.add(axesGroup);
 
