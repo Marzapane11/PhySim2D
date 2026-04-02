@@ -40,14 +40,13 @@ export class SceneManager {
       this._updateCamera();
     });
 
-    // Pan with middle mouse or shift+left
+    // Pan with left mouse drag
     let isPanning = false;
     let panStart = { x: 0, y: 0 };
     this.renderer.domElement.addEventListener('mousedown', (e) => {
-      if (e.button === 1 || (e.button === 0 && e.shiftKey)) {
+      if (e.button === 0) {
         isPanning = true;
         panStart = { x: e.clientX, y: e.clientY };
-        e.preventDefault();
       }
     });
     this.renderer.domElement.addEventListener('mousemove', (e) => {
@@ -60,6 +59,25 @@ export class SceneManager {
       this._updateCamera();
     });
     window.addEventListener('mouseup', () => { isPanning = false; });
+
+    // Touch pan support
+    this.renderer.domElement.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isPanning = true;
+        panStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+    });
+    this.renderer.domElement.addEventListener('touchmove', (e) => {
+      if (!isPanning || e.touches.length !== 1) return;
+      e.preventDefault();
+      const dx = (e.touches[0].clientX - panStart.x) / w * this._viewSize * 2 * aspect;
+      const dy = -(e.touches[0].clientY - panStart.y) / h * this._viewSize * 2;
+      this._panOffset.x -= dx;
+      this._panOffset.y -= dy;
+      panStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      this._updateCamera();
+    }, { passive: false });
+    this.renderer.domElement.addEventListener('touchend', () => { isPanning = false; });
 
     // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
