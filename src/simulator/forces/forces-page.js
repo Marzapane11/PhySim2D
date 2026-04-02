@@ -134,9 +134,16 @@ export function renderForcesPage(container) {
         const solverVals = scenarioState.solver.getValues();
         let statusHtml = '';
         if (activeScenario === 'inclined-plane') {
-          const sPx = solverVals.Px || 0;
-          const sFa = solverVals.Fa || 0;
-          statusHtml = `<div class="panel-row"><span class="panel-row-label">Scivola?</span><span class="panel-row-value">${sPx > sFa + 0.01 ? 'S\u00ec' : 'No'}</span></div>`;
+          const Fris = solverVals.Fris || 0;
+          let stato;
+          if (Math.abs(Fris) < 0.01) {
+            stato = '<span style="color:var(--success);font-weight:600;">Equilibrio (Fris = 0)</span>';
+          } else if (Fris > 0) {
+            stato = '<span style="color:var(--danger);font-weight:600;">Scivola (Fris > 0)</span>';
+          } else {
+            stato = '<span style="color:var(--success);font-weight:600;">Fermo (Fris < 0)</span>';
+          }
+          statusHtml = `<div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
         }
         sections.push({ title: 'Parametri e Risultati', content: panel.html + statusHtml });
         scenarioState._wireEvents = panel.wireEvents;

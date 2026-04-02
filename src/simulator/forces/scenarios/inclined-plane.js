@@ -17,12 +17,12 @@ export function createInclinedPlaneSolver() {
       { id: 'Py', label: 'Py (perpendicolare)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'N', label: 'Normale (<span class="vec-arrow">N</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Fa', label: 'Attrito (<span class="vec-arrow">F</span>a)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'Fnet', label: '<span class="vec-arrow">F</span> netta', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Fris', label: '<span class="vec-arrow">F</span>ris (risultante)', unit: 'N', defaultValue: 0, mode: 'output' },
     ],
     solve(vals, inputIds) {
       const G = 9.81;
       const has = (id) => inputIds.includes(id);
-      let { m, alpha, mu, P, Px, Py, N, Fa, Fnet } = vals;
+      let { m, alpha, mu, P, Px, Py, N, Fa, Fris } = vals;
       const rad = (alpha * Math.PI) / 180;
 
       if (has('m')) P = m * G;
@@ -47,9 +47,9 @@ export function createInclinedPlaneSolver() {
         mu = Fa / N;
       }
 
-      Fnet = Math.max(0, Px - Fa);
+      Fris = Px - Fa;
 
-      return { m, alpha, mu, P, Px, Py, N, Fa, Fnet };
+      return { m, alpha, mu, P, Px, Py, N, Fa, Fris };
     }
   });
 }
