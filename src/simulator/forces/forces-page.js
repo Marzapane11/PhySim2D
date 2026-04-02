@@ -152,7 +152,7 @@ export function renderForcesPage(container) {
             createInputRow('Massa', 'sp-mass', scenarioState.mass, 'kg', 'step="1" min="0.1"') +
             createInputRow('Angolo', 'sp-angle', scenarioState.angleDeg, '°', 'step="1" min="0" max="90"') +
             createInputRow('k (costante)', 'sp-k', scenarioState.k, 'N/m', 'step="10" min="1"') +
-            createInputRow('x (deformazione)', 'sp-x', scenarioState.x, 'm', 'step="0.1"'),
+            createInputRow('\u0394x (deformazione)', 'sp-x', scenarioState.x, 'm', 'step="0.1"'),
         });
         const calc = computeSpring(scenarioState);
         const W = scenarioState.mass * 9.81;
@@ -163,7 +163,7 @@ export function renderForcesPage(container) {
             createPropertyRow('P (peso)', W.toFixed(2) + ' N') +
             createPropertyRow('Px (lungo piano)', Px.toFixed(2) + ' N') +
             createPropertyRow('Fe (elastica)', calc.force.toFixed(2) + ' N') +
-            createPropertyRow('F = -kx', calc.signedForce.toFixed(2) + ' N') +
+            createPropertyRow('F = -k\u0394x', calc.signedForce.toFixed(2) + ' N') +
             createPropertyRow('Direzione', calc.direction === 'restore' ? 'Richiamo' : 'Nessuna'),
         });
         break;
