@@ -180,8 +180,22 @@
 }
 
 
-/* Vector notation: overline above letter to indicate vector quantity */
-.vec {
-  text-decoration: overline;
+/* Vector notation: real arrow above letter to indicate vector quantity */
+.vec-arrow {
+  position: relative;
+  display: inline-block;
+  font-style: italic;
   font-weight: 600;
+  padding-top: 0.3em;
+}
+.vec-arrow::after {
+  content: '\2192';
+  position: absolute;
+  top: -0.15em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65em;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
 }

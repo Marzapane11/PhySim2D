@@ -11,10 +11,10 @@ export function createPulleySolver() {
     variables: [
       { id: 'm1', label: 'Massa 1 (m\u2081)', unit: 'kg', defaultValue: 10, mode: 'input' },
       { id: 'm2', label: 'Massa 2 (m\u2082)', unit: 'kg', defaultValue: 5, mode: 'input' },
-      { id: 'P1', label: 'Peso 1 (<span class="vec">P</span>\u2081)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'P2', label: 'Peso 2 (<span class="vec">P</span>\u2082)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'P1', label: 'Peso 1 (<span class="vec-arrow">P</span>\u2081)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'P2', label: 'Peso 2 (<span class="vec-arrow">P</span>\u2082)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'a', label: 'Accelerazione (a)', unit: 'm/s\u00B2', defaultValue: 0, mode: 'output' },
-      { id: 'T', label: 'Tensione (<span class="vec">T</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'T', label: 'Tensione (<span class="vec-arrow">T</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
     ],
     solve(vals, inputIds) {
       const G = 9.81;

@@ -12,12 +12,12 @@ export function createInclinedPlaneSolver() {
       { id: 'm', label: 'Massa (m)', unit: 'kg', defaultValue: 10, mode: 'input' },
       { id: 'alpha', label: 'Angolo (\u03B1)', unit: '\u00B0', defaultValue: 30, mode: 'input' },
       { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.3, mode: 'input' },
-      { id: 'P', label: 'Peso (<span class="vec">P</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'P', label: 'Peso (<span class="vec-arrow">P</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Px', label: 'Px (parallela)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Py', label: 'Py (perpendicolare)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'N', label: 'Normale (<span class="vec">N</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'Fa', label: 'Attrito (<span class="vec">F</span>a)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'Fnet', label: '<span class="vec">F</span> netta', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'N', label: 'Normale (<span class="vec-arrow">N</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Fa', label: 'Attrito (<span class="vec-arrow">F</span>a)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Fnet', label: '<span class="vec-arrow">F</span> netta', unit: 'N', defaultValue: 0, mode: 'output' },
     ],
     solve(vals, inputIds) {
       const G = 9.81;

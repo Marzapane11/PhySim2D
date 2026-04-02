@@ -15,7 +15,7 @@ export function renderMod2Page(container) {
       <div class="theory-card expanded">
         <div class="theory-card-title">Equilibrio del punto materiale</div>
         <div class="theory-card-content" style="display:block">
-          <p>Un punto materiale è in <strong>equilibrio</strong> quando la somma vettoriale di tutte le forze applicate è nulla.</p>
+          <p>Un punto materiale è in <strong>equilibrio</strong> quando la somma vettoriale di tutte le forze applicate è nulla: \u03a3<span class="vec-arrow">F</span> = 0.</p>
           <div class="theory-formula-block">\u03a3F = 0
 \u03a3Fx = 0   e   \u03a3Fy = 0</div>
           <p>In pratica, si scompongono tutte le forze lungo due assi perpendicolari e si impone che la somma delle componenti su ciascun asse sia zero.</p>
@@ -29,9 +29,9 @@ T = 78.5 N (verso l'alto, tensione del filo)
       <div class="theory-card expanded">
         <div class="theory-card-title">Equilibrio su piano orizzontale e inclinato</div>
         <div class="theory-card-content" style="display:block">
-          <p><strong>Piano orizzontale</strong>: un corpo è in equilibrio quando la forza normale N equilibra il peso P.</p>
+          <p><strong>Piano orizzontale</strong>: un corpo è in equilibrio quando la forza normale <span class="vec-arrow">N</span> equilibra il peso <span class="vec-arrow">P</span>.</p>
           <div class="theory-formula-block">N = P = m \u00b7 g</div>
-          <p><strong>Piano inclinato</strong> (angolo \u03b1): il peso si scompone in componente parallela Px e perpendicolare Py al piano.</p>
+          <p><strong>Piano inclinato</strong> (angolo \u03b1): il peso <span class="vec-arrow">P</span> si scompone in componente parallela Px e perpendicolare Py al piano.</p>
           <div class="theory-formula-block">Px = P \u00b7 sin(\u03b1) = m \u00b7 g \u00b7 sin(\u03b1)
 Py = P \u00b7 cos(\u03b1) = m \u00b7 g \u00b7 cos(\u03b1)
 N = Py</div>
@@ -73,7 +73,7 @@ M = 20 \u00b7 0.5 = 10 N\u00b7m</div>
         <div class="theory-card-content" style="display:block">
           <p>Un <strong>corpo rigido</strong> è in equilibrio quando sono soddisfatte due condizioni:</p>
           <ol style="margin:8px 0 8px 20px;">
-            <li>La risultante di tutte le forze è nulla: <strong>\u03a3F = 0</strong> (equilibrio alla traslazione)</li>
+            <li>La risultante di tutte le forze è nulla: <strong>\u03a3<span class="vec-arrow">F</span> = 0</strong> (equilibrio alla traslazione)</li>
             <li>La somma di tutti i momenti rispetto a qualsiasi polo è nulla: <strong>\u03a3M = 0</strong> (equilibrio alla rotazione)</li>
           </ol>
           <div class="theory-formula-block">\u03a3F = 0   e   \u03a3M = 0</div>
@@ -87,7 +87,7 @@ F2 = ? a destra (distanza 1 m dal fulcro)
       <div class="theory-card expanded">
         <div class="theory-card-title">Il baricentro</div>
         <div class="theory-card-content" style="display:block">
-          <p>Il <strong>baricentro</strong> (o centro di gravità) è il punto in cui si può considerare applicata tutta la forza peso del corpo.</p>
+          <p>Il <strong>baricentro</strong> (o centro di gravità) è il punto in cui si può considerare applicata tutta la forza peso <span class="vec-arrow">P</span> del corpo.</p>
           <p>Per un corpo omogeneo, il baricentro coincide con il centro geometrico.</p>
           <p>Un corpo appoggiato è in equilibrio stabile se la verticale passante per il baricentro cade all'interno della base di appoggio.</p>
           <p>Tipi di equilibrio:</p>

@@ -13,10 +13,10 @@ export function createSpringSolver() {
       { id: 'alpha', label: 'Angolo (\u03B8)', unit: '\u00B0', defaultValue: 30, mode: 'input' },
       { id: 'k', label: 'Costante (k)', unit: 'N/m', defaultValue: 100, mode: 'input' },
       { id: 'dx', label: 'Deformazione (\u0394x)', unit: 'm', defaultValue: 0.5, mode: 'input' },
-      { id: 'P', label: 'Peso (<span class="vec">P</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'P', label: 'Peso (<span class="vec-arrow">P</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Px', label: 'Px (lungo piano)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'N', label: 'Normale (<span class="vec">N</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'Fe', label: '<span class="vec">F</span>e (elastica)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'N', label: 'Normale (<span class="vec-arrow">N</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Fe', label: '<span class="vec-arrow">F</span>e (elastica)', unit: 'N', defaultValue: 0, mode: 'output' },
     ],
     solve(vals, inputIds) {
       const G = 9.81;

@@ -63,7 +63,7 @@ export function renderMod0Page(container) {
               <td style="padding:6px;">Accelerazione</td><td style="padding:6px;">a = v/t</td><td style="padding:6px;">m/s²</td>
             </tr>
             <tr style="border-bottom:1px solid var(--border-color);">
-              <td style="padding:6px;">Forza</td><td style="padding:6px;">F = m·a</td><td style="padding:6px;">N (Newton)</td>
+              <td style="padding:6px;">Forza</td><td style="padding:6px;"><span class="vec-arrow">F</span> = m·<span class="vec-arrow">a</span></td><td style="padding:6px;">N (Newton)</td>
             </tr>
             <tr style="border-bottom:1px solid var(--border-color);">
               <td style="padding:6px;">Pressione</td><td style="padding:6px;">p = F/A</td><td style="padding:6px;">Pa (Pascal)</td>
