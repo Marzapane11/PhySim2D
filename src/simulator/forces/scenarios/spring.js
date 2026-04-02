@@ -13,10 +13,10 @@ export function createSpringSolver() {
       { id: 'alpha', label: 'Angolo (\u03B8)', unit: '\u00B0', defaultValue: 30, mode: 'input' },
       { id: 'k', label: 'Costante (k)', unit: 'N/m', defaultValue: 100, mode: 'input' },
       { id: 'dx', label: 'Deformazione (\u0394x)', unit: 'm', defaultValue: 0.5, mode: 'input' },
-      { id: 'P', label: 'Peso (P)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'P', label: 'Peso (P\u20D7)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Px', label: 'Px (lungo piano)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'N', label: 'Normale (N)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'Fe', label: 'Fe (elastica)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'N', label: 'Normale (N\u20D7)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Fe', label: 'F\u20D7e (elastica)', unit: 'N', defaultValue: 0, mode: 'output' },
     ],
     solve(vals, inputIds) {
       const G = 9.81;
@@ -235,17 +235,17 @@ export function renderSpring(sceneManager, state, visibility) {
       const origin = { x: boxCx, y: boxCy };
 
       // P (weight, straight down)
-      const pArrow = createArrow(origin, { x: 0, y: -W * scale }, 0x4fc3f7, 'P');
+      const pArrow = createArrow(origin, { x: 0, y: -W * scale }, 0x4fc3f7, 'P\u20D7');
       if (pArrow) sceneManager.objects.add(pArrow);
 
       // N (normal, away from surface)
-      const nForce = createArrow(origin, { x: ndx * W * Math.cos(angleRad) * scale, y: ndy * W * Math.cos(angleRad) * scale }, 0x66bb6a, 'N');
+      const nForce = createArrow(origin, { x: ndx * W * Math.cos(angleRad) * scale, y: ndy * W * Math.cos(angleRad) * scale }, 0x66bb6a, 'N\u20D7');
       if (nForce) sceneManager.objects.add(nForce);
 
       // Fe (spring force, along slope toward wall = up the slope)
       if (calc.force > 0.01) {
         const feDir = state.x > 0 ? 1 : -1; // restoring: if stretched (x>0), force goes up slope
-        const feArrow = createArrow(origin, { x: feDir * sdx * calc.force * scale, y: feDir * sdy * calc.force * scale }, 0xffa726, 'Fe');
+        const feArrow = createArrow(origin, { x: feDir * sdx * calc.force * scale, y: feDir * sdy * calc.force * scale }, 0xffa726, 'F\u20D7e');
         if (feArrow) sceneManager.objects.add(feArrow);
       }
     }

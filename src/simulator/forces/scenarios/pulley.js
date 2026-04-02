@@ -11,10 +11,10 @@ export function createPulleySolver() {
     variables: [
       { id: 'm1', label: 'Massa 1 (m\u2081)', unit: 'kg', defaultValue: 10, mode: 'input' },
       { id: 'm2', label: 'Massa 2 (m\u2082)', unit: 'kg', defaultValue: 5, mode: 'input' },
-      { id: 'P1', label: 'Peso 1 (P\u2081)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'P2', label: 'Peso 2 (P\u2082)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'P1', label: 'Peso 1 (P\u20D7\u2081)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'P2', label: 'Peso 2 (P\u20D7\u2082)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'a', label: 'Accelerazione (a)', unit: 'm/s\u00B2', defaultValue: 0, mode: 'output' },
-      { id: 'T', label: 'Tensione (T)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'T', label: 'Tensione (T\u20D7)', unit: 'N', defaultValue: 0, mode: 'output' },
     ],
     solve(vals, inputIds) {
       const G = 9.81;
@@ -142,13 +142,13 @@ export function renderPulley(sceneManager, state, visibility) {
       const box1CenterY = -1 + box1H / 2;
       const box2CenterY = 0.2 + box2H / 2;
 
-      const w1 = createArrow({ x: -0.65, y: box1CenterY }, { x: 0, y: -calc.weight1 * scale }, 0xff4444, 'P1');
+      const w1 = createArrow({ x: -0.65, y: box1CenterY }, { x: 0, y: -calc.weight1 * scale }, 0xff4444, 'P\u20D71');
       if (w1) sceneManager.objects.add(w1);
-      const w2 = createArrow({ x: 0.65, y: box2CenterY }, { x: 0, y: -calc.weight2 * scale }, 0xff4444, 'P2');
+      const w2 = createArrow({ x: 0.65, y: box2CenterY }, { x: 0, y: -calc.weight2 * scale }, 0xff4444, 'P\u20D72');
       if (w2) sceneManager.objects.add(w2);
-      const t1 = createArrow({ x: -0.65, y: box1CenterY }, { x: 0, y: calc.tension * scale }, 0x4fc3f7, 'T');
+      const t1 = createArrow({ x: -0.65, y: box1CenterY }, { x: 0, y: calc.tension * scale }, 0x4fc3f7, 'T\u20D7');
       if (t1) sceneManager.objects.add(t1);
-      const t2 = createArrow({ x: 0.65, y: box2CenterY }, { x: 0, y: calc.tension * scale }, 0x4fc3f7, 'T');
+      const t2 = createArrow({ x: 0.65, y: box2CenterY }, { x: 0, y: calc.tension * scale }, 0x4fc3f7, 'T\u20D7');
       if (t2) sceneManager.objects.add(t2);
     }
   }

@@ -5,7 +5,7 @@ import { createArrow, createResultantArrow, getNextColor, resetColorIndex } from
 export function computeEquilibrium(forces) { return isEquilibrium(forces); }
 
 export function getEquilibriumConfig() {
-  return { id: 'equilibrium', label: 'Equilibrio', defaultForces: [{ x: 3, y: 2, name: 'F1' }, { x: -3, y: -2, name: 'F2' }] };
+  return { id: 'equilibrium', label: 'Equilibrio', defaultForces: [{ x: 3, y: 2, name: 'F\u20D71' }, { x: -3, y: -2, name: 'F\u20D72' }] };
 }
 
 export function renderEquilibrium(sceneManager, state, visibility) {
@@ -29,7 +29,7 @@ export function renderEquilibrium(sceneManager, state, visibility) {
     if (!calc.balanced) {
       const rArrow = createResultantArrow({ x: 0, y: 0 }, calc.resultant);
       if (rArrow) sceneManager.objects.add(rArrow);
-      const mArrow = createArrow({ x: 0, y: 0 }, calc.missingForce, 0xffff00, 'F mancante');
+      const mArrow = createArrow({ x: 0, y: 0 }, calc.missingForce, 0xffff00, 'F\u20D7 mancante');
       if (mArrow) sceneManager.objects.add(mArrow);
     }
   }
