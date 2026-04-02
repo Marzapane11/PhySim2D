@@ -136,12 +136,10 @@ export function renderForcesPage(container) {
         if (activeScenario === 'inclined-plane') {
           const Fris = solverVals.Fris || 0;
           let stato;
-          if (Math.abs(Fris) < 0.01) {
-            stato = '<span style="color:var(--success);font-weight:600;">Equilibrio (Fris = 0)</span>';
-          } else if (Fris > 0) {
-            stato = '<span style="color:var(--danger);font-weight:600;">Scivola (Fris > 0)</span>';
+          if (Fris <= 0.01) {
+            stato = '<span style="color:var(--success);font-weight:600;">Equilibrio (Fris \u2264 0)</span>';
           } else {
-            stato = '<span style="color:var(--success);font-weight:600;">Fermo (Fris < 0)</span>';
+            stato = '<span style="color:var(--danger);font-weight:600;">Scivola (Fris > 0)</span>';
           }
           statusHtml = `<div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
         }
