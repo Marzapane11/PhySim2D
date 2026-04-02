@@ -184,7 +184,7 @@ export function renderForcesPage(container) {
         if (addBtn) {
           addBtn.addEventListener('click', () => {
             const idx = scenarioState.forces.length + 1;
-            scenarioState.forces.push({ x: 1, y: 0, name: `F\u20D7${idx}` });
+            scenarioState.forces.push({ x: 1, y: 0, name: `F${idx}` });
             updateScene();
             updatePanel();
           });

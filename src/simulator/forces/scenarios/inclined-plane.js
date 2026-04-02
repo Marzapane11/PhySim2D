@@ -12,12 +12,12 @@ export function createInclinedPlaneSolver() {
       { id: 'm', label: 'Massa (m)', unit: 'kg', defaultValue: 10, mode: 'input' },
       { id: 'alpha', label: 'Angolo (\u03B1)', unit: '\u00B0', defaultValue: 30, mode: 'input' },
       { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.3, mode: 'input' },
-      { id: 'P', label: 'Peso (P\u20D7)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'P', label: 'Peso (<span class="vec">P</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Px', label: 'Px (parallela)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Py', label: 'Py (perpendicolare)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'N', label: 'Normale (N\u20D7)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'Fa', label: 'Attrito (F\u20D7a)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'Fnet', label: 'F\u20D7 netta', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'N', label: 'Normale (<span class="vec">N</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Fa', label: 'Attrito (<span class="vec">F</span>a)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Fnet', label: '<span class="vec">F</span> netta', unit: 'N', defaultValue: 0, mode: 'output' },
     ],
     solve(vals, inputIds) {
       const G = 9.81;
@@ -177,11 +177,11 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
       const origin = { x: cx, y: cy };
 
       // P (weight, straight down)
-      const pArrow = createArrow(origin, { x: 0, y: -calc.weight * scale }, 0x4fc3f7, 'P\u20D7');
+      const pArrow = createArrow(origin, { x: 0, y: -calc.weight * scale }, 0x4fc3f7, 'P');
       if (pArrow) sceneManager.objects.add(pArrow);
 
       // N (normal, perpendicular to slope, away from surface)
-      const nForce = createArrow(origin, { x: ndx * calc.normal * scale, y: ndy * calc.normal * scale }, 0x66bb6a, 'N\u20D7');
+      const nForce = createArrow(origin, { x: ndx * calc.normal * scale, y: ndy * calc.normal * scale }, 0x66bb6a, 'N');
       if (nForce) sceneManager.objects.add(nForce);
 
       if (visibility.components) {
@@ -196,7 +196,7 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
 
       // Fa (friction, up the slope)
       if (calc.friction > 0.01) {
-        const faArrow = createArrow(origin, { x: sdx * calc.friction * scale, y: sdy * calc.friction * scale }, 0xab47bc, 'F\u20D7a');
+        const faArrow = createArrow(origin, { x: sdx * calc.friction * scale, y: sdy * calc.friction * scale }, 0xab47bc, 'Fa');
         if (faArrow) sceneManager.objects.add(faArrow);
       }
     }

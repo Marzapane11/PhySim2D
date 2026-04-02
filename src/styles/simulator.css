@@ -178,3 +178,10 @@
 .theory-tip-link:hover {
   text-decoration: underline;
 }
+
+
+/* Vector notation: overline above letter to indicate vector quantity */
+.vec {
+  text-decoration: overline;
+  font-weight: 600;
+}

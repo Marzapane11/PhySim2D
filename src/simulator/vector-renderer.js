@@ -45,7 +45,7 @@ export function createResultantArrow(origin, vector) {
     Math.min(len * 0.25, 0.5),
     Math.min(len * 0.15, 0.25)
   );
-  arrowHelper.userData = { name: 'R\u20D7', vector, origin, isResultant: true };
+  arrowHelper.userData = { name: 'R', vector, origin, isResultant: true };
   return arrowHelper;
 }
 

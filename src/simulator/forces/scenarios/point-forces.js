@@ -11,7 +11,7 @@ export function getPointForcesConfig() {
   return {
     id: 'point-forces',
     label: 'Forze su un punto',
-    defaultForces: [{ x: 3, y: 0, name: 'F\u20D71' }, { x: 0, y: 4, name: 'F\u20D72' }],
+    defaultForces: [{ x: 3, y: 0, name: 'F1' }, { x: 0, y: 4, name: 'F2' }],
   };
 }
 

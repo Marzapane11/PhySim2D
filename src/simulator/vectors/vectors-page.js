@@ -124,7 +124,7 @@ export function renderVectorsPage(container) {
     vectors.forEach((v, i) => {
       const color = getNextColor();
       vectorColors.push(color);
-      const arrow = createArrow({ x: v.originX, y: v.originY }, { x: v.x, y: v.y }, color, v.name + '\u20D7');
+      const arrow = createArrow({ x: v.originX, y: v.originY }, { x: v.x, y: v.y }, color, v.name);
       if (arrow) {
         sceneManager.objects.add(arrow);
         if (vis.forceNames || vis.forceValues) {
@@ -229,7 +229,7 @@ export function renderVectorsPage(container) {
         updateScene();
         updatePanel();
       });
-      sections.push({ title: `Vettore ${v.name}\u20D7`, content: panel.html });
+      sections.push({ title: `Vettore ${v.name}`, content: panel.html });
       _panelWireEvents = panel.wireEvents;
     } else {
       sections.push({
