@@ -2,8 +2,47 @@ import * as THREE from 'three';
 import { pulleySystem } from '../../../math/force-math.js';
 import { createArrow } from '../../vector-renderer.js';
 import { getState } from '../../../state.js';
+import { createSolver } from '../../dynamic-solver.js';
 
 export function computePulley(params) { return pulleySystem(params); }
+
+export function createPulleySolver() {
+  return createSolver({
+    variables: [
+      { id: 'm1', label: 'Massa 1 (m\u2081)', unit: 'kg', defaultValue: 10, mode: 'input' },
+      { id: 'm2', label: 'Massa 2 (m\u2082)', unit: 'kg', defaultValue: 5, mode: 'input' },
+      { id: 'P1', label: 'Peso 1 (P\u2081)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'P2', label: 'Peso 2 (P\u2082)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'a', label: 'Accelerazione (a)', unit: 'm/s\u00B2', defaultValue: 0, mode: 'output' },
+      { id: 'T', label: 'Tensione (T)', unit: 'N', defaultValue: 0, mode: 'output' },
+    ],
+    solve(vals, inputIds) {
+      const G = 9.81;
+      const has = (id) => inputIds.includes(id);
+      let { m1, m2, P1, P2, a, T } = vals;
+
+      if (has('m1')) P1 = m1 * G;
+      else if (has('P1')) m1 = P1 / G;
+
+      if (has('m2')) P2 = m2 * G;
+      else if (has('P2')) m2 = P2 / G;
+
+      const totalMass = m1 + m2;
+      if (totalMass > 0) {
+        if (has('a')) {
+          T = m1 * (G - a);
+          if (!has('m1') && has('T')) m1 = T / (G - a);
+          if (!has('m2') && has('T')) m2 = T / (G + a);
+        } else {
+          a = (G * Math.abs(m1 - m2)) / totalMass;
+          T = (2 * m1 * m2 * G) / totalMass;
+        }
+      }
+
+      return { m1, m2, P1, P2, a, T };
+    }
+  });
+}
 
 export function getPulleyConfig() {
   return { id: 'pulley', label: 'Carrucola', defaults: { mass1: 10, mass2: 5 } };

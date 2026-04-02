@@ -2,8 +2,48 @@ import * as THREE from 'three';
 import { springForce, weight } from '../../../math/force-math.js';
 import { createArrow } from '../../vector-renderer.js';
 import { getState } from '../../../state.js';
+import { createSolver } from '../../dynamic-solver.js';
 
 export function computeSpring(params) { return springForce(params); }
+
+export function createSpringSolver() {
+  return createSolver({
+    variables: [
+      { id: 'm', label: 'Massa (m)', unit: 'kg', defaultValue: 5, mode: 'input' },
+      { id: 'alpha', label: 'Angolo (\u03B8)', unit: '\u00B0', defaultValue: 30, mode: 'input' },
+      { id: 'k', label: 'Costante (k)', unit: 'N/m', defaultValue: 100, mode: 'input' },
+      { id: 'dx', label: 'Deformazione (\u0394x)', unit: 'm', defaultValue: 0.5, mode: 'input' },
+      { id: 'P', label: 'Peso (P)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Px', label: 'Px (lungo piano)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'N', label: 'Normale (N)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Fe', label: 'Fe (elastica)', unit: 'N', defaultValue: 0, mode: 'output' },
+    ],
+    solve(vals, inputIds) {
+      const G = 9.81;
+      const has = (id) => inputIds.includes(id);
+      let { m, alpha, k, dx, P, Px, N, Fe } = vals;
+      const rad = (alpha * Math.PI) / 180;
+
+      if (has('m')) P = m * G;
+      else if (has('P')) m = P / G;
+
+      if (P > 0) {
+        Px = P * Math.sin(rad);
+        N = P * Math.cos(rad);
+      }
+
+      if (has('k') && has('dx')) {
+        Fe = Math.abs(k * dx);
+      } else if (has('Fe') && has('k') && k > 0) {
+        dx = Fe / k;
+      } else if (has('Fe') && has('dx') && dx !== 0) {
+        k = Fe / Math.abs(dx);
+      }
+
+      return { m, alpha, k, dx, P, Px, N, Fe };
+    }
+  });
+}
 
 export function getSpringConfig() {
   return { id: 'spring', label: 'Molla (Hooke)', defaults: { k: 100, x: 0.5, mass: 5, angleDeg: 30 } };

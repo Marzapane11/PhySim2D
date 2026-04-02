@@ -11,9 +11,10 @@ import { getState, subscribe } from '../../state.js';
 import { magnitude, direction } from '../../math/vector-math.js';
 
 import { renderPointForces, getPointForcesConfig, computePointForces } from './scenarios/point-forces.js';
-import { renderInclinedPlane, getInclinedPlaneConfig, computeInclinedPlane } from './scenarios/inclined-plane.js';
-import { renderSpring, getSpringConfig, computeSpring } from './scenarios/spring.js';
-import { renderPulley, getPulleyConfig, computePulley } from './scenarios/pulley.js';
+import { renderInclinedPlane, getInclinedPlaneConfig, computeInclinedPlane, createInclinedPlaneSolver } from './scenarios/inclined-plane.js';
+import { renderSpring, getSpringConfig, computeSpring, createSpringSolver } from './scenarios/spring.js';
+import { renderPulley, getPulleyConfig, computePulley, createPulleySolver } from './scenarios/pulley.js';
+import { renderDynamicPanel } from '../dynamic-panel.js';
 
 const SCENARIO_TOOLS = [
   { id: 'point-forces', label: 'Forze su un punto', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><line x1="12" y1="10" x2="12" y2="3"/><line x1="14" y1="12" x2="21" y2="12"/><line x1="10" y1="14" x2="5" y2="19"/></svg>' },
@@ -35,18 +36,12 @@ function initScenarioState(id) {
       const cfg = getPointForcesConfig();
       return { forces: cfg.defaultForces.map((f) => ({ ...f })) };
     }
-    case 'inclined-plane': {
-      const cfg = getInclinedPlaneConfig();
-      return { ...cfg.defaults };
-    }
-    case 'spring': {
-      const cfg = getSpringConfig();
-      return { ...cfg.defaults };
-    }
-    case 'pulley': {
-      const cfg = getPulleyConfig();
-      return { ...cfg.defaults };
-    }
+    case 'inclined-plane':
+      return { type: 'inclined-plane', solver: createInclinedPlaneSolver() };
+    case 'spring':
+      return { type: 'spring', solver: createSpringSolver() };
+    case 'pulley':
+      return { type: 'pulley', solver: createPulleySolver() };
     default:
       return {};
   }
@@ -81,15 +76,24 @@ export function renderForcesPage(container) {
       case 'point-forces':
         renderPointForces(sceneManager, scenarioState.forces, vis);
         break;
-      case 'inclined-plane':
-        renderInclinedPlane(sceneManager, scenarioState, vis);
+      case 'inclined-plane': {
+        scenarioState.solver.solve();
+        const ipv = scenarioState.solver.getValues();
+        renderInclinedPlane(sceneManager, { mass: ipv.m, angleDeg: ipv.alpha, frictionCoeff: ipv.mu }, vis);
         break;
-      case 'spring':
-        renderSpring(sceneManager, scenarioState, vis);
+      }
+      case 'spring': {
+        scenarioState.solver.solve();
+        const spv = scenarioState.solver.getValues();
+        renderSpring(sceneManager, { mass: spv.m, angleDeg: spv.alpha, k: spv.k, x: spv.dx }, vis);
         break;
-      case 'pulley':
-        renderPulley(sceneManager, scenarioState, vis);
+      }
+      case 'pulley': {
+        scenarioState.solver.solve();
+        const puv = scenarioState.solver.getValues();
+        renderPulley(sceneManager, { mass1: puv.m1, mass2: puv.m2 }, vis);
         break;
+      }
     }
   }
 
@@ -123,69 +127,19 @@ export function renderForcesPage(container) {
         break;
       }
 
-      case 'inclined-plane': {
-        sections.push({
-          title: 'Parametri',
-          content:
-            createInputRow('Massa', 'ip-mass', scenarioState.mass, 'kg', 'step="1" min="0.1"') +
-            createInputRow('Angolo', 'ip-angle', scenarioState.angleDeg, '\u00b0', 'step="1" min="0" max="90"') +
-            createInputRow('Coeff. attrito', 'ip-friction', scenarioState.frictionCoeff, '', 'step="0.05" min="0" max="1"'),
-        });
-        const calc = computeInclinedPlane(scenarioState);
-        sections.push({
-          title: 'Risultati',
-          content:
-            createPropertyRow('P (peso)', calc.weight.toFixed(2) + ' N') +
-            createPropertyRow('N (normale)', calc.normal.toFixed(2) + ' N') +
-            createPropertyRow('Px (parallela)', calc.parallel.toFixed(2) + ' N') +
-            createPropertyRow('Fa (attrito)', calc.friction.toFixed(2) + ' N') +
-            createPropertyRow('F netta', calc.netForce.toFixed(2) + ' N') +
-            createPropertyRow('Scivola?', calc.slides ? 'Sì' : 'No'),
-        });
-        break;
-      }
-
-      case 'spring': {
-        sections.push({
-          title: 'Parametri',
-          content:
-            createInputRow('Massa', 'sp-mass', scenarioState.mass, 'kg', 'step="1" min="0.1"') +
-            createInputRow('Angolo', 'sp-angle', scenarioState.angleDeg, '°', 'step="1" min="0" max="90"') +
-            createInputRow('k (costante)', 'sp-k', scenarioState.k, 'N/m', 'step="10" min="1"') +
-            createInputRow('\u0394x (deformazione)', 'sp-x', scenarioState.x, 'm', 'step="0.1"'),
-        });
-        const calc = computeSpring(scenarioState);
-        const W = scenarioState.mass * 9.81;
-        const Px = W * Math.sin((scenarioState.angleDeg * Math.PI) / 180);
-        sections.push({
-          title: 'Risultati',
-          content:
-            createPropertyRow('P (peso)', W.toFixed(2) + ' N') +
-            createPropertyRow('Px (lungo piano)', Px.toFixed(2) + ' N') +
-            createPropertyRow('Fe (elastica)', calc.force.toFixed(2) + ' N') +
-            createPropertyRow('F = -k\u0394x', calc.signedForce.toFixed(2) + ' N') +
-            createPropertyRow('Direzione', calc.direction === 'restore' ? 'Richiamo' : 'Nessuna'),
-        });
-        break;
-      }
-
+      case 'inclined-plane':
+      case 'spring':
       case 'pulley': {
-        sections.push({
-          title: 'Parametri',
-          content:
-            createInputRow('Massa 1', 'pu-m1', scenarioState.mass1, 'kg', 'step="1" min="0.1"') +
-            createInputRow('Massa 2', 'pu-m2', scenarioState.mass2, 'kg', 'step="1" min="0.1"'),
-        });
-        const calc = computePulley(scenarioState);
-        sections.push({
-          title: 'Risultati',
-          content:
-            createPropertyRow('Accelerazione', calc.acceleration.toFixed(2) + ' m/s\u00b2') +
-            createPropertyRow('Tensione', calc.tension.toFixed(2) + ' N') +
-            createPropertyRow('Peso 1', calc.weight1.toFixed(2) + ' N') +
-            createPropertyRow('Peso 2', calc.weight2.toFixed(2) + ' N') +
-            createPropertyRow('Lato pesante', calc.heavierSide === 'balanced' ? 'Bilanciato' : calc.heavierSide === 'mass1' ? 'Massa 1' : 'Massa 2'),
-        });
+        const panel = renderDynamicPanel(scenarioState.solver, () => { updateScene(); updatePanel(); });
+        const solverVals = scenarioState.solver.getValues();
+        let statusHtml = '';
+        if (activeScenario === 'inclined-plane') {
+          const sPx = solverVals.Px || 0;
+          const sFa = solverVals.Fa || 0;
+          statusHtml = `<div class="panel-row"><span class="panel-row-label">Scivola?</span><span class="panel-row-value">${sPx > sFa + 0.01 ? 'S\u00ec' : 'No'}</span></div>`;
+        }
+        sections.push({ title: 'Parametri e Risultati', content: panel.html + statusHtml });
+        scenarioState._wireEvents = panel.wireEvents;
         break;
       }
     }
@@ -196,6 +150,11 @@ export function renderForcesPage(container) {
 
     renderPropertiesPanel(rightPanel, sections);
     renderVisibilityMenu(rightPanel);
+
+    if (scenarioState._wireEvents) {
+      scenarioState._wireEvents(rightPanel);
+      scenarioState._wireEvents = null;
+    }
 
     wireUpEvents();
   }
@@ -233,35 +192,7 @@ export function renderForcesPage(container) {
         break;
       }
 
-      case 'inclined-plane': {
-        const massInput = rightPanel.querySelector('#ip-mass');
-        const angleInput = rightPanel.querySelector('#ip-angle');
-        const frictionInput = rightPanel.querySelector('#ip-friction');
-        if (massInput) massInput.addEventListener('change', (e) => { scenarioState.mass = parseFloat(e.target.value) || 1; updateScene(); updatePanel(); });
-        if (angleInput) angleInput.addEventListener('change', (e) => { scenarioState.angleDeg = parseFloat(e.target.value) || 0; updateScene(); updatePanel(); });
-        if (frictionInput) frictionInput.addEventListener('change', (e) => { scenarioState.frictionCoeff = parseFloat(e.target.value) || 0; updateScene(); updatePanel(); });
-        break;
-      }
-
-      case 'spring': {
-        const spMass = rightPanel.querySelector('#sp-mass');
-        const spAngle = rightPanel.querySelector('#sp-angle');
-        const kInput = rightPanel.querySelector('#sp-k');
-        const xInput = rightPanel.querySelector('#sp-x');
-        if (spMass) spMass.addEventListener('change', (e) => { scenarioState.mass = parseFloat(e.target.value) || 1; updateScene(); updatePanel(); });
-        if (spAngle) spAngle.addEventListener('change', (e) => { scenarioState.angleDeg = parseFloat(e.target.value) || 0; updateScene(); updatePanel(); });
-        if (kInput) kInput.addEventListener('change', (e) => { scenarioState.k = parseFloat(e.target.value) || 1; updateScene(); updatePanel(); });
-        if (xInput) xInput.addEventListener('change', (e) => { scenarioState.x = parseFloat(e.target.value) || 0; updateScene(); updatePanel(); });
-        break;
-      }
-
-      case 'pulley': {
-        const m1Input = rightPanel.querySelector('#pu-m1');
-        const m2Input = rightPanel.querySelector('#pu-m2');
-        if (m1Input) m1Input.addEventListener('change', (e) => { scenarioState.mass1 = parseFloat(e.target.value) || 1; updateScene(); updatePanel(); });
-        if (m2Input) m2Input.addEventListener('change', (e) => { scenarioState.mass2 = parseFloat(e.target.value) || 1; updateScene(); updatePanel(); });
-        break;
-      }
+      // inclined-plane, spring, pulley handled by dynamic panel wireEvents
     }
   }
 

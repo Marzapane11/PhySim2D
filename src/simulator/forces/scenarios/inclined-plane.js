@@ -2,8 +2,57 @@ import * as THREE from 'three';
 import { inclinedPlane } from '../../../math/force-math.js';
 import { createArrow } from '../../vector-renderer.js';
 import { getState } from '../../../state.js';
+import { createSolver } from '../../dynamic-solver.js';
 
 export function computeInclinedPlane(params) { return inclinedPlane(params); }
+
+export function createInclinedPlaneSolver() {
+  return createSolver({
+    variables: [
+      { id: 'm', label: 'Massa (m)', unit: 'kg', defaultValue: 10, mode: 'input' },
+      { id: 'alpha', label: 'Angolo (\u03B1)', unit: '\u00B0', defaultValue: 30, mode: 'input' },
+      { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.3, mode: 'input' },
+      { id: 'P', label: 'Peso (P)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Px', label: 'Px (parallela)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Py', label: 'Py (perpendicolare)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'N', label: 'Normale (N)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Fa', label: 'Attrito (Fa)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Fnet', label: 'F netta', unit: 'N', defaultValue: 0, mode: 'output' },
+    ],
+    solve(vals, inputIds) {
+      const G = 9.81;
+      const has = (id) => inputIds.includes(id);
+      let { m, alpha, mu, P, Px, Py, N, Fa, Fnet } = vals;
+      const rad = (alpha * Math.PI) / 180;
+
+      if (has('m')) P = m * G;
+      else if (has('P')) m = P / G;
+
+      if (has('alpha') && P > 0) {
+        Px = P * Math.sin(rad);
+        Py = P * Math.cos(rad);
+      } else if (has('Px') && P > 0) {
+        alpha = Math.asin(Math.min(1, Px / P)) * 180 / Math.PI;
+        Py = P * Math.cos((alpha * Math.PI) / 180);
+      } else if (has('Py') && P > 0) {
+        alpha = Math.acos(Math.min(1, Py / P)) * 180 / Math.PI;
+        Px = P * Math.sin((alpha * Math.PI) / 180);
+      }
+
+      N = Py;
+
+      if (has('mu') && N > 0) {
+        Fa = mu * N;
+      } else if (has('Fa') && N > 0) {
+        mu = Fa / N;
+      }
+
+      Fnet = Math.max(0, Px - Fa);
+
+      return { m, alpha, mu, P, Px, Py, N, Fa, Fnet };
+    }
+  });
+}
 
 export function getInclinedPlaneConfig() {
   return { id: 'inclined-plane', label: 'Piano inclinato', defaults: { mass: 10, angleDeg: 30, frictionCoeff: 0.3 } };
