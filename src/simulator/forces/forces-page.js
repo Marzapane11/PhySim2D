@@ -149,13 +149,19 @@ export function renderForcesPage(container) {
         sections.push({
           title: 'Parametri',
           content:
-            createInputRow('k', 'sp-k', scenarioState.k, 'N/m', 'step="10" min="1"') +
-            createInputRow('x', 'sp-x', scenarioState.x, 'm', 'step="0.1"'),
+            createInputRow('Massa', 'sp-mass', scenarioState.mass, 'kg', 'step="1" min="0.1"') +
+            createInputRow('Angolo', 'sp-angle', scenarioState.angleDeg, '°', 'step="1" min="0" max="90"') +
+            createInputRow('k (costante)', 'sp-k', scenarioState.k, 'N/m', 'step="10" min="1"') +
+            createInputRow('x (deformazione)', 'sp-x', scenarioState.x, 'm', 'step="0.1"'),
         });
         const calc = computeSpring(scenarioState);
+        const W = scenarioState.mass * 9.81;
+        const Px = W * Math.sin((scenarioState.angleDeg * Math.PI) / 180);
         sections.push({
           title: 'Risultati',
           content:
+            createPropertyRow('P (peso)', W.toFixed(2) + ' N') +
+            createPropertyRow('Px (lungo piano)', Px.toFixed(2) + ' N') +
             createPropertyRow('Fe (elastica)', calc.force.toFixed(2) + ' N') +
             createPropertyRow('F = -kx', calc.signedForce.toFixed(2) + ' N') +
             createPropertyRow('Direzione', calc.direction === 'restore' ? 'Richiamo' : 'Nessuna'),
@@ -238,8 +244,12 @@ export function renderForcesPage(container) {
       }
 
       case 'spring': {
+        const spMass = rightPanel.querySelector('#sp-mass');
+        const spAngle = rightPanel.querySelector('#sp-angle');
         const kInput = rightPanel.querySelector('#sp-k');
         const xInput = rightPanel.querySelector('#sp-x');
+        if (spMass) spMass.addEventListener('change', (e) => { scenarioState.mass = parseFloat(e.target.value) || 1; updateScene(); updatePanel(); });
+        if (spAngle) spAngle.addEventListener('change', (e) => { scenarioState.angleDeg = parseFloat(e.target.value) || 0; updateScene(); updatePanel(); });
         if (kInput) kInput.addEventListener('change', (e) => { scenarioState.k = parseFloat(e.target.value) || 1; updateScene(); updatePanel(); });
         if (xInput) xInput.addEventListener('change', (e) => { scenarioState.x = parseFloat(e.target.value) || 0; updateScene(); updatePanel(); });
         break;
