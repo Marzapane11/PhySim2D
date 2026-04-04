@@ -54,7 +54,7 @@ export class SceneManager {
       const dx = (e.clientX - panStart.x) / w * this._viewSize * 2 * aspect;
       const dy = (e.clientY - panStart.y) / h * this._viewSize * 2;
       this._panOffset.x -= dx;
-      this._panOffset.y += dy;
+      this._panOffset.y -= dy;
       panStart = { x: e.clientX, y: e.clientY };
       this._updateCamera();
     });
@@ -73,7 +73,7 @@ export class SceneManager {
       const dx = (e.touches[0].clientX - panStart.x) / w * this._viewSize * 2 * aspect;
       const dy = (e.touches[0].clientY - panStart.y) / h * this._viewSize * 2;
       this._panOffset.x -= dx;
-      this._panOffset.y += dy;
+      this._panOffset.y -= dy;
       panStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       this._updateCamera();
     }, { passive: false });
