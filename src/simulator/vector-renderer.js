@@ -20,13 +20,13 @@ export function getNextColor() {
 export function createArrow(origin, vector, color, name) {
   const dir = new THREE.Vector3(vector.x, vector.y, 0).normalize();
   const len = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
-  if (len < 0.15) return null;
+  if (len < 0.3) return null;
 
-  const headLen = Math.min(len * 0.25, 0.35);
-  const headW = Math.min(len * 0.15, 0.18);
+  const headLen = Math.min(len * 0.2, 0.3);
+  const headW = Math.min(len * 0.1, 0.15);
   const arrowHelper = new THREE.ArrowHelper(
     dir,
-    new THREE.Vector3(origin.x, origin.y, 0.02),
+    new THREE.Vector3(origin.x, origin.y, 0.06),
     len, color, headLen, headW
   );
   arrowHelper.userData = { name, vector, origin, color };
@@ -36,14 +36,14 @@ export function createArrow(origin, vector, color, name) {
 export function createResultantArrow(origin, vector) {
   const dir = new THREE.Vector3(vector.x, vector.y, 0).normalize();
   const len = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
-  if (len < 0.001) return null;
+  if (len < 0.3) return null;
 
   const arrowHelper = new THREE.ArrowHelper(
     dir,
-    new THREE.Vector3(origin.x, origin.y, 0.04),
+    new THREE.Vector3(origin.x, origin.y, 0.08),
     len, 0xffffff,
-    Math.min(len * 0.25, 0.5),
-    Math.min(len * 0.15, 0.25)
+    Math.min(len * 0.2, 0.4),
+    Math.min(len * 0.1, 0.2)
   );
   arrowHelper.userData = { name: 'R', vector, origin, isResultant: true };
   return arrowHelper;
