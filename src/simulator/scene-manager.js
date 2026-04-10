@@ -112,10 +112,13 @@ export class SceneManager {
   }
 
   _handleResize() {
-    const w = this.container.clientWidth;
-    const h = this.container.clientHeight;
+    const rect = this.container.getBoundingClientRect();
+    const w = Math.round(rect.width);
+    const h = Math.round(rect.height);
     if (w === 0 || h === 0) return;
-    this.renderer.setSize(w, h);
+    this.renderer.setSize(w, h, true);
+    this.renderer.domElement.style.width = w + 'px';
+    this.renderer.domElement.style.height = h + 'px';
     this._updateCamera();
   }
 

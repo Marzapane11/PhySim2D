@@ -19,10 +19,24 @@ export function createSimulatorLayout(container) {
   const fsBtn = container.querySelector('#fullscreen-btn');
 
   function triggerResize() {
-    // Multiple resize events to ensure renderer catches the new size
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 150);
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 300);
+    // Use requestAnimationFrame to ensure CSS layout is complete before resizing
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // Force canvas to re-measure by briefly changing size
+        const canvasEl = container.querySelector('#canvas-container canvas');
+        if (canvasEl) {
+          canvasEl.style.width = '1px';
+          canvasEl.style.height = '1px';
+          requestAnimationFrame(() => {
+            canvasEl.style.width = '';
+            canvasEl.style.height = '';
+            window.dispatchEvent(new Event('resize'));
+          });
+        } else {
+          window.dispatchEvent(new Event('resize'));
+        }
+      });
+    });
   }
 
   fsBtn.addEventListener('click', () => {
