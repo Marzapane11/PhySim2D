@@ -60,34 +60,68 @@ export function renderSpring(sceneManager, state, visibility) {
   // Same triangle as inclined plane
   drawTriangle(sceneManager, tri, isLight, '\u03B8');
 
-  // === Spring (smooth sinusoidal coils) from B down to the box ===
+  // === Wall at B (solid rectangle attached to side BC) ===
+  const wallThick = 0.3;
+  const wallLen = 1.0;
+  const wallColor = isLight ? 0x8090a0 : 0x3a4a6a;
+  // Wall rectangle: centered at B, extends along normal direction, thickness into slope direction (toward B/beyond)
+  const wallShape = new THREE.Shape();
+  const w0x = B.x - (wallLen / 2) * nd.x;
+  const w0y = B.y - (wallLen / 2) * nd.y;
+  const w1x = B.x + (wallLen / 2) * nd.x;
+  const w1y = B.y + (wallLen / 2) * nd.y;
+  const w2x = w1x + wallThick * sd.x;
+  const w2y = w1y + wallThick * sd.y;
+  const w3x = w0x + wallThick * sd.x;
+  const w3y = w0y + wallThick * sd.y;
+  wallShape.moveTo(w0x, w0y);
+  wallShape.lineTo(w1x, w1y);
+  wallShape.lineTo(w2x, w2y);
+  wallShape.lineTo(w3x, w3y);
+  wallShape.closePath();
+  const wallMesh = new THREE.Mesh(
+    new THREE.ShapeGeometry(wallShape),
+    new THREE.MeshBasicMaterial({ color: wallColor, side: THREE.DoubleSide })
+  );
+  wallMesh.position.z = 0.01;
+  sceneManager.objects.add(wallMesh);
+
+  // === Box first, then spring connects wall to box ===
+  const boxW = 1.2;
+  const boxH = 0.9;
+  // Box at ~45% up the slope from A
+  const boxT = 0.45;
+  const boxBx = A.x + boxT * (B.x - A.x);
+  const boxBy = A.y + boxT * (B.y - A.y);
+
+  // === Spring from wall to the upper side of the box ===
   const restLen = 2.5;
   const displacement = state.x * 1.5;
   const totalLen = restLen + displacement;
 
-  // Spring starts slightly below B on the slope
-  const startT = 0.9;
-  const sx = A.x + startT * (B.x - A.x);
-  const sy = A.y + startT * (B.y - A.y);
-  // Straight line from B to spring start
-  const endX = sx - sd.x * totalLen;
-  const endY = sy - sd.y * totalLen;
+  // Spring start: at B on the slope (wall surface)
+  const sx = B.x;
+  const sy = B.y;
+  // Spring end: center of the box's upper side (toward B)
+  // Upper side center = boxBottom + boxW/2 along slope + boxH along normal... no
+  // Box bottom center is at (boxBx, boxBy). The side facing B is at boxBx + (boxW/2)*sd
+  const springEndX = boxBx + (boxW / 2) * sd.x;
+  const springEndY = boxBy + (boxW / 2) * sd.y;
 
-  // Smooth sinusoidal coils with damped start/end
+  // Sinusoidal coils
   const coils = 8;
   const coilW = 0.2;
   const numPoints = coils * 20;
-  const points = [new THREE.Vector3(B.x, B.y, 0.03), new THREE.Vector3(sx, sy, 0.03)];
+  const points = [new THREE.Vector3(sx, sy, 0.03)];
   for (let i = 1; i < numPoints; i++) {
     const frac = i / numPoints;
-    const px = sx + frac * (endX - sx);
-    const py = sy + frac * (endY - sy);
-    // Dampen amplitude at start and end so no pieces stick out
-    const envelope = Math.min(1, frac * 5) * Math.min(1, (1 - frac) * 5);
+    const px = sx + frac * (springEndX - sx);
+    const py = sy + frac * (springEndY - sy);
+    const envelope = Math.min(1, frac * 4) * Math.min(1, (1 - frac) * 4);
     const wave = Math.sin(frac * coils * Math.PI * 2) * coilW * envelope;
     points.push(new THREE.Vector3(px - nd.x * wave, py - nd.y * wave, 0.03));
   }
-  points.push(new THREE.Vector3(endX, endY, 0.03));
+  points.push(new THREE.Vector3(springEndX, springEndY, 0.03));
 
   sceneManager.objects.add(new THREE.Line(
     new THREE.BufferGeometry().setFromPoints(points),
@@ -95,13 +129,13 @@ export function renderSpring(sceneManager, state, visibility) {
   ));
 
   // "k" label above spring
-  addTextLabel(sceneManager, 'k', (sx + endX) / 2 + nd.x * 0.6, (sy + endY) / 2 + nd.y * 0.6, '#4fc3f7');
+  const kx = (sx + springEndX) / 2 + nd.x * 0.6;
+  const ky = (sy + springEndY) / 2 + nd.y * 0.6;
+  addTextLabel(sceneManager, 'k', kx, ky, '#4fc3f7');
 
   // === Box ===
   if (visibility.body) {
-    const boxBx = endX - sd.x * 0.6;
-    const boxBy = endY - sd.y * 0.6;
-    const center = drawBox(sceneManager, boxBx, boxBy, sd, nd, 1.2, 0.9);
+    const center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
 
     if (visibility.forceArrows) {
       const s = 0.025;
