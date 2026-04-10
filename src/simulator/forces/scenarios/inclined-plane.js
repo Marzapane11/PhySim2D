@@ -125,30 +125,27 @@ export function drawTriangle(sceneManager, tri, isLight, angleLabel) {
 export function drawBox(sceneManager, bx, by, sd, nd, boxW, boxH) {
   const hw = boxW / 2;
 
-  // 4 corners computed from slope and normal directions
-  const c0x = bx - hw * sd.x;
-  const c0y = by - hw * sd.y;
-  const c1x = bx + hw * sd.x;
-  const c1y = by + hw * sd.y;
-  const c2x = c1x + boxH * nd.x;
-  const c2y = c1y + boxH * nd.y;
-  const c3x = c0x + boxH * nd.x;
-  const c3y = c0y + boxH * nd.y;
+  // 4 corners
+  const corners = [
+    { x: bx - hw * sd.x, y: by - hw * sd.y },
+    { x: bx + hw * sd.x, y: by + hw * sd.y },
+    { x: bx + hw * sd.x + boxH * nd.x, y: by + hw * sd.y + boxH * nd.y },
+    { x: bx - hw * sd.x + boxH * nd.x, y: by - hw * sd.y + boxH * nd.y },
+  ];
 
-  // Fill using ShapeGeometry (single flat polygon, no edge artifacts)
-  const shape = new THREE.Shape();
-  shape.moveTo(c0x, c0y);
-  shape.lineTo(c1x, c1y);
-  shape.lineTo(c2x, c2y);
-  shape.lineTo(c3x, c3y);
-  shape.closePath();
-
-  const mesh = new THREE.Mesh(
-    new THREE.ShapeGeometry(shape),
-    new THREE.MeshBasicMaterial({ color: 0xff8a65, side: THREE.DoubleSide })
-  );
-  mesh.position.z = 0.03;
-  sceneManager.objects.add(mesh);
+  // Draw only the 4 edges as separate lines (no mesh, no fill, no artifacts)
+  const z = 0.03;
+  for (let i = 0; i < 4; i++) {
+    const a = corners[i];
+    const b = corners[(i + 1) % 4];
+    sceneManager.objects.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(a.x, a.y, z),
+        new THREE.Vector3(b.x, b.y, z),
+      ]),
+      new THREE.LineBasicMaterial({ color: 0xff7043 })
+    ));
+  }
 
   // Center of box
   const cx = bx + (boxH / 2) * nd.x;
