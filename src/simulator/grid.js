@@ -74,13 +74,15 @@ function createTextSprite(text, x, y, z, color) {
   canvas.width = 64;
   canvas.height = 64;
   const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 64, 64);
   ctx.fillStyle = '#' + color.toString(16).padStart(6, '0');
   ctx.font = 'bold 44px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(text, 32, 32);
   const texture = new THREE.CanvasTexture(canvas);
-  const material = new THREE.SpriteMaterial({ map: texture });
+  texture.premultiplyAlpha = true;
+  const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
   const sprite = new THREE.Sprite(material);
   sprite.position.set(x, y, z);
   sprite.scale.set(0.7, 0.7, 1);

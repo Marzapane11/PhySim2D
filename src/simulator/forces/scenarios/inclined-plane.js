@@ -203,16 +203,20 @@ export function addLine(sceneManager, x1, y1, x2, y2, color) {
 
 export function addTextLabel(sceneManager, text, x, y, color) {
   const canvas = document.createElement('canvas');
-  canvas.width = 64; canvas.height = 64;
+  canvas.width = 128; canvas.height = 64;
   const ctx = canvas.getContext('2d');
+  // Ensure fully transparent background
+  ctx.clearRect(0, 0, 128, 64);
   ctx.fillStyle = color;
   ctx.font = 'bold 40px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(text, 32, 32);
+  ctx.fillText(text, 64, 32);
   const texture = new THREE.CanvasTexture(canvas);
-  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture }));
+  texture.premultiplyAlpha = true;
+  const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+  const sprite = new THREE.Sprite(material);
   sprite.position.set(x, y, 0.05);
-  sprite.scale.set(0.6, 0.6, 1);
+  sprite.scale.set(0.8, 0.4, 1);
   sceneManager.objects.add(sprite);
 }
