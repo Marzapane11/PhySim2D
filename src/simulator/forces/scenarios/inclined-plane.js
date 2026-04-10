@@ -123,7 +123,7 @@ export function drawTriangle(sceneManager, tri, isLight, angleLabel) {
   const lT = 0.15;
   const lx = A.x + lT * (B.x - A.x) + tri.nd.x * 0.3;
   const ly = A.y + lT * (B.y - A.y) + tri.nd.y * 0.3;
-  addTextLabel(sceneManager, '\u2113', lx, ly, '#ff7043');
+  addItalicLabel(sceneManager, 'l', lx, ly, '#ff7043');
 }
 
 export function drawBox(sceneManager, bx, by, sd, nd, boxW, boxH) {
@@ -207,20 +207,20 @@ export function addLine(sceneManager, x1, y1, x2, y2, color) {
 
 export function addItalicLabel(sceneManager, text, x, y, color) {
   const canvas = document.createElement('canvas');
-  canvas.width = 128; canvas.height = 64;
+  canvas.width = 128; canvas.height = 128;
   const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, 128, 64);
+  ctx.clearRect(0, 0, 128, 128);
   ctx.fillStyle = color;
-  ctx.font = 'italic 44px serif';
+  ctx.font = 'bold italic 80px "Times New Roman", Georgia, serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(text, 64, 32);
+  ctx.fillText(text, 64, 64);
   const texture = new THREE.CanvasTexture(canvas);
   texture.premultiplyAlpha = true;
   const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
   const sprite = new THREE.Sprite(material);
   sprite.position.set(x, y, 0.05);
-  sprite.scale.set(0.8, 0.4, 1);
+  sprite.scale.set(0.7, 0.7, 1);
   sceneManager.objects.add(sprite);
 }
 
