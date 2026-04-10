@@ -42,6 +42,28 @@
 
 .simulator-layout:fullscreen {
   background: var(--bg-primary);
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
+.simulator-layout:fullscreen .canvas-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.simulator-layout:fullscreen .canvas-container {
+  flex: 1;
+}
+
+.simulator-layout:fullscreen .toolbar {
+  height: var(--toolbar-height);
+}
+
+.simulator-layout:fullscreen .right-panel {
+  width: var(--panel-width);
+  min-width: var(--panel-width);
 }
 
 .toolbar {

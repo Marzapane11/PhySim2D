@@ -38,6 +38,10 @@ export function createSimulatorLayout(container) {
       </svg>`;
       fsBtn.title = 'Schermo intero';
     }
+    // Force layout recalculation after fullscreen change
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
   });
 
   return {
