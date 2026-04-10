@@ -60,26 +60,16 @@ export function renderSpring(sceneManager, state, visibility) {
   // Same triangle as inclined plane
   drawTriangle(sceneManager, tri, isLight, '\u03B8');
 
-  // === Wall at B (solid rectangle, sits BEHIND B, into the triangle) ===
-  const wallThick = 0.25;
-  const wallLen = 0.8;
+  // === Wall at B (solid rectangle along the vertical side BC) ===
+  const wallThick = 0.3;
+  const wallHeight = 1.0;
   const wallColor = isLight ? 0x8090a0 : 0x3a4a6a;
-  // Wall face is at B, perpendicular to slope. Wall body goes BEHIND B (opposite to slope = into triangle)
+  // Wall sits on the vertical side BC, at point B, extending downward along BC
   const wallShape = new THREE.Shape();
-  // Face edge at B, perpendicular to slope (along nd)
-  const w0x = B.x - (wallLen / 2) * nd.x;
-  const w0y = B.y - (wallLen / 2) * nd.y;
-  const w1x = B.x + (wallLen / 2) * nd.x;
-  const w1y = B.y + (wallLen / 2) * nd.y;
-  // Back edge behind B (opposite of sd = going away from slope, into the wall)
-  const w2x = w1x - wallThick * sd.x;
-  const w2y = w1y - wallThick * sd.y;
-  const w3x = w0x - wallThick * sd.x;
-  const w3y = w0y - wallThick * sd.y;
-  wallShape.moveTo(w0x, w0y);
-  wallShape.lineTo(w1x, w1y);
-  wallShape.lineTo(w2x, w2y);
-  wallShape.lineTo(w3x, w3y);
+  wallShape.moveTo(B.x, B.y);
+  wallShape.lineTo(B.x - wallThick, B.y);
+  wallShape.lineTo(B.x - wallThick, B.y - wallHeight);
+  wallShape.lineTo(B.x, B.y - wallHeight);
   wallShape.closePath();
   const wallMesh = new THREE.Mesh(
     new THREE.ShapeGeometry(wallShape),
