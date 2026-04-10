@@ -123,7 +123,7 @@ export function drawTriangle(sceneManager, tri, isLight, angleLabel) {
   const lT = 0.15;
   const lx = A.x + lT * (B.x - A.x) + tri.nd.x * 0.3;
   const ly = A.y + lT * (B.y - A.y) + tri.nd.y * 0.3;
-  addItalicLabel(sceneManager, 'l', lx, ly, '#ff7043');
+  addTextLabel(sceneManager, '\u2113', lx, ly, '#ff7043');
 }
 
 export function drawBox(sceneManager, bx, by, sd, nd, boxW, boxH) {
