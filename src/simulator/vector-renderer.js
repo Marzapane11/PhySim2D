@@ -111,19 +111,13 @@ export function createComponentLines(origin, vector, color, z) {
   horizLine.computeLineDistances();
   group.add(horizLine);
 
-  // Small solid line on x-axis showing Vx (from origin to projection)
-  const xGeo = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(origin.x, origin.y, z),
-    new THREE.Vector3(tipX, origin.y, z),
-  ]);
-  group.add(new THREE.Line(xGeo, new THREE.LineBasicMaterial({ color: 0xff4444 })));
+  // Vx arrow (from origin along x-axis)
+  const xArrow = makeArrow2D(origin, { x: vector.x, y: 0 }, 0xff4444, z);
+  if (xArrow) group.add(xArrow);
 
-  // Small solid line on y-axis showing Vy (from origin to projection)
-  const yGeo = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(origin.x, origin.y, z),
-    new THREE.Vector3(origin.x, tipY, z),
-  ]);
-  group.add(new THREE.Line(yGeo, new THREE.LineBasicMaterial({ color: 0x44ff44 })));
+  // Vy arrow (from origin along y-axis)
+  const yArrow = makeArrow2D(origin, { x: 0, y: vector.y }, 0x44ff44, z);
+  if (yArrow) group.add(yArrow);
 
   return group;
 }
@@ -174,19 +168,15 @@ export function createSlopeComponentLines(origin, vector, sd, nd, color, z) {
   line2.computeLineDistances();
   group.add(line2);
 
-  // Solid line for slope component (Px)
-  const slopeGeo = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(origin.x, origin.y, z),
-    new THREE.Vector3(slopeEndX, slopeEndY, z),
-  ]);
-  group.add(new THREE.Line(slopeGeo, new THREE.LineBasicMaterial({ color: 0xffa726 })));
+  // Px arrow (slope component)
+  const pxVec = { x: projSlope * sd.x, y: projSlope * sd.y };
+  const pxArrow = makeArrow2D(origin, pxVec, 0xffa726, z);
+  if (pxArrow) group.add(pxArrow);
 
-  // Solid line for normal component (Py)
-  const normalGeo = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(origin.x, origin.y, z),
-    new THREE.Vector3(normalEndX, normalEndY, z),
-  ]);
-  group.add(new THREE.Line(normalGeo, new THREE.LineBasicMaterial({ color: 0x26c6da })));
+  // Py arrow (normal component)
+  const pyVec = { x: projNormal * nd.x, y: projNormal * nd.y };
+  const pyArrow = makeArrow2D(origin, pyVec, 0x26c6da, z);
+  if (pyArrow) group.add(pyArrow);
 
   return group;
 }
