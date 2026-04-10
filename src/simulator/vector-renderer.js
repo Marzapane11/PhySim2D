@@ -20,14 +20,14 @@ export function getNextColor() {
 export function createArrow(origin, vector, color, name) {
   const dir = new THREE.Vector3(vector.x, vector.y, 0).normalize();
   const len = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
-  if (len < 0.001) return null;
+  if (len < 0.15) return null;
 
+  const headLen = Math.min(len * 0.25, 0.35);
+  const headW = Math.min(len * 0.15, 0.18);
   const arrowHelper = new THREE.ArrowHelper(
     dir,
     new THREE.Vector3(origin.x, origin.y, 0.02),
-    len, color,
-    Math.min(len * 0.2, 0.4),
-    Math.min(len * 0.12, 0.2)
+    len, color, headLen, headW
   );
   arrowHelper.userData = { name, vector, origin, color };
   return arrowHelper;
