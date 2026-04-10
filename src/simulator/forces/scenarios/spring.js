@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { springForce, weight } from '../../../math/force-math.js';
-import { createArrow } from '../../vector-renderer.js';
+import { createArrow, createSlopeComponentLines } from '../../vector-renderer.js';
 import { getState } from '../../../state.js';
 import { createSolver } from '../../dynamic-solver.js';
 import { calcTriangle, drawTriangle, drawBox, addLine, addTextLabel } from './inclined-plane.js';
@@ -107,18 +107,18 @@ export function renderSpring(sceneManager, state, visibility) {
       const s = 0.025;
 
       // P — weight down
-      const pA = createArrow(center, { x: 0, y: -W * s }, 0x4fc3f7, 'P');
+      const pVec = { x: 0, y: -W * s };
+      const pA = createArrow(center, pVec, 0x4fc3f7, 'P');
       if (pA) sceneManager.objects.add(pA);
+
+      // Dashed decomposition of P into Px (along slope) and Py (along normal)
+      const compLines = createSlopeComponentLines(center, pVec, sd, nd, 0x4fc3f7, 0.04);
+      sceneManager.objects.add(compLines);
 
       // N — normal
       const nVal = W * Math.cos(tri.angleRad);
       const nA = createArrow(center, { x: nd.x * nVal * s, y: nd.y * nVal * s }, 0x66bb6a, 'N');
       if (nA) sceneManager.objects.add(nA);
-
-      // Px — parallel component, down the slope
-      const pxVal = W * Math.sin(tri.angleRad);
-      const pxA = createArrow(center, { x: -sd.x * pxVal * s, y: -sd.y * pxVal * s }, 0xffa726, 'Px');
-      if (pxA) sceneManager.objects.add(pxA);
 
       // Fe — elastic force
       if (calc.force > 0.01) {

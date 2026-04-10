@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { inclinedPlane } from '../../../math/force-math.js';
-import { createArrow } from '../../vector-renderer.js';
+import { createArrow, createSlopeComponentLines } from '../../vector-renderer.js';
 import { getState } from '../../../state.js';
 import { createSolver } from '../../dynamic-solver.js';
 
@@ -176,16 +176,17 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
       const o = center;
 
       // P — weight, straight down
-      const pA = createArrow(o, { x: 0, y: -calc.weight * s }, 0x4fc3f7, 'P');
+      const pVec = { x: 0, y: -calc.weight * s };
+      const pA = createArrow(o, pVec, 0x4fc3f7, 'P');
       if (pA) sceneManager.objects.add(pA);
+
+      // Dashed decomposition of P into Px (along slope) and Py (along normal)
+      const compLines = createSlopeComponentLines(o, pVec, tri.sd, tri.nd, 0x4fc3f7, 0.04);
+      sceneManager.objects.add(compLines);
 
       // N — normal, away from surface
       const nA = createArrow(o, { x: tri.nd.x * calc.normal * s, y: tri.nd.y * calc.normal * s }, 0x66bb6a, 'N');
       if (nA) sceneManager.objects.add(nA);
-
-      // Px — parallel component, down the slope
-      const pxA = createArrow(o, { x: -tri.sd.x * calc.parallel * s, y: -tri.sd.y * calc.parallel * s }, 0xffa726, 'Px');
-      if (pxA) sceneManager.objects.add(pxA);
 
       // Fa — friction, up the slope
       if (calc.friction > 0.01) {

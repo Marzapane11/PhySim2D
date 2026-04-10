@@ -77,6 +77,120 @@ export function createResultantArrow(origin, vector) {
   return group;
 }
 
+/**
+ * Draw component decomposition with dashed lines like a textbook:
+ * From the tip of the vector, draw dashed lines to the axes,
+ * forming a rectangle. Label Vx on x-axis, Vy on y-axis.
+ */
+export function createComponentLines(origin, vector, color, z) {
+  const group = new THREE.Group();
+  const tipX = origin.x + vector.x;
+  const tipY = origin.y + vector.y;
+  const dashSize = 0.15;
+  const gapSize = 0.1;
+
+  // Dashed line from tip down to x-axis (vertical dashed line at tip)
+  const vertGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(tipX, tipY, z),
+    new THREE.Vector3(tipX, origin.y, z),
+  ]);
+  const vertLine = new THREE.Line(vertGeo, new THREE.LineDashedMaterial({
+    color, dashSize, gapSize, transparent: true, opacity: 0.7
+  }));
+  vertLine.computeLineDistances();
+  group.add(vertLine);
+
+  // Dashed line from tip left to y-axis (horizontal dashed line at tip)
+  const horizGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(tipX, tipY, z),
+    new THREE.Vector3(origin.x, tipY, z),
+  ]);
+  const horizLine = new THREE.Line(horizGeo, new THREE.LineDashedMaterial({
+    color, dashSize, gapSize, transparent: true, opacity: 0.7
+  }));
+  horizLine.computeLineDistances();
+  group.add(horizLine);
+
+  // Small solid line on x-axis showing Vx (from origin to projection)
+  const xGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(origin.x, origin.y, z),
+    new THREE.Vector3(tipX, origin.y, z),
+  ]);
+  group.add(new THREE.Line(xGeo, new THREE.LineBasicMaterial({ color: 0xff4444 })));
+
+  // Small solid line on y-axis showing Vy (from origin to projection)
+  const yGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(origin.x, origin.y, z),
+    new THREE.Vector3(origin.x, tipY, z),
+  ]);
+  group.add(new THREE.Line(yGeo, new THREE.LineBasicMaterial({ color: 0x44ff44 })));
+
+  return group;
+}
+
+/**
+ * Draw component decomposition along slope/normal directions (for inclined plane).
+ * From the tip of the force vector, draw dashed lines to the slope and normal axes.
+ */
+export function createSlopeComponentLines(origin, vector, sd, nd, color, z) {
+  const group = new THREE.Group();
+  const tipX = origin.x + vector.x;
+  const tipY = origin.y + vector.y;
+  const dashSize = 0.15;
+  const gapSize = 0.1;
+
+  // Project vector onto slope direction: Px = (vector · sd) * sd
+  const projSlope = vector.x * sd.x + vector.y * sd.y;
+  // Project vector onto normal direction: Py = (vector · nd) * nd
+  const projNormal = vector.x * nd.x + vector.y * nd.y;
+
+  // End of slope projection (from origin along slope)
+  const slopeEndX = origin.x + projSlope * sd.x;
+  const slopeEndY = origin.y + projSlope * sd.y;
+
+  // End of normal projection (from origin along normal)
+  const normalEndX = origin.x + projNormal * nd.x;
+  const normalEndY = origin.y + projNormal * nd.y;
+
+  // Dashed line from tip to slope projection
+  const dashToSlope = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(tipX, tipY, z),
+    new THREE.Vector3(slopeEndX, slopeEndY, z),
+  ]);
+  const line1 = new THREE.Line(dashToSlope, new THREE.LineDashedMaterial({
+    color, dashSize, gapSize, transparent: true, opacity: 0.7
+  }));
+  line1.computeLineDistances();
+  group.add(line1);
+
+  // Dashed line from tip to normal projection
+  const dashToNormal = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(tipX, tipY, z),
+    new THREE.Vector3(normalEndX, normalEndY, z),
+  ]);
+  const line2 = new THREE.Line(dashToNormal, new THREE.LineDashedMaterial({
+    color, dashSize, gapSize, transparent: true, opacity: 0.7
+  }));
+  line2.computeLineDistances();
+  group.add(line2);
+
+  // Solid line for slope component (Px)
+  const slopeGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(origin.x, origin.y, z),
+    new THREE.Vector3(slopeEndX, slopeEndY, z),
+  ]);
+  group.add(new THREE.Line(slopeGeo, new THREE.LineBasicMaterial({ color: 0xffa726 })));
+
+  // Solid line for normal component (Py)
+  const normalGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(origin.x, origin.y, z),
+    new THREE.Vector3(normalEndX, normalEndY, z),
+  ]);
+  group.add(new THREE.Line(normalGeo, new THREE.LineBasicMaterial({ color: 0x26c6da })));
+
+  return group;
+}
+
 export function createAngleArc(origin, vector1, vector2, color) {
   const angle1 = Math.atan2(vector1.y, vector1.x);
   const angle2 = Math.atan2(vector2.y, vector2.x);

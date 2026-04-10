@@ -2,7 +2,7 @@ import '../../styles/simulator.css';
 import { createSimulatorLayout } from '../simulator-layout.js';
 import { SceneManager } from '../scene-manager.js';
 import { createGrid, setGridVisible } from '../grid.js';
-import { createArrow, createResultantArrow, createAngleArc, resetColorIndex, getNextColor } from '../vector-renderer.js';
+import { createArrow, createResultantArrow, createAngleArc, createComponentLines, resetColorIndex, getNextColor } from '../vector-renderer.js';
 import { LabelManager } from '../label-renderer.js';
 import { renderToolbar } from '../toolbar.js';
 import { renderPropertiesPanel, createPropertyRow, createInputRow } from '../properties-panel.js';
@@ -137,10 +137,12 @@ export function renderVectorsPage(container) {
           labelManager.addLabel(labelText, arrow, sceneManager.camera, sceneManager.renderer);
         }
         if (vis.components) {
-          const xArrow = createArrow({ x: v.originX, y: v.originY }, { x: v.x, y: 0 }, 0xff4444, 'Vx');
-          if (xArrow) sceneManager.objects.add(xArrow);
-          const yArrow = createArrow({ x: v.originX, y: v.originY }, { x: 0, y: v.y }, 0x44ff44, 'Vy');
-          if (yArrow) sceneManager.objects.add(yArrow);
+          const compLines = createComponentLines(
+            { x: v.originX, y: v.originY },
+            { x: v.x, y: v.y },
+            color, 0.04
+          );
+          sceneManager.objects.add(compLines);
         }
         if (vis.angles) {
           const arc = createAngleArc({ x: v.originX, y: v.originY }, { x: 1, y: 0 }, { x: v.x, y: v.y }, 0xffff00);
@@ -191,18 +193,13 @@ export function renderVectorsPage(container) {
 
     if (activeTool === 'decompose' && selectedIndex >= 0 && selectedIndex < vectors.length) {
       const v = vectors[selectedIndex];
-      if (!getState().visibility.components) {
-        const xArrow = createArrow({ x: v.originX, y: v.originY }, { x: v.x, y: 0 }, 0xff4444, 'Vx');
-        if (xArrow) {
-          sceneManager.objects.add(xArrow);
-          labelManager.addLabel(`Vx = ${v.x.toFixed(2)}`, xArrow, sceneManager.camera, sceneManager.renderer);
-        }
-        const yArrow = createArrow({ x: v.originX, y: v.originY }, { x: 0, y: v.y }, 0x44ff44, 'Vy');
-        if (yArrow) {
-          sceneManager.objects.add(yArrow);
-          labelManager.addLabel(`Vy = ${v.y.toFixed(2)}`, yArrow, sceneManager.camera, sceneManager.renderer);
-        }
-      }
+      // Always show dashed decomposition lines for the selected vector
+      const compLines = createComponentLines(
+        { x: v.originX, y: v.originY },
+        { x: v.x, y: v.y },
+        vectorColors[selectedIndex] || 0x4fc3f7, 0.04
+      );
+      sceneManager.objects.add(compLines);
     }
   }
 
