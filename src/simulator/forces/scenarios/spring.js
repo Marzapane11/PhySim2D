@@ -60,20 +60,22 @@ export function renderSpring(sceneManager, state, visibility) {
   // Same triangle as inclined plane
   drawTriangle(sceneManager, tri, isLight, '\u03B8');
 
-  // === Wall at B (solid rectangle attached to side BC) ===
-  const wallThick = 0.3;
-  const wallLen = 1.0;
+  // === Wall at B (solid rectangle, sits BEHIND B, into the triangle) ===
+  const wallThick = 0.25;
+  const wallLen = 0.8;
   const wallColor = isLight ? 0x8090a0 : 0x3a4a6a;
-  // Wall rectangle: centered at B, extends along normal direction, thickness into slope direction (toward B/beyond)
+  // Wall face is at B, perpendicular to slope. Wall body goes BEHIND B (opposite to slope = into triangle)
   const wallShape = new THREE.Shape();
+  // Face edge at B, perpendicular to slope (along nd)
   const w0x = B.x - (wallLen / 2) * nd.x;
   const w0y = B.y - (wallLen / 2) * nd.y;
   const w1x = B.x + (wallLen / 2) * nd.x;
   const w1y = B.y + (wallLen / 2) * nd.y;
-  const w2x = w1x + wallThick * sd.x;
-  const w2y = w1y + wallThick * sd.y;
-  const w3x = w0x + wallThick * sd.x;
-  const w3y = w0y + wallThick * sd.y;
+  // Back edge behind B (opposite of sd = going away from slope, into the wall)
+  const w2x = w1x - wallThick * sd.x;
+  const w2y = w1y - wallThick * sd.y;
+  const w3x = w0x - wallThick * sd.x;
+  const w3y = w0y - wallThick * sd.y;
   wallShape.moveTo(w0x, w0y);
   wallShape.lineTo(w1x, w1y);
   wallShape.lineTo(w2x, w2y);
@@ -86,27 +88,24 @@ export function renderSpring(sceneManager, state, visibility) {
   wallMesh.position.z = 0.01;
   sceneManager.objects.add(wallMesh);
 
-  // === Box first, then spring connects wall to box ===
+  // === Box ===
   const boxW = 1.2;
   const boxH = 0.9;
-  // Box at ~45% up the slope from A
+  const hw = boxW / 2;
+  // Box at ~45% up the slope from A (bottom center on slope)
   const boxT = 0.45;
   const boxBx = A.x + boxT * (B.x - A.x);
   const boxBy = A.y + boxT * (B.y - A.y);
 
-  // === Spring from wall to the upper side of the box ===
-  const restLen = 2.5;
-  const displacement = state.x * 1.5;
-  const totalLen = restLen + displacement;
+  // Center of the box's side facing B = bottom center + hw along sd (toward B) + boxH/2 along nd (half height)
+  const boxSideBx = boxBx + hw * sd.x + (boxH / 2) * nd.x;
+  const boxSideBy = boxBy + hw * sd.y + (boxH / 2) * nd.y;
 
-  // Spring start: at B on the slope (wall surface)
+  // === Spring from wall face (at B) to center of box side facing B ===
   const sx = B.x;
   const sy = B.y;
-  // Spring end: center of the box's upper side (toward B)
-  // Upper side center = boxBottom + boxW/2 along slope + boxH along normal... no
-  // Box bottom center is at (boxBx, boxBy). The side facing B is at boxBx + (boxW/2)*sd
-  const springEndX = boxBx + (boxW / 2) * sd.x;
-  const springEndY = boxBy + (boxW / 2) * sd.y;
+  const springEndX = boxSideBx;
+  const springEndY = boxSideBy;
 
   // Sinusoidal coils
   const coils = 8;
