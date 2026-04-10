@@ -119,7 +119,7 @@ export function drawTriangle(sceneManager, tri, isLight, angleLabel) {
   addTextLabel(sceneManager, angleLabel || '\u03B1', A.x - 1.5, A.y + 0.4, '#66bb6a');
   addTextLabel(sceneManager, 'h', C.x - 0.7, (C.y + B.y) / 2, '#66bb6a');
   addTextLabel(sceneManager, 'd', (C.x + A.x) / 2, C.y - 0.5, '#4fc3f7');
-  addTextLabel(sceneManager, 'l', (A.x + B.x) / 2 + 0.7, (A.y + B.y) / 2 + 0.5, '#ff7043');
+  addTextLabel(sceneManager, 'L', (A.x + B.x) / 2 + 1.2, (A.y + B.y) / 2 + 0.8, '#ff7043');
 }
 
 export function drawBox(sceneManager, bx, by, sd, nd, boxW, boxH) {
