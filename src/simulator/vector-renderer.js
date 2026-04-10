@@ -45,7 +45,7 @@ function makeArrow2D(origin, vector, color, z) {
   ]);
   group.add(new THREE.Line(shaftGeo, new THREE.LineBasicMaterial({ color })));
 
-  // Arrowhead (flat triangle)
+  // Arrowhead (two lines forming a V shape — no mesh)
   const tipX = origin.x + vector.x;
   const tipY = origin.y + vector.y;
   const baseLeftX = shaftEndX + px * tipW;
@@ -53,18 +53,12 @@ function makeArrow2D(origin, vector, color, z) {
   const baseRightX = shaftEndX - px * tipW;
   const baseRightY = shaftEndY - py * tipW;
 
-  const tipShape = new THREE.Shape();
-  tipShape.moveTo(tipX, tipY);
-  tipShape.lineTo(baseLeftX, baseLeftY);
-  tipShape.lineTo(baseRightX, baseRightY);
-  tipShape.closePath();
-
-  const tipMesh = new THREE.Mesh(
-    new THREE.ShapeGeometry(tipShape),
-    new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide })
-  );
-  tipMesh.position.z = z;
-  group.add(tipMesh);
+  const tipGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(baseLeftX, baseLeftY, z),
+    new THREE.Vector3(tipX, tipY, z),
+    new THREE.Vector3(baseRightX, baseRightY, z),
+  ]);
+  group.add(new THREE.Line(tipGeo, new THREE.LineBasicMaterial({ color })));
 
   return group;
 }
