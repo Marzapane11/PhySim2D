@@ -18,16 +18,23 @@ export function createSimulatorLayout(container) {
   const layout = container.querySelector('#simulator-layout');
   const fsBtn = container.querySelector('#fullscreen-btn');
 
+  function triggerResize() {
+    // Multiple resize events to ensure renderer catches the new size
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 150);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 300);
+  }
+
   fsBtn.addEventListener('click', () => {
     layout.classList.toggle('is-fullscreen');
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+    triggerResize();
   });
 
   // ESC to exit
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && layout.classList.contains('is-fullscreen')) {
       layout.classList.remove('is-fullscreen');
-      setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+      triggerResize();
     }
   });
 
