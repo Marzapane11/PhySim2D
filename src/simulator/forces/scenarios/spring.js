@@ -99,9 +99,10 @@ export function renderSpring(sceneManager, state, visibility) {
   const boxSideBx = boxBx + hw * sd.x + (boxH / 2) * nd.x;
   const boxSideBy = boxBy + hw * sd.y + (boxH / 2) * nd.y;
 
-  // === Spring from wall face (at B) to center of box side facing B ===
-  const sx = B.x;
-  const sy = B.y;
+  // === Spring from inner face of wall (facing down slope) to center of box side facing B ===
+  // Inner face is at B shifted down-slope by half wall width, at mid wall height
+  const sx = B.x - (wallW / 2) * sd.x + (wallH / 2) * nd.x;
+  const sy = B.y - (wallW / 2) * sd.y + (wallH / 2) * nd.y;
   const springEndX = boxSideBx;
   const springEndY = boxSideBy;
 
