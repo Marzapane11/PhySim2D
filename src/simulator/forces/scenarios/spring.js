@@ -61,21 +61,23 @@ export function renderSpring(sceneManager, state, visibility) {
   drawTriangle(sceneManager, tri, isLight, '\u03B8');
 
   // === Wall at B (top of slope) ===
-  const wallLen = 1.0;
-  const wallColor = isLight ? 0x8090a0 : 0x6a6a8a;
-  const hatchColor = isLight ? 0x9aa0b0 : 0x4a4a5a;
-  // Line perpendicular to slope at B
+  // Wall is perpendicular to the slope at point B
+  // Hatching goes INTO the wall (opposite to slope direction, i.e. behind B)
+  const wallLen = 0.8;
+  const hatchColor = isLight ? 0x8090a0 : 0x5a5a7a;
+  // Wall line perpendicular to slope
   addLine(sceneManager,
     B.x - wallLen / 2 * nd.x, B.y - wallLen / 2 * nd.y,
     B.x + wallLen / 2 * nd.x, B.y + wallLen / 2 * nd.y,
-    wallColor
+    hatchColor
   );
-  // Hatching behind wall
+  // Hatching lines behind the wall (going away from slope, into the wall)
   for (let i = -3; i <= 3; i++) {
-    const t = i * 0.15;
+    const t = i * 0.12;
     const wx = B.x + t * nd.x;
     const wy = B.y + t * nd.y;
-    addLine(sceneManager, wx, wy, wx + 0.25 * sd.x, wy + 0.25 * sd.y, hatchColor);
+    // Go in OPPOSITE direction of slope (behind B, into the triangle)
+    addLine(sceneManager, wx, wy, wx - 0.2 * sd.x, wy - 0.2 * sd.y, hatchColor);
   }
 
   // === Spring coils ===
@@ -126,6 +128,11 @@ export function renderSpring(sceneManager, state, visibility) {
       const nVal = W * Math.cos(tri.angleRad);
       const nA = createArrow(center, { x: nd.x * nVal * s, y: nd.y * nVal * s }, 0x66bb6a, 'N');
       if (nA) sceneManager.objects.add(nA);
+
+      // Px — parallel component, down the slope
+      const pxVal = W * Math.sin(tri.angleRad);
+      const pxA = createArrow(center, { x: -sd.x * pxVal * s, y: -sd.y * pxVal * s }, 0xffa726, 'Px');
+      if (pxA) sceneManager.objects.add(pxA);
 
       // Fe — elastic force
       if (calc.force > 0.01) {
