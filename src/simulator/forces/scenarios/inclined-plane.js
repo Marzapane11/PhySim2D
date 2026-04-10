@@ -137,12 +137,6 @@ export function drawBox(sceneManager, bx, by, sd, nd, boxW, boxH) {
   mesh.rotation.z = slopeAngle;
   sceneManager.objects.add(mesh);
 
-  // Box outline — EdgesGeometry for clean lines
-  const edges = new THREE.EdgesGeometry(geo);
-  const outline = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xe64a19 }));
-  outline.position.set(cx, cy, 0.04);
-  outline.rotation.z = slopeAngle;
-  sceneManager.objects.add(outline);
 
   return { x: cx, y: cy };
 }
