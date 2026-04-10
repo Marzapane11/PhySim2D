@@ -15,19 +15,37 @@ export function createSimulatorLayout(container) {
     </div>
   `;
 
-  const layout = container.querySelector('#simulator-layout');
   const fsBtn = container.querySelector('#fullscreen-btn');
+  let isFullscreen = false;
 
-  fsBtn.addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-      layout.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
-  });
+  function enterFullscreen() {
+    isFullscreen = true;
+    // Hide sidebar
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) sidebar.style.display = 'none';
+    // Make main content fill the screen
+    const main = document.getElementById('main-content');
+    if (main) main.style.flex = '1';
+    // Request browser fullscreen
+    document.documentElement.requestFullscreen().catch(() => {});
+    updateIcon();
+  }
 
-  document.addEventListener('fullscreenchange', () => {
+  function exitFullscreen() {
+    isFullscreen = false;
+    // Show sidebar again
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) sidebar.style.display = '';
+    // Exit browser fullscreen
     if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
+    updateIcon();
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+  }
+
+  function updateIcon() {
+    if (isFullscreen) {
       fsBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
         <path d="M4 14h6v6m10-10h-6V4M4 10h6V4m10 10h-6v6"/>
       </svg>`;
@@ -38,10 +56,25 @@ export function createSimulatorLayout(container) {
       </svg>`;
       fsBtn.title = 'Schermo intero';
     }
-    // Force layout recalculation after fullscreen change
-    setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 100);
+  }
+
+  fsBtn.addEventListener('click', () => {
+    if (isFullscreen) {
+      exitFullscreen();
+    } else {
+      enterFullscreen();
+    }
+  });
+
+  // Handle ESC key or browser exit fullscreen
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && isFullscreen) {
+      isFullscreen = false;
+      const sidebar = document.querySelector('.sidebar');
+      if (sidebar) sidebar.style.display = '';
+      updateIcon();
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+    }
   });
 
   return {
