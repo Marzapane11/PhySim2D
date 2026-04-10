@@ -25,14 +25,17 @@ export function renderSettingsPage(container) {
         <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;">
           Simulatore Forze e Vettori v1.0 Beta<br>
           Programma di Fisica — Liceo Enrico Medi, Cicciano (NA)<br>
-          Coordinatore: Prof.ssa Loreta Lembo<br>
           Sviluppatore: Mataro M.
         </p>
-        <div style="margin-top: 12px; padding: 10px; background: var(--bg-primary); border-radius: var(--radius-sm); border: 1px dashed var(--accent);">
-          <p style="font-size: 12px; color: var(--text-accent); font-weight: 600; margin-bottom: 4px;">Accesso anticipato — Solo Beta Testers</p>
-          <p style="font-size: 11px; color: var(--text-secondary); line-height: 1.5;">
-            Stai utilizzando una versione in fase di sviluppo. Nuove funzionalità e scenari verranno aggiunti nei prossimi aggiornamenti. Segnala bug e suggerimenti per migliorare l'app!
-          </p>
+        <div style="margin-top: 12px; padding: 10px; background: var(--bg-primary); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <p style="font-size: 12px; color: var(--text-accent); font-weight: 600; margin-bottom: 6px;">Funzionalità</p>
+          <ul style="font-size: 11px; color: var(--text-secondary); line-height: 1.8; padding-left: 16px;">
+            <li>Simulatore interattivo di vettori e forze 2D</li>
+            <li>Piano inclinato, molla, carrucola</li>
+            <li>Parametri dinamici con formule inverse</li>
+            <li>Sezione teoria con formule ed esempi</li>
+            <li>Tema scuro e chiaro</li>
+          </ul>
         </div>
       </div>
     </div>
