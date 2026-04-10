@@ -65,24 +65,27 @@ export function renderSpring(sceneManager, state, visibility) {
   const displacement = state.x * 1.5;
   const totalLen = restLen + displacement;
 
-  // Spring starts at B (on the hypotenuse)
-  const sx = B.x;
-  const sy = B.y;
-  // Spring ends further down the slope
+  // Spring starts slightly below B on the slope
+  const startT = 0.9;
+  const sx = A.x + startT * (B.x - A.x);
+  const sy = A.y + startT * (B.y - A.y);
+  // Straight line from B to spring start
   const endX = sx - sd.x * totalLen;
   const endY = sy - sd.y * totalLen;
 
-  // Smooth sinusoidal coils (many points for a round look)
+  // Smooth sinusoidal coils with damped start/end
   const coils = 8;
   const coilW = 0.2;
   const numPoints = coils * 20;
-  const points = [new THREE.Vector3(sx, sy, 0.03)];
+  const points = [new THREE.Vector3(B.x, B.y, 0.03), new THREE.Vector3(sx, sy, 0.03)];
   for (let i = 1; i < numPoints; i++) {
     const frac = i / numPoints;
     const px = sx + frac * (endX - sx);
     const py = sy + frac * (endY - sy);
-    const wave = Math.sin(frac * coils * Math.PI * 2) * coilW;
-    points.push(new THREE.Vector3(px + nd.x * wave, py + nd.y * wave, 0.03));
+    // Dampen amplitude at start and end so no pieces stick out
+    const envelope = Math.min(1, frac * 5) * Math.min(1, (1 - frac) * 5);
+    const wave = Math.sin(frac * coils * Math.PI * 2) * coilW * envelope;
+    points.push(new THREE.Vector3(px - nd.x * wave, py - nd.y * wave, 0.03));
   }
   points.push(new THREE.Vector3(endX, endY, 0.03));
 
