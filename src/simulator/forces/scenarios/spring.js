@@ -160,19 +160,19 @@ export function renderSpring(sceneManager, state, visibility) {
       const nA = createArrow(center, { x: nd.x * nVal * s, y: nd.y * nVal * s }, 0x66bb6a, 'N');
       if (nA) sceneManager.objects.add(nA);
 
-      // Fa — friction, up the slope (opposes motion)
-      const faVal = state.mass ? state.mass * 9.81 * Math.cos(tri.angleRad) * (state.frictionCoeff || 0) : 0;
-      if (faVal > 0.01) {
-        const faScale = s * 1.3;
-        const faA = createArrow(center, { x: sd.x * faVal * faScale, y: sd.y * faVal * faScale }, 0xffff00, 'Fa');
-        if (faA) sceneManager.objects.add(faA);
-      }
-
-      // Fe — elastic force
+      // Fe — elastic force (drawn first, so Fa goes on top)
       if (calc.force > 0.01) {
         const dir = state.x > 0 ? 1 : -1;
-        const fA = createArrow(center, { x: dir * sd.x * calc.force * s, y: dir * sd.y * calc.force * s }, 0xaa00ff, 'Fe');
-        if (fA) sceneManager.objects.add(fA);
+        const feA = createArrow(center, { x: dir * sd.x * calc.force * s, y: dir * sd.y * calc.force * s }, 0xaa00ff, 'Fe');
+        if (feA) sceneManager.objects.add(feA);
+      }
+
+      // Fa — friction, up the slope (drawn LAST so it's on top and visible)
+      const faVal = state.mass ? state.mass * 9.81 * Math.cos(tri.angleRad) * (state.frictionCoeff || 0) : 0;
+      if (faVal > 0.01) {
+        const faScale = s * 1.5;
+        const faA = createArrow(center, { x: sd.x * faVal * faScale, y: sd.y * faVal * faScale }, 0xffff00, 'Fa');
+        if (faA) sceneManager.objects.add(faA);
       }
     }
   }
