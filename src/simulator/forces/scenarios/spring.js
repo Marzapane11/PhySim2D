@@ -60,16 +60,24 @@ export function renderSpring(sceneManager, state, visibility) {
   // Same triangle as inclined plane
   drawTriangle(sceneManager, tri, isLight, '\u03B8');
 
-  // === Wall at B (solid rectangle along the vertical side BC) ===
-  const wallThick = 0.3;
-  const wallHeight = 1.0;
+  // === Wall at B (sits ON the hypotenuse, like the box but at B) ===
+  const wallW = 0.3;  // thin along slope
+  const wallH = 0.8;  // height above slope
   const wallColor = isLight ? 0x8090a0 : 0x3a4a6a;
-  // Wall sits on the vertical side BC, at point B, extending downward along BC
+  // Bottom center of wall on the hypotenuse at B
+  const wbx = B.x;
+  const wby = B.y;
+  const whw = wallW / 2;
   const wallShape = new THREE.Shape();
-  wallShape.moveTo(B.x, B.y);
-  wallShape.lineTo(B.x - wallThick, B.y);
-  wallShape.lineTo(B.x - wallThick, B.y - wallHeight);
-  wallShape.lineTo(B.x, B.y - wallHeight);
+  // 4 corners: same logic as drawBox
+  const wc0 = { x: wbx - whw * sd.x, y: wby - whw * sd.y };
+  const wc1 = { x: wbx + whw * sd.x, y: wby + whw * sd.y };
+  const wc2 = { x: wc1.x + wallH * nd.x, y: wc1.y + wallH * nd.y };
+  const wc3 = { x: wc0.x + wallH * nd.x, y: wc0.y + wallH * nd.y };
+  wallShape.moveTo(wc0.x, wc0.y);
+  wallShape.lineTo(wc1.x, wc1.y);
+  wallShape.lineTo(wc2.x, wc2.y);
+  wallShape.lineTo(wc3.x, wc3.y);
   wallShape.closePath();
   const wallMesh = new THREE.Mesh(
     new THREE.ShapeGeometry(wallShape),
