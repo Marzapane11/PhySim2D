@@ -55,7 +55,7 @@ export function renderSpring(sceneManager, state, visibility) {
   const angleRad = (state.angleDeg * Math.PI) / 180;
   const W = weight(state.mass);
 
-  // Triangle geometry (same style as inclined plane)
+  // Triangle geometry (identical to inclined plane)
   const base = 8;
   const height = base * Math.tan(angleRad);
 
@@ -63,11 +63,11 @@ export function renderSpring(sceneManager, state, visibility) {
   const A = { x: C.x + base, y: C.y };
   const B = { x: C.x, y: C.y + height };
 
-  // Slope direction (from A up to B)
+  // Slope direction unit vector (A → B)
   const slopeLen = Math.sqrt((B.x - A.x) ** 2 + (B.y - A.y) ** 2);
   const sdx = (B.x - A.x) / slopeLen;
   const sdy = (B.y - A.y) / slopeLen;
-  // Normal outward (CW rotation)
+  // Normal outward (away from triangle interior) — rotate slope 90° CW
   const ndx = sdy;
   const ndy = -sdx;
 
@@ -83,11 +83,11 @@ export function renderSpring(sceneManager, state, visibility) {
   ));
 
   // === Triangle outline ===
-  addLine(sceneManager, A.x, A.y, B.x, B.y, 0xff7043); // Hypotenuse
-  addLine(sceneManager, C.x, C.y, B.x, B.y, 0x66bb6a); // Height
-  addLine(sceneManager, C.x, C.y, A.x, A.y, 0x4fc3f7); // Base
+  addLine(sceneManager, A.x, A.y, B.x, B.y, 0xff7043); // Hypotenuse (orange)
+  addLine(sceneManager, C.x, C.y, B.x, B.y, 0x66bb6a); // Height (green)
+  addLine(sceneManager, C.x, C.y, A.x, A.y, 0x4fc3f7); // Base (cyan)
 
-  // Right angle marker at C
+  // === Right angle marker at C ===
   const ms = 0.35;
   const raPoints = [
     new THREE.Vector3(C.x + ms, C.y, 0.02),
@@ -99,7 +99,7 @@ export function renderSpring(sceneManager, state, visibility) {
     new THREE.LineBasicMaterial({ color: 0x66bb6a })
   ));
 
-  // Angle alpha arc at A
+  // === Angle theta arc at A ===
   const arcR = 1.0;
   const arcCurve = new THREE.EllipseCurve(A.x, A.y, arcR, arcR, Math.PI, Math.PI - angleRad, true);
   const arcPts = arcCurve.getPoints(24).map(p => new THREE.Vector3(p.x, p.y, 0.02));
@@ -108,73 +108,61 @@ export function renderSpring(sceneManager, state, visibility) {
     new THREE.LineBasicMaterial({ color: 0x66bb6a })
   ));
 
-  // Labels
+  // === Labels (same as inclined plane, but θ instead of α) ===
+  addTextLabel(sceneManager, 'A', A.x + 0.4, A.y - 0.5, '#4fc3f7');
+  addTextLabel(sceneManager, 'B', B.x - 0.5, B.y + 0.4, '#4fc3f7');
+  addTextLabel(sceneManager, 'C', C.x - 0.5, C.y - 0.5, '#4fc3f7');
   addTextLabel(sceneManager, '\u03B8', A.x - 1.5, A.y + 0.3, '#66bb6a');
+  addTextLabel(sceneManager, 'h', C.x - 0.7, (C.y + B.y) / 2, '#66bb6a');
+  addTextLabel(sceneManager, 'd', (C.x + A.x) / 2, C.y - 0.5, '#4fc3f7');
+  addTextLabel(sceneManager, 'l', (A.x + B.x) / 2 + 0.6, (A.y + B.y) / 2 + 0.4, '#ff7043');
 
-  // === Wall at the top of the slope (at B) ===
-  // Wall is a small rectangle perpendicular to the slope at B
-  const wallThick = 0.15;
+  // === Wall at B (physics-style hatching flush with slope surface) ===
+  const wallColor = isLight ? 0x607080 : 0x8090a0;
+  const hatchColor = isLight ? 0x607080 : 0x6a7a8a;
   const wallLen = 1.2;
-  // Wall extends outward from the slope surface at B
-  const wallCorners = [
-    { x: B.x - wallLen / 2 * ndx, y: B.y - wallLen / 2 * ndy },
-    { x: B.x + wallLen / 2 * ndx, y: B.y + wallLen / 2 * ndy },
-    { x: B.x + wallLen / 2 * ndx + wallThick * sdx, y: B.y + wallLen / 2 * ndy + wallThick * sdy },
-    { x: B.x - wallLen / 2 * ndx + wallThick * sdx, y: B.y - wallLen / 2 * ndy + wallThick * sdy },
-  ];
-  const wallShape = new THREE.Shape();
-  wallShape.moveTo(wallCorners[0].x, wallCorners[0].y);
-  wallShape.lineTo(wallCorners[1].x, wallCorners[1].y);
-  wallShape.lineTo(wallCorners[2].x, wallCorners[2].y);
-  wallShape.lineTo(wallCorners[3].x, wallCorners[3].y);
-  wallShape.closePath();
-  sceneManager.objects.add(new THREE.Mesh(
-    new THREE.ShapeGeometry(wallShape),
-    new THREE.MeshBasicMaterial({ color: isLight ? 0x8090a0 : 0x4a4a6a, side: THREE.DoubleSide })
-  ));
-
-  // Wall hatching
-  for (let t = -wallLen / 2; t < wallLen / 2; t += 0.25) {
+  // Main wall line perpendicular to the slope at B
+  addLine(sceneManager,
+    B.x - (wallLen / 2) * ndx, B.y - (wallLen / 2) * ndy,
+    B.x + (wallLen / 2) * ndx, B.y + (wallLen / 2) * ndy,
+    wallColor);
+  // Hatching lines behind the wall (shifted along slope direction toward B/beyond)
+  for (let t = -wallLen / 2; t < wallLen / 2; t += 0.2) {
     const wx = B.x + t * ndx;
     const wy = B.y + t * ndy;
     const hGeo = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(wx, wy, 0.02),
-      new THREE.Vector3(wx + 0.2 * sdx + 0.15 * ndx, wy + 0.2 * sdy + 0.15 * ndy, 0.02),
+      new THREE.Vector3(wx + 0.25 * sdx, wy + 0.25 * sdy, 0.02),
     ]);
-    sceneManager.objects.add(new THREE.Line(hGeo, new THREE.LineBasicMaterial({ color: isLight ? 0x9aa0b0 : 0x3a3a5a })));
+    sceneManager.objects.add(new THREE.Line(hGeo, new THREE.LineBasicMaterial({ color: hatchColor })));
   }
 
   // === Spring coils along the slope (from wall down to box) ===
-  // Box position: about 40% up the slope from A
   const restLengthSlope = 2.5;
   const displacementSlope = state.x * 2; // visual scale
   const boxW = 1.0;
   const boxH = 0.8;
 
-  // Wall anchor point (on the slope surface, just below B)
-  const wallAnchorT = 0.95; // very close to B
+  // Wall anchor point on the slope surface, just below B
+  const wallAnchorT = 0.95;
   const wallAnchorX = A.x + wallAnchorT * (B.x - A.x);
   const wallAnchorY = A.y + wallAnchorT * (B.y - A.y);
 
-  // Spring end (where box connects)
+  // Spring end (where box top-edge connects)
   const springEndX = wallAnchorX - sdx * (restLengthSlope + displacementSlope);
   const springEndY = wallAnchorY - sdy * (restLengthSlope + displacementSlope);
 
-  // Spring coils (zigzag along slope direction)
+  // Zigzag spring coils
   const coils = 8;
   const coilWidth = 0.3;
-  const springStartX = wallAnchorX;
-  const springStartY = wallAnchorY;
-  const springPoints = [new THREE.Vector3(springStartX, springStartY, 0.03)];
+  const springPoints = [new THREE.Vector3(wallAnchorX, wallAnchorY, 0.03)];
   const totalSpringLen = restLengthSlope + displacementSlope;
   const segLen = totalSpringLen / (coils * 2);
 
   for (let i = 0; i < coils * 2; i++) {
     const dist = segLen * (i + 1);
-    // Position along slope (going down from wall)
-    const px = springStartX - sdx * dist;
-    const py = springStartY - sdy * dist;
-    // Offset perpendicular to slope for zigzag
+    const px = wallAnchorX - sdx * dist;
+    const py = wallAnchorY - sdy * dist;
     const offset = (i % 2 === 0 ? coilWidth : -coilWidth);
     springPoints.push(new THREE.Vector3(px + ndx * offset, py + ndy * offset, 0.03));
   }
@@ -185,23 +173,23 @@ export function renderSpring(sceneManager, state, visibility) {
     new THREE.LineBasicMaterial({ color: 0x4fc3f7 })
   ));
 
-  // Label "k" above the spring
-  const springMidX = (springStartX + springEndX) / 2 + ndx * 0.8;
-  const springMidY = (springStartY + springEndY) / 2 + ndy * 0.8;
+  // Label "k" above the spring midpoint
+  const springMidX = (wallAnchorX + springEndX) / 2 + ndx * 0.8;
+  const springMidY = (wallAnchorY + springEndY) / 2 + ndy * 0.8;
   addTextLabel(sceneManager, 'k', springMidX, springMidY, '#4fc3f7');
 
-  // === Box on the slope ===
+  // === Box on the slope (same style as inclined plane, no "M" label) ===
   if (visibility.body) {
-    // Box bottom center on the slope at springEnd
+    // Box bottom-center on the slope, shifted down-slope from spring end by half width
     const bx = springEndX - sdx * (boxW / 2);
     const by = springEndY - sdy * (boxW / 2);
-
     const hw = boxW / 2;
+
     const corners = [
-      { x: bx - hw * sdx, y: by - hw * sdy },
-      { x: bx + hw * sdx, y: by + hw * sdy },
-      { x: bx + hw * sdx + boxH * ndx, y: by + hw * sdy + boxH * ndy },
-      { x: bx - hw * sdx + boxH * ndx, y: by - hw * sdy + boxH * ndy },
+      { x: bx - hw * sdx, y: by - hw * sdy },                            // bottom-left
+      { x: bx + hw * sdx, y: by + hw * sdy },                            // bottom-right
+      { x: bx + hw * sdx + boxH * ndx, y: by + hw * sdy + boxH * ndy }, // top-right
+      { x: bx - hw * sdx + boxH * ndx, y: by - hw * sdy + boxH * ndy }, // top-left
     ];
 
     const boxShape = new THREE.Shape();
@@ -212,54 +200,45 @@ export function renderSpring(sceneManager, state, visibility) {
     boxShape.closePath();
     const boxMesh = new THREE.Mesh(
       new THREE.ShapeGeometry(boxShape),
-      new THREE.MeshBasicMaterial({ color: 0xff7043, side: THREE.DoubleSide })
+      new THREE.MeshBasicMaterial({ color: 0xff8a65, side: THREE.DoubleSide })
     );
     boxMesh.position.z = 0.02;
     sceneManager.objects.add(boxMesh);
 
-    // Box outline
+    // Box outline (darker orange)
     const boxOutlinePts = [...corners, corners[0]].map(c => new THREE.Vector3(c.x, c.y, 0.04));
     sceneManager.objects.add(new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(boxOutlinePts),
-      new THREE.LineBasicMaterial({ color: 0xff8a65 })
+      new THREE.LineBasicMaterial({ color: 0xe64a19 })
     ));
 
-    // Label "M" on the box
+    // Center of box (for force arrow origins)
     const boxCx = bx + (boxH / 2) * ndx;
     const boxCy = by + (boxH / 2) * ndy;
-    addTextLabel(sceneManager, 'M', boxCx, boxCy, '#ffffff');
 
-    // Force arrows from box center
     if (visibility.forceArrows) {
-      const scale = 0.02;
-      const origin = { x: boxCx, y: boxCy };
+      const scale = 0.035;
+      const off = 0.25;
 
-      // P (weight, straight down)
-      const pArrow = createArrow(origin, { x: 0, y: -W * scale }, 0x4fc3f7, 'P');
+      // P (weight, straight down) — from center
+      const pOrigin = { x: boxCx, y: boxCy };
+      const pArrow = createArrow(pOrigin, { x: 0, y: -W * scale }, 0x4fc3f7, 'P');
       if (pArrow) sceneManager.objects.add(pArrow);
 
-      // N (normal, away from surface)
-      const nForce = createArrow(origin, { x: ndx * W * Math.cos(angleRad) * scale, y: ndy * W * Math.cos(angleRad) * scale }, 0x66bb6a, 'N');
+      // N (normal, away from surface) — offset slightly down-slope
+      const nOrigin = { x: boxCx - off * sdx, y: boxCy - off * sdy };
+      const nForce = createArrow(nOrigin, { x: ndx * W * Math.cos(angleRad) * scale, y: ndy * W * Math.cos(angleRad) * scale }, 0x66bb6a, 'N');
       if (nForce) sceneManager.objects.add(nForce);
 
-      // Fe (spring force, along slope toward wall = up the slope)
+      // Fe (spring force, along slope — restoring direction)
       if (calc.force > 0.01) {
-        const feDir = state.x > 0 ? 1 : -1; // restoring: if stretched (x>0), force goes up slope
-        const feArrow = createArrow(origin, { x: feDir * sdx * calc.force * scale, y: feDir * sdy * calc.force * scale }, 0xffa726, 'Fe');
+        const feDir = state.x > 0 ? 1 : -1;
+        const feOrigin = { x: boxCx + off * ndx, y: boxCy + off * ndy };
+        const feArrow = createArrow(feOrigin, { x: feDir * sdx * calc.force * scale, y: feDir * sdy * calc.force * scale }, 0xffa726, 'Fe');
         if (feArrow) sceneManager.objects.add(feArrow);
       }
     }
   }
-
-  // Axes indicator (x along slope, y perpendicular)
-  const axisOriginX = A.x + 0.3 * (B.x - A.x) + ndx * 2.5;
-  const axisOriginY = A.y + 0.3 * (B.y - A.y) + ndy * 2.5;
-  const axisLen = 1.0;
-  // x-axis along slope
-  addLine(sceneManager, axisOriginX, axisOriginY, axisOriginX - sdx * axisLen, axisOriginY - sdy * axisLen, 0xff4444);
-  addLine(sceneManager, axisOriginX, axisOriginY, axisOriginX + ndx * axisLen, axisOriginY + ndy * axisLen, 0x44ff44);
-  addTextLabel(sceneManager, 'x', axisOriginX - sdx * (axisLen + 0.3), axisOriginY - sdy * (axisLen + 0.3), '#ff4444');
-  addTextLabel(sceneManager, 'y', axisOriginX + ndx * (axisLen + 0.3), axisOriginY + ndy * (axisLen + 0.3), '#44ff44');
 }
 
 function addLine(sceneManager, x1, y1, x2, y2, color) {
