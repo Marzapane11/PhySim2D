@@ -178,10 +178,14 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
       const nA = createArrow(o, { x: tri.nd.x * calc.normal * s, y: tri.nd.y * calc.normal * s }, 0x66bb6a, 'N');
       if (nA) sceneManager.objects.add(nA);
 
+      // Px — parallel component, down the slope
+      const pxA = createArrow(o, { x: -tri.sd.x * calc.parallel * s, y: -tri.sd.y * calc.parallel * s }, 0xffa726, 'Px');
+      if (pxA) sceneManager.objects.add(pxA);
+
       // Fa — friction, up the slope
       if (calc.friction > 0.01) {
-        const fA = createArrow(o, { x: tri.sd.x * calc.friction * s, y: tri.sd.y * calc.friction * s }, 0xffa726, 'Fa');
-        if (fA) sceneManager.objects.add(fA);
+        const faA = createArrow(o, { x: tri.sd.x * calc.friction * s, y: tri.sd.y * calc.friction * s }, 0xab47bc, 'Fa');
+        if (faA) sceneManager.objects.add(faA);
       }
     }
   }

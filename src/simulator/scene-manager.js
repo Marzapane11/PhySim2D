@@ -112,17 +112,16 @@ export class SceneManager {
   }
 
   _handleResize() {
-    // Reset canvas CSS size so it doesn't force the container to stay large
-    this.renderer.domElement.style.width = '100%';
-    this.renderer.domElement.style.height = '100%';
+    // Temporarily shrink canvas so container can recalculate its own size
+    this.renderer.domElement.style.width = '1px';
+    this.renderer.domElement.style.height = '1px';
 
-    // Wait for layout to recalculate
     requestAnimationFrame(() => {
       const rect = this.container.getBoundingClientRect();
       const w = Math.round(rect.width);
       const h = Math.round(rect.height);
       if (w === 0 || h === 0) return;
-      this.renderer.setSize(w, h, false);
+      this.renderer.setSize(w, h, true);
       this._updateCamera();
     });
   }
