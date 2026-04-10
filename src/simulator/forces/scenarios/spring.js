@@ -60,39 +60,29 @@ export function renderSpring(sceneManager, state, visibility) {
   // Same triangle as inclined plane
   drawTriangle(sceneManager, tri, isLight, '\u03B8');
 
-  // === Wall at B ===
-  // The wall is the vertical side BC. Draw hatching along BC near B.
-  const hatchColor = isLight ? 0x8090a0 : 0x5a5a7a;
-  const wallSize = 0.8;
-  // Hatching along the vertical wall (BC direction) at point B
-  for (let i = 0; i < 5; i++) {
-    const t = i * 0.18;
-    // Start on the hypotenuse near B, go toward C (downward along vertical wall)
-    const startX = B.x + nd.x * (t - 0.1);
-    const startY = B.y + nd.y * (t - 0.1);
-    addLine(sceneManager, startX, startY, startX, startY - 0.3, hatchColor);
-  }
-
-  // === Spring coils ===
-  const restLen = 2.0;
+  // === Spring (smooth sinusoidal coils) from B down to the box ===
+  const restLen = 2.5;
   const displacement = state.x * 1.5;
   const totalLen = restLen + displacement;
 
-  const springStartT = 0.92;
-  const sx = A.x + springStartT * (B.x - A.x);
-  const sy = A.y + springStartT * (B.y - A.y);
+  // Spring starts at B (on the hypotenuse)
+  const sx = B.x;
+  const sy = B.y;
+  // Spring ends further down the slope
   const endX = sx - sd.x * totalLen;
   const endY = sy - sd.y * totalLen;
 
-  const coils = 10;
-  const coilW = 0.25;
+  // Smooth sinusoidal coils (many points for a round look)
+  const coils = 8;
+  const coilW = 0.2;
+  const numPoints = coils * 20;
   const points = [new THREE.Vector3(sx, sy, 0.03)];
-  for (let i = 0; i < coils * 2; i++) {
-    const frac = (i + 1) / (coils * 2 + 1);
+  for (let i = 1; i < numPoints; i++) {
+    const frac = i / numPoints;
     const px = sx + frac * (endX - sx);
     const py = sy + frac * (endY - sy);
-    const offset = (i % 2 === 0 ? coilW : -coilW);
-    points.push(new THREE.Vector3(px + nd.x * offset, py + nd.y * offset, 0.03));
+    const wave = Math.sin(frac * coils * Math.PI * 2) * coilW;
+    points.push(new THREE.Vector3(px + nd.x * wave, py + nd.y * wave, 0.03));
   }
   points.push(new THREE.Vector3(endX, endY, 0.03));
 
@@ -101,8 +91,8 @@ export function renderSpring(sceneManager, state, visibility) {
     new THREE.LineBasicMaterial({ color: 0x4fc3f7 })
   ));
 
-  // "k" label
-  addTextLabel(sceneManager, 'k', (sx + endX) / 2 + nd.x * 0.7, (sy + endY) / 2 + nd.y * 0.7, '#4fc3f7');
+  // "k" label above spring
+  addTextLabel(sceneManager, 'k', (sx + endX) / 2 + nd.x * 0.6, (sy + endY) / 2 + nd.y * 0.6, '#4fc3f7');
 
   // === Box ===
   if (visibility.body) {
