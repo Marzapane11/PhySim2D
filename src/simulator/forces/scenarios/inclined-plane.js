@@ -58,28 +58,27 @@ export function getInclinedPlaneConfig() {
   return { id: 'inclined-plane', label: 'Piano inclinato', defaults: { mass: 10, angleDeg: 30, frictionCoeff: 0.3 } };
 }
 
-export function renderInclinedPlane(sceneManager, state, visibility) {
-  const isLight = getState().theme === 'light';
-  const calc = computeInclinedPlane(state);
-  const angleRad = (state.angleDeg * Math.PI) / 180;
-
+// Shared helpers used by both inclined-plane and spring
+export function calcTriangle(angleDeg) {
+  const angleRad = (angleDeg * Math.PI) / 180;
   const base = 8;
   const height = base * Math.tan(angleRad);
-
-  // Triangle vertices: C (bottom-left), A (bottom-right), B (top-left)
   const C = { x: -base / 2, y: -height / 2 };
   const A = { x: C.x + base, y: C.y };
   const B = { x: C.x, y: C.y + height };
 
-  // Slope direction unit vector (A → B)
   const slopeLen = Math.sqrt((B.x - A.x) ** 2 + (B.y - A.y) ** 2);
-  const sdx = (B.x - A.x) / slopeLen;
-  const sdy = (B.y - A.y) / slopeLen;
-  // Normal outward (away from triangle interior) — rotate slope 90° CW
-  const ndx = sdy;
-  const ndy = -sdx;
+  const sd = { x: (B.x - A.x) / slopeLen, y: (B.y - A.y) / slopeLen };
+  // Normal outward: rotate slope 90° CW → (sd.y, -sd.x)
+  const nd = { x: sd.y, y: -sd.x };
 
-  // === Triangle fill ===
+  return { A, B, C, sd, nd, angleRad, base, height };
+}
+
+export function drawTriangle(sceneManager, tri, isLight, angleLabel) {
+  const { A, B, C, angleRad } = tri;
+
+  // Fill
   const shape = new THREE.Shape();
   shape.moveTo(C.x, C.y);
   shape.lineTo(A.x, A.y);
@@ -90,126 +89,114 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
     new THREE.MeshBasicMaterial({ color: isLight ? 0xc8d4e0 : 0x1a2a4c, side: THREE.DoubleSide })
   ));
 
-  // === Triangle outline ===
-  addLine(sceneManager, A.x, A.y, B.x, B.y, 0xff7043); // Hypotenuse (orange)
-  addLine(sceneManager, C.x, C.y, B.x, B.y, 0x66bb6a); // Height (green)
-  addLine(sceneManager, C.x, C.y, A.x, A.y, 0x4fc3f7); // Base (cyan)
+  // Outline
+  addLine(sceneManager, A.x, A.y, B.x, B.y, 0xff7043);
+  addLine(sceneManager, C.x, C.y, B.x, B.y, 0x66bb6a);
+  addLine(sceneManager, C.x, C.y, A.x, A.y, 0x4fc3f7);
 
-  // === Right angle marker at C ===
+  // Right angle at C
   const ms = 0.35;
-  const raPoints = [
-    new THREE.Vector3(C.x + ms, C.y, 0.02),
-    new THREE.Vector3(C.x + ms, C.y + ms, 0.02),
-    new THREE.Vector3(C.x, C.y + ms, 0.02),
-  ];
   sceneManager.objects.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints(raPoints),
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(C.x + ms, C.y, 0.02),
+      new THREE.Vector3(C.x + ms, C.y + ms, 0.02),
+      new THREE.Vector3(C.x, C.y + ms, 0.02),
+    ]),
     new THREE.LineBasicMaterial({ color: 0x66bb6a })
   ));
 
-  // === Angle alpha arc at A ===
-  const arcR = 1.0;
-  const arcCurve = new THREE.EllipseCurve(A.x, A.y, arcR, arcR, Math.PI, Math.PI - angleRad, true);
-  const arcPts = arcCurve.getPoints(24).map(p => new THREE.Vector3(p.x, p.y, 0.02));
+  // Angle arc at A
+  const arcCurve = new THREE.EllipseCurve(A.x, A.y, 1.0, 1.0, Math.PI, Math.PI - angleRad, true);
   sceneManager.objects.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints(arcPts),
+    new THREE.BufferGeometry().setFromPoints(arcCurve.getPoints(24).map(p => new THREE.Vector3(p.x, p.y, 0.02))),
     new THREE.LineBasicMaterial({ color: 0x66bb6a })
   ));
 
-  // === Labels ===
-  addTextLabel(sceneManager, 'A', A.x + 0.4, A.y - 0.5, '#4fc3f7');
-  addTextLabel(sceneManager, 'B', B.x - 0.5, B.y + 0.4, '#4fc3f7');
+  // Labels
+  addTextLabel(sceneManager, 'A', A.x + 0.5, A.y - 0.5, '#4fc3f7');
+  addTextLabel(sceneManager, 'B', B.x - 0.5, B.y + 0.5, '#4fc3f7');
   addTextLabel(sceneManager, 'C', C.x - 0.5, C.y - 0.5, '#4fc3f7');
-  addTextLabel(sceneManager, '\u03B1', A.x - 1.5, A.y + 0.3, '#66bb6a');
+  addTextLabel(sceneManager, angleLabel || '\u03B1', A.x - 1.5, A.y + 0.4, '#66bb6a');
   addTextLabel(sceneManager, 'h', C.x - 0.7, (C.y + B.y) / 2, '#66bb6a');
   addTextLabel(sceneManager, 'd', (C.x + A.x) / 2, C.y - 0.5, '#4fc3f7');
-  addTextLabel(sceneManager, 'l', (A.x + B.x) / 2 + 0.6, (A.y + B.y) / 2 + 0.4, '#ff7043');
+  addTextLabel(sceneManager, 'l', (A.x + B.x) / 2 + 0.7, (A.y + B.y) / 2 + 0.5, '#ff7043');
+}
 
-  // === Body on the incline ===
+export function drawBox(sceneManager, bx, by, sd, nd, boxW, boxH) {
+  const hw = boxW / 2;
+  const corners = [
+    { x: bx - hw * sd.x, y: by - hw * sd.y },
+    { x: bx + hw * sd.x, y: by + hw * sd.y },
+    { x: bx + hw * sd.x + boxH * nd.x, y: by + hw * sd.y + boxH * nd.y },
+    { x: bx - hw * sd.x + boxH * nd.x, y: by - hw * sd.y + boxH * nd.y },
+  ];
+
+  const boxShape = new THREE.Shape();
+  boxShape.moveTo(corners[0].x, corners[0].y);
+  corners.slice(1).forEach(c => boxShape.lineTo(c.x, c.y));
+  boxShape.closePath();
+
+  const mesh = new THREE.Mesh(
+    new THREE.ShapeGeometry(boxShape),
+    new THREE.MeshBasicMaterial({ color: 0xff8a65, side: THREE.DoubleSide })
+  );
+  mesh.position.z = 0.02;
+  sceneManager.objects.add(mesh);
+
+  sceneManager.objects.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([...corners, corners[0]].map(c => new THREE.Vector3(c.x, c.y, 0.04))),
+    new THREE.LineBasicMaterial({ color: 0xe64a19 })
+  ));
+
+  // Return box center
+  return { x: bx + (boxH / 2) * nd.x, y: by + (boxH / 2) * nd.y };
+}
+
+export function renderInclinedPlane(sceneManager, state, visibility) {
+  const isLight = getState().theme === 'light';
+  const calc = computeInclinedPlane(state);
+  const tri = calcTriangle(state.angleDeg);
+
+  drawTriangle(sceneManager, tri, isLight, '\u03B1');
+
   if (visibility.body) {
+    // Box at 40% up the slope from A
     const t = 0.4;
-    const bx = A.x + t * (B.x - A.x); // bottom-center on slope
-    const by = A.y + t * (B.y - A.y);
-    const boxW = 1.0;
-    const boxH = 0.8;
-    const hw = boxW / 2;
-
-    // Box corners: bottom edge sits flat on the slope surface
-    const corners = [
-      { x: bx - hw * sdx, y: by - hw * sdy },                            // bottom-left
-      { x: bx + hw * sdx, y: by + hw * sdy },                            // bottom-right
-      { x: bx + hw * sdx + boxH * ndx, y: by + hw * sdy + boxH * ndy }, // top-right
-      { x: bx - hw * sdx + boxH * ndx, y: by - hw * sdy + boxH * ndy }, // top-left
-    ];
-
-    const boxShape = new THREE.Shape();
-    boxShape.moveTo(corners[0].x, corners[0].y);
-    boxShape.lineTo(corners[1].x, corners[1].y);
-    boxShape.lineTo(corners[2].x, corners[2].y);
-    boxShape.lineTo(corners[3].x, corners[3].y);
-    boxShape.closePath();
-    const boxMesh = new THREE.Mesh(
-      new THREE.ShapeGeometry(boxShape),
-      new THREE.MeshBasicMaterial({ color: 0xff8a65, side: THREE.DoubleSide })
-    );
-    boxMesh.position.z = 0.02;
-    sceneManager.objects.add(boxMesh);
-
-    // Box outline (darker orange)
-    const boxOutlinePts = [...corners, corners[0]].map(c => new THREE.Vector3(c.x, c.y, 0.04));
-    sceneManager.objects.add(new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints(boxOutlinePts),
-      new THREE.LineBasicMaterial({ color: 0xe64a19 })
-    ));
-
-    // Center of box (for force arrow origins)
-    const cx = bx + (boxH / 2) * ndx;
-    const cy = by + (boxH / 2) * ndy;
+    const bx = tri.A.x + t * (tri.B.x - tri.A.x);
+    const by = tri.A.y + t * (tri.B.y - tri.A.y);
+    const center = drawBox(sceneManager, bx, by, tri.sd, tri.nd, 1.2, 0.9);
 
     if (visibility.forceArrows) {
-      const scale = 0.035;
-      // Slight offsets to avoid arrow overlap
-      const off = 0.25;
+      const s = 0.025;
+      const o = center;
 
-      // P (weight, straight down) — from center
-      const pOrigin = { x: cx, y: cy };
-      const pArrow = createArrow(pOrigin, { x: 0, y: -calc.weight * scale }, 0x4fc3f7, 'P');
-      if (pArrow) sceneManager.objects.add(pArrow);
+      // P — weight, straight down
+      const pA = createArrow(o, { x: 0, y: -calc.weight * s }, 0x4fc3f7, 'P');
+      if (pA) sceneManager.objects.add(pA);
 
-      // N (normal, away from surface) — offset slightly down-slope
-      const nOrigin = { x: cx - off * sdx, y: cy - off * sdy };
-      const nForce = createArrow(nOrigin, { x: ndx * calc.normal * scale, y: ndy * calc.normal * scale }, 0x66bb6a, 'N');
-      if (nForce) sceneManager.objects.add(nForce);
+      // N — normal, away from surface
+      const nA = createArrow(o, { x: tri.nd.x * calc.normal * s, y: tri.nd.y * calc.normal * s }, 0x66bb6a, 'N');
+      if (nA) sceneManager.objects.add(nA);
 
-      if (visibility.components) {
-        // Px (parallel, down the slope) — offset along normal
-        const pxOrigin = { x: cx + off * ndx, y: cy + off * ndy };
-        const pxArrow = createArrow(pxOrigin, { x: -sdx * calc.parallel * scale, y: -sdy * calc.parallel * scale }, 0xffa726, 'Px');
-        if (pxArrow) sceneManager.objects.add(pxArrow);
-
-        // Py (perpendicular, into surface) — offset down-slope
-        const pyOrigin = { x: cx + off * sdx, y: cy + off * sdy };
-        const pyArrow = createArrow(pyOrigin, { x: -ndx * calc.perpendicular * scale, y: -ndy * calc.perpendicular * scale }, 0x26c6da, 'Py');
-        if (pyArrow) sceneManager.objects.add(pyArrow);
-      }
-
-      // Fa (friction, up the slope) — from center
+      // Fa — friction, up the slope
       if (calc.friction > 0.01) {
-        const faArrow = createArrow(pOrigin, { x: sdx * calc.friction * scale, y: sdy * calc.friction * scale }, 0xab47bc, 'Fa');
-        if (faArrow) sceneManager.objects.add(faArrow);
+        const fA = createArrow(o, { x: tri.sd.x * calc.friction * s, y: tri.sd.y * calc.friction * s }, 0xffa726, 'Fa');
+        if (fA) sceneManager.objects.add(fA);
       }
     }
   }
 }
 
-function addLine(sceneManager, x1, y1, x2, y2, color) {
-  const geo = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(x1, y1, 0.01), new THREE.Vector3(x2, y2, 0.01)
-  ]);
-  sceneManager.objects.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color })));
+export function addLine(sceneManager, x1, y1, x2, y2, color) {
+  sceneManager.objects.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(x1, y1, 0.01), new THREE.Vector3(x2, y2, 0.01)
+    ]),
+    new THREE.LineBasicMaterial({ color })
+  ));
 }
 
-function addTextLabel(sceneManager, text, x, y, color) {
+export function addTextLabel(sceneManager, text, x, y, color) {
   const canvas = document.createElement('canvas');
   canvas.width = 64; canvas.height = 64;
   const ctx = canvas.getContext('2d');
@@ -220,7 +207,7 @@ function addTextLabel(sceneManager, text, x, y, color) {
   ctx.fillText(text, 32, 32);
   const texture = new THREE.CanvasTexture(canvas);
   const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture }));
-  sprite.position.set(x, y, 0.02);
-  sprite.scale.set(0.7, 0.7, 1);
+  sprite.position.set(x, y, 0.05);
+  sprite.scale.set(0.6, 0.6, 1);
   sceneManager.objects.add(sprite);
 }
