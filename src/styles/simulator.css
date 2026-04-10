@@ -16,6 +16,14 @@
   flex: 1;
   position: relative;
   background: var(--bg-primary);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.canvas-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .fullscreen-btn {
