@@ -119,7 +119,11 @@ export function drawTriangle(sceneManager, tri, isLight, angleLabel) {
   addTextLabel(sceneManager, angleLabel || '\u03B1', A.x - 1.5, A.y + 0.4, '#66bb6a');
   addTextLabel(sceneManager, 'h', C.x - 0.7, (C.y + B.y) / 2, '#66bb6a');
   addTextLabel(sceneManager, 'd', (C.x + A.x) / 2, C.y - 0.5, '#4fc3f7');
-  addTextLabel(sceneManager, 'L', (A.x + B.x) / 2 + 1.2, (A.y + B.y) / 2 + 0.8, '#ff7043');
+  // L label on the hypotenuse, at 20% from A (far from the box which is at 40%)
+  const lT = 0.15;
+  const lx = A.x + lT * (B.x - A.x) + 0.5;
+  const ly = A.y + lT * (B.y - A.y) + 0.5;
+  addTextLabel(sceneManager, 'L', lx, ly, '#ff7043');
 }
 
 export function drawBox(sceneManager, bx, by, sd, nd, boxW, boxH) {
