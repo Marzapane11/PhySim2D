@@ -34,7 +34,7 @@ export function renderSettingsPage(container) {
             <li>Piano inclinato, molla, carrucola</li>
             <li>Parametri dinamici con formule inverse</li>
             <li>Sezione teoria con formule ed esempi</li>
-            <li>Tema scuro e chiaro</li>
+            <li>Personalizzazione interfaccia</li>
           </ul>
         </div>
       </div>
