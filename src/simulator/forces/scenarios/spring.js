@@ -163,7 +163,8 @@ export function renderSpring(sceneManager, state, visibility) {
       // Fa — friction, up the slope (opposes motion)
       const faVal = state.mass ? state.mass * 9.81 * Math.cos(tri.angleRad) * (state.frictionCoeff || 0) : 0;
       if (faVal > 0.01) {
-        const faA = createArrow(center, { x: sd.x * faVal * s, y: sd.y * faVal * s }, 0xffa726, 'Fa');
+        const faScale = s * 1.3;
+        const faA = createArrow(center, { x: sd.x * faVal * faScale, y: sd.y * faVal * faScale }, 0xffff00, 'Fa');
         if (faA) sceneManager.objects.add(faA);
       }
 
