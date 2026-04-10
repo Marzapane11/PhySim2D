@@ -60,24 +60,17 @@ export function renderSpring(sceneManager, state, visibility) {
   // Same triangle as inclined plane
   drawTriangle(sceneManager, tri, isLight, '\u03B8');
 
-  // === Wall at B (top of slope) ===
-  // Wall is perpendicular to the slope at point B
-  // Hatching goes INTO the wall (opposite to slope direction, i.e. behind B)
-  const wallLen = 0.8;
+  // === Wall at B ===
+  // The wall is the vertical side BC. Draw hatching along BC near B.
   const hatchColor = isLight ? 0x8090a0 : 0x5a5a7a;
-  // Wall line perpendicular to slope
-  addLine(sceneManager,
-    B.x - wallLen / 2 * nd.x, B.y - wallLen / 2 * nd.y,
-    B.x + wallLen / 2 * nd.x, B.y + wallLen / 2 * nd.y,
-    hatchColor
-  );
-  // Hatching lines behind the wall (going away from slope, into the wall)
-  for (let i = -3; i <= 3; i++) {
-    const t = i * 0.12;
-    const wx = B.x + t * nd.x;
-    const wy = B.y + t * nd.y;
-    // Go in OPPOSITE direction of slope (behind B, into the triangle)
-    addLine(sceneManager, wx, wy, wx - 0.2 * sd.x, wy - 0.2 * sd.y, hatchColor);
+  const wallSize = 0.8;
+  // Hatching along the vertical wall (BC direction) at point B
+  for (let i = 0; i < 5; i++) {
+    const t = i * 0.18;
+    // Start on the hypotenuse near B, go toward C (downward along vertical wall)
+    const startX = B.x + nd.x * (t - 0.1);
+    const startY = B.y + nd.y * (t - 0.1);
+    addLine(sceneManager, startX, startY, startX, startY - 0.3, hatchColor);
   }
 
   // === Spring coils ===

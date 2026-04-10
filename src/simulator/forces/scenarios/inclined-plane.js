@@ -123,33 +123,28 @@ export function drawTriangle(sceneManager, tri, isLight, angleLabel) {
 }
 
 export function drawBox(sceneManager, bx, by, sd, nd, boxW, boxH) {
-  const hw = boxW / 2;
-  const corners = [
-    { x: bx - hw * sd.x, y: by - hw * sd.y },
-    { x: bx + hw * sd.x, y: by + hw * sd.y },
-    { x: bx + hw * sd.x + boxH * nd.x, y: by + hw * sd.y + boxH * nd.y },
-    { x: bx - hw * sd.x + boxH * nd.x, y: by - hw * sd.y + boxH * nd.y },
-  ];
+  // Calculate the slope angle from the direction vector
+  const slopeAngle = Math.atan2(sd.y, sd.x);
 
-  const boxShape = new THREE.Shape();
-  boxShape.moveTo(corners[0].x, corners[0].y);
-  corners.slice(1).forEach(c => boxShape.lineTo(c.x, c.y));
-  boxShape.closePath();
+  // Center of the box: bottom-center is at (bx,by), offset by half height along normal
+  const cx = bx + (boxH / 2) * nd.x;
+  const cy = by + (boxH / 2) * nd.y;
 
-  const mesh = new THREE.Mesh(
-    new THREE.ShapeGeometry(boxShape),
-    new THREE.MeshBasicMaterial({ color: 0xff8a65, side: THREE.DoubleSide })
-  );
-  mesh.position.z = 0.02;
+  // Box fill — PlaneGeometry rotated by slope angle
+  const geo = new THREE.PlaneGeometry(boxW, boxH);
+  const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xff8a65, side: THREE.DoubleSide }));
+  mesh.position.set(cx, cy, 0.02);
+  mesh.rotation.z = slopeAngle;
   sceneManager.objects.add(mesh);
 
-  sceneManager.objects.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints([...corners, corners[0]].map(c => new THREE.Vector3(c.x, c.y, 0.04))),
-    new THREE.LineBasicMaterial({ color: 0xe64a19 })
-  ));
+  // Box outline — EdgesGeometry for clean lines
+  const edges = new THREE.EdgesGeometry(geo);
+  const outline = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xe64a19 }));
+  outline.position.set(cx, cy, 0.04);
+  outline.rotation.z = slopeAngle;
+  sceneManager.objects.add(outline);
 
-  // Return box center
-  return { x: bx + (boxH / 2) * nd.x, y: by + (boxH / 2) * nd.y };
+  return { x: cx, y: cy };
 }
 
 export function renderInclinedPlane(sceneManager, state, visibility) {
