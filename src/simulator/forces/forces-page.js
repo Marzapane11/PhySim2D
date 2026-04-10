@@ -85,7 +85,7 @@ export function renderForcesPage(container) {
       case 'spring': {
         scenarioState.solver.solve();
         const spv = scenarioState.solver.getValues();
-        renderSpring(sceneManager, { mass: spv.m, angleDeg: spv.alpha, k: spv.k, x: spv.dx }, vis);
+        renderSpring(sceneManager, { mass: spv.m, angleDeg: spv.alpha, k: spv.k, x: spv.dx, frictionCoeff: spv.mu }, vis);
         break;
       }
       case 'pulley': {

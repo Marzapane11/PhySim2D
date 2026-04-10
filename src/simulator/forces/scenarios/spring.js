@@ -12,17 +12,19 @@ export function createSpringSolver() {
     variables: [
       { id: 'm', label: 'Massa (m)', unit: 'kg', defaultValue: 5, mode: 'input' },
       { id: 'alpha', label: 'Angolo (\u03B8)', unit: '\u00B0', defaultValue: 30, mode: 'input' },
+      { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.2, mode: 'input' },
       { id: 'k', label: 'Costante (k)', unit: 'N/m', defaultValue: 100, mode: 'input' },
       { id: 'dx', label: 'Deformazione (\u0394x)', unit: 'm', defaultValue: 0.5, mode: 'input' },
       { id: 'P', label: 'Peso (<span class="vec-arrow">P</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Px', label: 'Px (lungo piano)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'N', label: 'Normale (<span class="vec-arrow">N</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Fa', label: 'Attrito (<span class="vec-arrow">F</span>a)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Fe', label: '<span class="vec-arrow">F</span>e (elastica)', unit: 'N', defaultValue: 0, mode: 'output' },
     ],
     solve(vals, inputIds) {
       const G = 9.81;
       const has = (id) => inputIds.includes(id);
-      let { m, alpha, k, dx, P, Px, N, Fe } = vals;
+      let { m, alpha, mu, k, dx, P, Px, N, Fa, Fe } = vals;
       const rad = (alpha * Math.PI) / 180;
 
       if (has('m')) P = m * G;
@@ -33,6 +35,12 @@ export function createSpringSolver() {
         N = P * Math.cos(rad);
       }
 
+      if (has('mu') && N > 0) {
+        Fa = mu * N;
+      } else if (has('Fa') && N > 0) {
+        mu = Fa / N;
+      }
+
       if (has('k') && has('dx')) {
         Fe = Math.abs(k * dx);
       } else if (has('Fe') && has('k') && k > 0) {
@@ -41,13 +49,13 @@ export function createSpringSolver() {
         k = Fe / Math.abs(dx);
       }
 
-      return { m, alpha, k, dx, P, Px, N, Fe };
+      return { m, alpha, mu, k, dx, P, Px, N, Fa, Fe };
     }
   });
 }
 
 export function getSpringConfig() {
-  return { id: 'spring', label: 'Molla (Hooke)', defaults: { k: 100, x: 0.5, mass: 5, angleDeg: 30 } };
+  return { id: 'spring', label: 'Molla (Hooke)', defaults: { k: 100, x: 0.5, mass: 5, angleDeg: 30, frictionCoeff: 0.2 } };
 }
 
 export function renderSpring(sceneManager, state, visibility) {
@@ -151,6 +159,13 @@ export function renderSpring(sceneManager, state, visibility) {
       const nVal = W * Math.cos(tri.angleRad);
       const nA = createArrow(center, { x: nd.x * nVal * s, y: nd.y * nVal * s }, 0x66bb6a, 'N');
       if (nA) sceneManager.objects.add(nA);
+
+      // Fa — friction, up the slope (opposes motion)
+      const faVal = state.mass ? state.mass * 9.81 * Math.cos(tri.angleRad) * (state.frictionCoeff || 0) : 0;
+      if (faVal > 0.01) {
+        const faA = createArrow(center, { x: sd.x * faVal * s, y: sd.y * faVal * s }, 0xffa726, 'Fa');
+        if (faA) sceneManager.objects.add(faA);
+      }
 
       // Fe — elastic force
       if (calc.force > 0.01) {
