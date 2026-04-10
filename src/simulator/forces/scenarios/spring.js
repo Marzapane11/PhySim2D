@@ -155,7 +155,7 @@ export function renderSpring(sceneManager, state, visibility) {
       // Fe — elastic force
       if (calc.force > 0.01) {
         const dir = state.x > 0 ? 1 : -1;
-        const fA = createArrow(center, { x: dir * sd.x * calc.force * s, y: dir * sd.y * calc.force * s }, 0xef5350, 'Fe');
+        const fA = createArrow(center, { x: dir * sd.x * calc.force * s, y: dir * sd.y * calc.force * s }, 0xaa00ff, 'Fe');
         if (fA) sceneManager.objects.add(fA);
       }
     }
