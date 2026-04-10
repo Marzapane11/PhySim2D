@@ -123,7 +123,7 @@ export function renderSpring(sceneManager, state, visibility) {
 
   sceneManager.objects.add(new THREE.Line(
     new THREE.BufferGeometry().setFromPoints(points),
-    new THREE.LineBasicMaterial({ color: 0x4fc3f7 })
+    new THREE.LineBasicMaterial({ color: 0x4fc3f7, transparent: true, opacity: 0.4 })
   ));
 
   // "k" label above spring
