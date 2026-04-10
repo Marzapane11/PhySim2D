@@ -123,21 +123,36 @@ export function drawTriangle(sceneManager, tri, isLight, angleLabel) {
 }
 
 export function drawBox(sceneManager, bx, by, sd, nd, boxW, boxH) {
-  // Calculate the slope angle from the direction vector
-  const slopeAngle = Math.atan2(sd.y, sd.x);
+  const hw = boxW / 2;
 
-  // Center of the box: bottom-center is at (bx,by), offset by half height along normal
-  const cx = bx + (boxH / 2) * nd.x;
-  const cy = by + (boxH / 2) * nd.y;
+  // 4 corners computed from slope and normal directions
+  const c0x = bx - hw * sd.x;
+  const c0y = by - hw * sd.y;
+  const c1x = bx + hw * sd.x;
+  const c1y = by + hw * sd.y;
+  const c2x = c1x + boxH * nd.x;
+  const c2y = c1y + boxH * nd.y;
+  const c3x = c0x + boxH * nd.x;
+  const c3y = c0y + boxH * nd.y;
 
-  // Box fill — PlaneGeometry rotated by slope angle
-  const geo = new THREE.PlaneGeometry(boxW, boxH);
-  const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xff8a65, side: THREE.DoubleSide }));
-  mesh.position.set(cx, cy, 0.02);
-  mesh.rotation.z = slopeAngle;
+  // Fill using ShapeGeometry (single flat polygon, no edge artifacts)
+  const shape = new THREE.Shape();
+  shape.moveTo(c0x, c0y);
+  shape.lineTo(c1x, c1y);
+  shape.lineTo(c2x, c2y);
+  shape.lineTo(c3x, c3y);
+  shape.closePath();
+
+  const mesh = new THREE.Mesh(
+    new THREE.ShapeGeometry(shape),
+    new THREE.MeshBasicMaterial({ color: 0xff8a65, side: THREE.DoubleSide })
+  );
+  mesh.position.z = 0.03;
   sceneManager.objects.add(mesh);
 
-
+  // Center of box
+  const cx = bx + (boxH / 2) * nd.x;
+  const cy = by + (boxH / 2) * nd.y;
   return { x: cx, y: cy };
 }
 

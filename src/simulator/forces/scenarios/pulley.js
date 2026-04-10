@@ -97,18 +97,6 @@ export function renderPulley(sceneManager, state, visibility) {
     );
     box1Mesh.position.z = 0.01;
     sceneManager.objects.add(box1Mesh);
-    // Box 1 outline
-    const box1Outline = [
-      new THREE.Vector3(-0.65 - box1W / 2, -1, 0.02),
-      new THREE.Vector3(-0.65 + box1W / 2, -1, 0.02),
-      new THREE.Vector3(-0.65 + box1W / 2, -1 + box1H, 0.02),
-      new THREE.Vector3(-0.65 - box1W / 2, -1 + box1H, 0.02),
-      new THREE.Vector3(-0.65 - box1W / 2, -1, 0.02),
-    ];
-    sceneManager.objects.add(new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints(box1Outline),
-      new THREE.LineBasicMaterial({ color: 0xff8a65 })
-    ));
 
     // Mass 2 (2D ShapeGeometry)
     const box2W = 0.8;
@@ -125,18 +113,6 @@ export function renderPulley(sceneManager, state, visibility) {
     );
     box2Mesh.position.z = 0.01;
     sceneManager.objects.add(box2Mesh);
-    // Box 2 outline
-    const box2Outline = [
-      new THREE.Vector3(0.65 - box2W / 2, 0.2, 0.02),
-      new THREE.Vector3(0.65 + box2W / 2, 0.2, 0.02),
-      new THREE.Vector3(0.65 + box2W / 2, 0.2 + box2H, 0.02),
-      new THREE.Vector3(0.65 - box2W / 2, 0.2 + box2H, 0.02),
-      new THREE.Vector3(0.65 - box2W / 2, 0.2, 0.02),
-    ];
-    sceneManager.objects.add(new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints(box2Outline),
-      new THREE.LineBasicMaterial({ color: 0x81c784 })
-    ));
 
     if (visibility.forceArrows) {
       const box1CenterY = -1 + box1H / 2;

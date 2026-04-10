@@ -47,18 +47,7 @@ export function renderFriction(sceneManager, state, visibility) {
       new THREE.ShapeGeometry(bShape),
       new THREE.MeshBasicMaterial({ color: 0xff7043, side: THREE.DoubleSide })
     ));
-    // Box outline
-    const boxOutline = [
-      new THREE.Vector3(boxLeft, boxBottom, 0.02),
-      new THREE.Vector3(boxLeft + boxW, boxBottom, 0.02),
-      new THREE.Vector3(boxLeft + boxW, boxBottom + boxH, 0.02),
-      new THREE.Vector3(boxLeft, boxBottom + boxH, 0.02),
-      new THREE.Vector3(boxLeft, boxBottom, 0.02),
-    ];
-    sceneManager.objects.add(new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints(boxOutline),
-      new THREE.LineBasicMaterial({ color: 0xff8a65 })
-    ));
+    // No outline needed
   }
 
   // Force arrows from center of box
