@@ -81,22 +81,23 @@ export function renderForcesPage(container) {
     const sdy = Math.sin(rad);
 
     let fcSlope = 0;
+    let fcNormal = 0;
+    const ndx = sdy;
+    const ndy = -sdx;
     scenarioState.customForces.forEach((f) => {
-      // Custom angle is relative to Px (down-slope). World angle = customAngle - alpha
       const fr = ((f.angleDeg - alpha) * Math.PI) / 180;
-      fcSlope += f.magnitude * Math.cos(fr) * sdx + f.magnitude * Math.sin(fr) * sdy;
+      const fx = f.magnitude * Math.cos(fr);
+      const fy = f.magnitude * Math.sin(fr);
+      fcSlope += fx * sdx + fy * sdy;
+      fcNormal += fx * ndx + fy * ndy;
     });
 
     const Px = m * G * Math.sin(rad);
-    const N = m * G * Math.cos(rad);
-    // Net down-slope force without spring
-    const netNoSpring = Px - fcSlope;
-    // Friction opposes motion tendency; clamped to max static
-    const FaMax = mu * N;
-    const Fa = Math.sign(netNoSpring) * Math.min(Math.abs(netNoSpring), FaMax);
-    // Spring must balance the rest
-    const Fe_eq = netNoSpring - Fa;
-    const dx_eq = k > 0 ? Fe_eq / k : 0;
+    const N = Math.max(0, m * G * Math.cos(rad) - fcNormal);
+    // Spring balances net down-slope force (friction helps but is unknown in static case)
+    // Use zero-friction equilibrium as the canonical deformation
+    const netNoSpringNoFa = Px - fcSlope;
+    const dx_eq = k > 0 ? netNoSpringNoFa / k : 0;
     scenarioState.solver.setValue('dx', dx_eq);
   }
 
@@ -143,40 +144,56 @@ export function renderForcesPage(container) {
         if (activeScenario === 'inclined-plane') {
           const alphaVal = solverVals.alpha || 0;
           const rad = (alphaVal * Math.PI) / 180;
-          // Slope direction (from A up to B): (-cos α, sin α)
+          // Up-slope direction: (-cos α, sin α)
           const sdx = -Math.cos(rad);
           const sdy = Math.sin(rad);
-          // Project custom forces along slope direction (positive = up slope)
-          let fcSlope = 0;
-          let fcNormal = 0;
-          const ndx = sdy;
+          const ndx = sdy;   // outward normal
           const ndy = -sdx;
+
+          let fcSlope = 0;   // up-slope positive
+          let fcNormal = 0;  // outward positive (lifts off surface)
           scenarioState.customForces.forEach((f) => {
-            // Angle is relative to Px (down slope). World angle = customAngle - alpha
             const fr = ((f.angleDeg - alphaVal) * Math.PI) / 180;
             const fx = f.magnitude * Math.cos(fr);
             const fy = f.magnitude * Math.sin(fr);
-            fcSlope += fx * sdx + fy * sdy; // up slope positive
-            fcNormal += fx * ndx + fy * ndy; // away from surface positive
+            fcSlope += fx * sdx + fy * sdy;
+            fcNormal += fx * ndx + fy * ndy;
           });
-          // Fris (down slope) with custom forces: Px - Fa - fcSlope
-          // fcSlope is up-slope contribution, so subtract it from down-slope Fris
-          const Px = solverVals.Px || 0;
-          const Fa = solverVals.Fa || 0;
-          const FrisTotal = Px - Fa - fcSlope;
+
+          const P = solverVals.P || 0;
+          const mu = solverVals.mu || 0;
+          const Px = P * Math.sin(rad);                // down-slope magnitude
+          // Total normal: P·cos α minus any outward-pushing custom force component
+          const N_tot = Math.max(0, P * Math.cos(rad) - fcNormal);
+          const FaMax = mu * N_tot;
+
+          // Net down-slope force WITHOUT friction, including custom forces
+          const netNoFa = Px - fcSlope;
+
+          // Friction opposes motion: use static if it can balance, else kinetic
+          let Fris, FaActual;
+          if (Math.abs(netNoFa) <= FaMax) {
+            FaActual = Math.abs(netNoFa);
+            Fris = 0;
+          } else {
+            FaActual = FaMax;
+            Fris = netNoFa - Math.sign(netNoFa) * FaMax;
+          }
 
           let stato;
-          if (FrisTotal <= 0.01 && FrisTotal >= -0.01) {
-            stato = '<span style="color:var(--success);font-weight:600;">Equilibrio (Fris = 0)</span>';
-          } else if (FrisTotal > 0) {
-            stato = '<span style="color:var(--danger);font-weight:600;">Scivola giù (Fris > 0)</span>';
+          if (Math.abs(Fris) < 0.01) {
+            stato = '<span style="color:var(--success);font-weight:600;">Equilibrio</span>';
+          } else if (Fris > 0) {
+            stato = '<span style="color:var(--danger);font-weight:600;">Scivola gi\u00F9</span>';
           } else {
-            stato = '<span style="color:var(--warning);font-weight:600;">Sale (Fris < 0)</span>';
+            stato = '<span style="color:var(--warning);font-weight:600;">Sale</span>';
           }
-          const extra = scenarioState.customForces.length > 0
-            ? `<div class="panel-row"><span class="panel-row-label">Fris totale</span><span class="panel-row-value">${FrisTotal.toFixed(2)} N</span></div>`
-            : '';
-          statusHtml = `${extra}<div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
+
+          statusHtml = `
+            <div class="panel-row"><span class="panel-row-label"><span class="vec-arrow">F</span>ris (reale)</span><span class="panel-row-value">${Fris.toFixed(2)} N</span></div>
+            <div class="panel-row"><span class="panel-row-label"><span class="vec-arrow">F</span>a (reale)</span><span class="panel-row-value">${FaActual.toFixed(2)} N</span></div>
+            <div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>
+          `;
         }
 
         sections.push({ title: 'Parametri e Risultati', content: panel.html + statusHtml });
