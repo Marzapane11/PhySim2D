@@ -13,6 +13,9 @@ export function createSpringSolver() {
       { id: 'm', label: 'Massa (m)', unit: 'kg', defaultValue: 4, mode: 'input' },
       { id: 'alpha', label: 'Angolo (\u03B8)', unit: '\u00B0', defaultValue: 45, mode: 'input' },
       { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.7, mode: 'input' },
+      { id: 'l', label: 'Ipotenusa (l)', unit: 'm', defaultValue: 5, mode: 'input' },
+      { id: 'h', label: 'Altezza (h)', unit: 'm', defaultValue: 0, mode: 'output' },
+      { id: 'b', label: 'Base (b)', unit: 'm', defaultValue: 0, mode: 'output' },
       { id: 'k', label: 'Costante (k)', unit: 'N/m', defaultValue: 60, mode: 'input' },
       { id: 'dx', label: 'Deformazione (\u0394x)', unit: 'm', defaultValue: 0.5, mode: 'input' },
       { id: 'P', label: 'Peso (<span class="vec-arrow">P</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
@@ -24,9 +27,32 @@ export function createSpringSolver() {
     solve(vals, inputIds) {
       const G = 9.81;
       const has = (id) => inputIds.includes(id);
-      let { m, alpha, mu, k, dx, P, Px, N, Fa, Fe } = vals;
+      let { m, alpha, mu, l, h, b, k, dx, P, Px, N, Fa, Fe } = vals;
+
+      // === Geometry ===
+      if (!has('alpha')) {
+        if (has('h') && has('b')) {
+          alpha = Math.atan2(h, b) * 180 / Math.PI;
+        } else if (has('h') && has('l') && l > 0) {
+          alpha = Math.asin(Math.min(1, h / l)) * 180 / Math.PI;
+        } else if (has('b') && has('l') && l > 0) {
+          alpha = Math.acos(Math.min(1, b / l)) * 180 / Math.PI;
+        }
+      }
       const rad = (alpha * Math.PI) / 180;
 
+      if (has('l')) {
+        if (!has('h')) h = l * Math.sin(rad);
+        if (!has('b')) b = l * Math.cos(rad);
+      } else if (has('h')) {
+        if (Math.sin(rad) > 0.0001) l = h / Math.sin(rad);
+        if (!has('b')) b = l * Math.cos(rad);
+      } else if (has('b')) {
+        if (Math.cos(rad) > 0.0001) l = b / Math.cos(rad);
+        if (!has('h')) h = l * Math.sin(rad);
+      }
+
+      // === Forces ===
       if (has('m')) P = m * G;
       else if (has('P')) m = P / G;
 
@@ -49,7 +75,7 @@ export function createSpringSolver() {
         k = Fe / Math.abs(dx);
       }
 
-      return { m, alpha, mu, k, dx, P, Px, N, Fa, Fe };
+      return { m, alpha, mu, l, h, b, k, dx, P, Px, N, Fa, Fe };
     }
   });
 }

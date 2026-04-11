@@ -12,6 +12,9 @@ export function createInclinedPlaneSolver() {
       { id: 'm', label: 'Massa (m)', unit: 'kg', defaultValue: 4, mode: 'input' },
       { id: 'alpha', label: 'Angolo (\u03B1)', unit: '\u00B0', defaultValue: 30, mode: 'input' },
       { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.5774, mode: 'input' },
+      { id: 'l', label: 'Ipotenusa (l)', unit: 'm', defaultValue: 5, mode: 'input' },
+      { id: 'h', label: 'Altezza (h)', unit: 'm', defaultValue: 0, mode: 'output' },
+      { id: 'b', label: 'Base (b)', unit: 'm', defaultValue: 0, mode: 'output' },
       { id: 'P', label: 'Peso (<span class="vec-arrow">P</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Px', label: 'Px (parallela)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Py', label: 'Py (perpendicolare)', unit: 'N', defaultValue: 0, mode: 'output' },
@@ -22,21 +25,40 @@ export function createInclinedPlaneSolver() {
     solve(vals, inputIds) {
       const G = 9.81;
       const has = (id) => inputIds.includes(id);
-      let { m, alpha, mu, P, Px, Py, N, Fa, Fris } = vals;
+      let { m, alpha, mu, l, h, b, P, Px, Py, N, Fa, Fris } = vals;
+
+      // === Geometry: solve for alpha, h, b, l ===
+      // Priority: if alpha is input, use it. Else derive from geometric values.
+      if (!has('alpha')) {
+        if (has('h') && has('b')) {
+          alpha = Math.atan2(h, b) * 180 / Math.PI;
+        } else if (has('h') && has('l') && l > 0) {
+          alpha = Math.asin(Math.min(1, h / l)) * 180 / Math.PI;
+        } else if (has('b') && has('l') && l > 0) {
+          alpha = Math.acos(Math.min(1, b / l)) * 180 / Math.PI;
+        }
+      }
       const rad = (alpha * Math.PI) / 180;
 
+      // Derive the missing side(s) from alpha and any given side
+      if (has('l')) {
+        if (!has('h')) h = l * Math.sin(rad);
+        if (!has('b')) b = l * Math.cos(rad);
+      } else if (has('h')) {
+        if (Math.sin(rad) > 0.0001) l = h / Math.sin(rad);
+        if (!has('b')) b = l * Math.cos(rad);
+      } else if (has('b')) {
+        if (Math.cos(rad) > 0.0001) l = b / Math.cos(rad);
+        if (!has('h')) h = l * Math.sin(rad);
+      }
+
+      // === Forces ===
       if (has('m')) P = m * G;
       else if (has('P')) m = P / G;
 
-      if (has('alpha') && P > 0) {
-        Px = P * Math.sin(rad);
-        Py = P * Math.cos(rad);
-      } else if (has('Px') && P > 0) {
-        alpha = Math.asin(Math.min(1, Px / P)) * 180 / Math.PI;
-        Py = P * Math.cos((alpha * Math.PI) / 180);
-      } else if (has('Py') && P > 0) {
-        alpha = Math.acos(Math.min(1, Py / P)) * 180 / Math.PI;
-        Px = P * Math.sin((alpha * Math.PI) / 180);
+      if (P > 0) {
+        if (!has('Px')) Px = P * Math.sin(rad);
+        if (!has('Py')) Py = P * Math.cos(rad);
       }
 
       N = Py;
@@ -49,7 +71,7 @@ export function createInclinedPlaneSolver() {
 
       Fris = Px - Fa;
 
-      return { m, alpha, mu, P, Px, Py, N, Fa, Fris };
+      return { m, alpha, mu, l, h, b, P, Px, Py, N, Fa, Fris };
     }
   });
 }
