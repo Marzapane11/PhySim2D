@@ -59,6 +59,53 @@ export function renderForcesPage(container) {
     updatePanel();
   });
 
+  // Override inclined-plane Fa and Fris with physically correct values (including custom forces)
+  function updateInclinedPlaneRealValues() {
+    if (activeScenario !== 'inclined-plane') return;
+    const vars = scenarioState.solver.getVariables();
+    const faVar = vars.find(v => v.id === 'Fa');
+    const frisVar = vars.find(v => v.id === 'Fris');
+    if (!faVar || !frisVar) return;
+    // Only override if Fa is in output mode (user isn't setting it manually)
+    if (faVar.mode !== 'output' || frisVar.mode !== 'output') return;
+
+    const vals = scenarioState.solver.getValues();
+    const alpha = vals.alpha || 0;
+    const rad = (alpha * Math.PI) / 180;
+    const sdx = -Math.cos(rad);
+    const sdy = Math.sin(rad);
+    const ndx = sdy;
+    const ndy = -sdx;
+
+    let fcSlope = 0, fcNormal = 0;
+    (scenarioState.customForces || []).forEach((f) => {
+      const fr = ((f.angleDeg - alpha) * Math.PI) / 180;
+      const fx = f.magnitude * Math.cos(fr);
+      const fy = f.magnitude * Math.sin(fr);
+      fcSlope += fx * sdx + fy * sdy;
+      fcNormal += fx * ndx + fy * ndy;
+    });
+
+    const P = vals.P || 0;
+    const mu = vals.mu || 0;
+    const Px = P * Math.sin(rad);
+    const N_tot = Math.max(0, P * Math.cos(rad) - fcNormal);
+    const FaMax = mu * N_tot;
+    const netNoFa = Px - fcSlope;
+
+    let FrisReal, FaReal;
+    if (Math.abs(netNoFa) <= FaMax) {
+      FaReal = Math.abs(netNoFa);
+      FrisReal = 0;
+    } else {
+      FaReal = FaMax;
+      FrisReal = netNoFa - Math.sign(netNoFa) * FaMax;
+    }
+
+    scenarioState.solver.setValue('Fa', FaReal);
+    scenarioState.solver.setValue('Fris', FrisReal);
+  }
+
   // Recompute spring deformation from equilibrium when custom forces are present
   function updateSpringEquilibrium() {
     if (activeScenario !== 'spring' || !scenarioState.customForces) return;
@@ -107,6 +154,12 @@ export function renderForcesPage(container) {
 
     const vis = getState().visibility;
     updateSpringEquilibrium();
+    // After solver.solve() runs in renderDynamicPanel, override with real values
+    // But updateScene is called before panel is rendered, so solve here
+    if (activeScenario === 'inclined-plane') {
+      scenarioState.solver.solve();
+      updateInclinedPlaneRealValues();
+    }
 
     switch (activeScenario) {
       case 'inclined-plane': {
@@ -133,6 +186,10 @@ export function renderForcesPage(container) {
   function updatePanel() {
     const sections = [];
     updateSpringEquilibrium();
+    if (activeScenario === 'inclined-plane') {
+      scenarioState.solver.solve();
+      updateInclinedPlaneRealValues();
+    }
 
     switch (activeScenario) {
       case 'inclined-plane':
@@ -189,11 +246,7 @@ export function renderForcesPage(container) {
             stato = '<span style="color:var(--warning);font-weight:600;">Sale</span>';
           }
 
-          statusHtml = `
-            <div class="panel-row"><span class="panel-row-label"><span class="vec-arrow">F</span>ris (reale)</span><span class="panel-row-value">${Fris.toFixed(2)} N</span></div>
-            <div class="panel-row"><span class="panel-row-label"><span class="vec-arrow">F</span>a (reale)</span><span class="panel-row-value">${FaActual.toFixed(2)} N</span></div>
-            <div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>
-          `;
+          statusHtml = `<div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
         }
 
         sections.push({ title: 'Parametri e Risultati', content: panel.html + statusHtml });
