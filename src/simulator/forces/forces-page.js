@@ -16,7 +16,7 @@ import { renderPulley, getPulleyConfig, computePulley, createPulleySolver } from
 import { renderDynamicPanel } from '../dynamic-panel.js';
 
 const SCENARIO_TOOLS = [
-  { id: 'inclined-plane', label: 'Piano e Piano inclinato', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M2 20L20 20 2 8z"/><rect x="8" y="11" width="4" height="3" transform="rotate(-33 10 12.5)"/></svg>' },
+  { id: 'inclined-plane', label: 'Piano e Piano inclinato', icon: '<svg viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="18" x2="13" y2="18"/><path d="M17 18h14L17 6z"/></svg>' },
   { id: 'spring', label: 'Molla', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h2l1-3 2 6 2-6 2 6 2-6 2 6 1-3h2"/></svg>' },
   { id: 'pulley', label: 'Carrucola', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="6" r="4"/><line x1="8" y1="6" x2="8" y2="20"/><line x1="16" y1="6" x2="16" y2="20"/><rect x="6" y="18" width="4" height="4"/><rect x="14" y="16" width="4" height="4"/></svg>' },
 ];
