@@ -32,7 +32,7 @@ function initScenarioState(id) {
     case 'inclined-plane':
       return { type: 'inclined-plane', solver: createInclinedPlaneSolver(), customForces: [] };
     case 'spring':
-      return { type: 'spring', solver: createSpringSolver() };
+      return { type: 'spring', solver: createSpringSolver(), customForces: [] };
     case 'pulley':
       return { type: 'pulley', solver: createPulleySolver() };
     default:
@@ -75,7 +75,7 @@ export function renderForcesPage(container) {
       case 'spring': {
         scenarioState.solver.solve();
         const spv = scenarioState.solver.getValues();
-        renderSpring(sceneManager, { mass: spv.m, angleDeg: spv.alpha, k: spv.k, x: spv.dx, frictionCoeff: spv.mu }, vis);
+        renderSpring(sceneManager, { mass: spv.m, angleDeg: spv.alpha, k: spv.k, x: spv.dx, frictionCoeff: spv.mu, customForces: scenarioState.customForces }, vis);
         break;
       }
       case 'pulley': {
@@ -137,8 +137,8 @@ export function renderForcesPage(container) {
         sections.push({ title: 'Parametri e Risultati', content: panel.html + statusHtml });
         scenarioState._wireEvents = panel.wireEvents;
 
-        // Custom forces panel (always shown on inclined-plane)
-        if (activeScenario === 'inclined-plane') {
+        // Custom forces panel (always shown on inclined-plane and spring)
+        if ((activeScenario === 'inclined-plane' || activeScenario === 'spring') && scenarioState.customForces) {
           let forcesHtml = '';
           scenarioState.customForces.forEach((f, i) => {
             forcesHtml += `<div style="margin-bottom:8px;padding:6px;border:1px solid var(--border-color);border-radius:4px;">
@@ -173,8 +173,8 @@ export function renderForcesPage(container) {
   }
 
   function wireUpEvents() {
-    // Custom forces UI (only when inclined-plane is flat)
-    if (activeScenario === 'inclined-plane' && scenarioState.customForces) {
+    // Custom forces UI (inclined-plane and spring)
+    if ((activeScenario === 'inclined-plane' || activeScenario === 'spring') && scenarioState.customForces) {
       const addBtn = rightPanel.querySelector('#btn-add-custom-force');
       if (addBtn) {
         addBtn.addEventListener('click', () => {
