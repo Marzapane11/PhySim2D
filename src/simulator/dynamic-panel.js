@@ -2,8 +2,9 @@
  * Renders a dynamic parameter panel where each variable can be toggled
  * between input (editable) and output (read-only calculated).
  */
-export function renderDynamicPanel(solver, onChange) {
-  solver.solve();
+export function renderDynamicPanel(solver, onChange, options = {}) {
+  if (!options.skipSolve) solver.solve();
+  if (options.postSolve) options.postSolve();
   const vars = solver.getVariables();
 
   let html = '';

@@ -90,13 +90,19 @@ export function renderForcesPage(container) {
     if (!dxVar || dxVar.mode !== 'output') return;
 
     const vals = scenarioState.solver.getValues();
+    const k = vals.k || 0;
     const dx_eq = computeSpringEquilibriumDx({
       mass: vals.m || 0,
       angleDeg: vals.alpha || 0,
-      k: vals.k || 0,
+      k,
       customForces: scenarioState.customForces,
     });
     scenarioState.solver.setValue('dx', dx_eq);
+    // Also sync Fe to match the new dx
+    const feVar = vars.find(v => v.id === 'Fe');
+    if (feVar && feVar.mode === 'output') {
+      scenarioState.solver.setValue('Fe', Math.abs(k * dx_eq));
+    }
   }
 
   function updateScene() {
@@ -146,7 +152,12 @@ export function renderForcesPage(container) {
       case 'inclined-plane':
       case 'spring':
       case 'pulley': {
-        const panel = renderDynamicPanel(scenarioState.solver, () => { updateScene(); updatePanel(); });
+        const panel = renderDynamicPanel(scenarioState.solver, () => { updateScene(); updatePanel(); }, {
+          postSolve: () => {
+            if (activeScenario === 'inclined-plane') updateInclinedPlaneRealValues();
+            if (activeScenario === 'spring') updateSpringEquilibrium();
+          }
+        });
         const solverVals = scenarioState.solver.getValues();
         let statusHtml = '';
         if (activeScenario === 'inclined-plane') {
