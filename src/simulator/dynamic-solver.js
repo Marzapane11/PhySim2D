@@ -47,7 +47,11 @@ export function createSolver(config) {
   }
 
   function getVariables() {
-    return variables;
+    const vals = getValues();
+    return variables.filter(v => {
+      if (typeof v.visibleIf === 'function') return v.visibleIf(vals);
+      return true;
+    });
   }
 
   return { getValues, getInputIds, setValue, toggleMode, solve, getVariables };
