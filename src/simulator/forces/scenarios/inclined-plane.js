@@ -258,6 +258,21 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
         const faA = createArrow(o, faVec, 0xffff00, 'Fa');
         if (faA) sceneManager.objects.add(faA);
       }
+
+      // Custom forces (only shown when flat)
+      const isFlat = Math.abs(state.angleDeg) < 0.5;
+      if (isFlat && state.customForces && state.customForces.length > 0) {
+        const customColors = [0xec407a, 0x26c6da, 0xd4e157, 0xab47bc, 0xef5350, 0x8d6e63];
+        state.customForces.forEach((f, i) => {
+          const rad = (f.angleDeg * Math.PI) / 180;
+          const fx = f.magnitude * Math.cos(rad);
+          const fy = f.magnitude * Math.sin(rad);
+          const fVec = scaleForceVector(fx, fy);
+          const color = customColors[i % customColors.length];
+          const arrow = createArrow(o, fVec, color, f.name);
+          if (arrow) sceneManager.objects.add(arrow);
+        });
+      }
     }
   }
 }

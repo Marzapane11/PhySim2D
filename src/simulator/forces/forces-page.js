@@ -30,7 +30,7 @@ const TIP_MAP = {
 function initScenarioState(id) {
   switch (id) {
     case 'inclined-plane':
-      return { type: 'inclined-plane', solver: createInclinedPlaneSolver() };
+      return { type: 'inclined-plane', solver: createInclinedPlaneSolver(), customForces: [] };
     case 'spring':
       return { type: 'spring', solver: createSpringSolver() };
     case 'pulley':
@@ -69,7 +69,7 @@ export function renderForcesPage(container) {
       case 'inclined-plane': {
         scenarioState.solver.solve();
         const ipv = scenarioState.solver.getValues();
-        renderInclinedPlane(sceneManager, { mass: ipv.m, angleDeg: ipv.alpha, frictionCoeff: ipv.mu }, vis);
+        renderInclinedPlane(sceneManager, { mass: ipv.m, angleDeg: ipv.alpha, frictionCoeff: ipv.mu, customForces: scenarioState.customForces }, vis);
         break;
       }
       case 'spring': {
@@ -98,17 +98,42 @@ export function renderForcesPage(container) {
         const solverVals = scenarioState.solver.getValues();
         let statusHtml = '';
         if (activeScenario === 'inclined-plane') {
-          const Fris = solverVals.Fris || 0;
-          let stato;
-          if (Fris <= 0.01) {
-            stato = '<span style="color:var(--success);font-weight:600;">Equilibrio (Fris \u2264 0)</span>';
-          } else {
-            stato = '<span style="color:var(--danger);font-weight:600;">Scivola (Fris > 0)</span>';
+          const alphaVal = solverVals.alpha || 0;
+          const isFlat = Math.abs(alphaVal) < 0.5;
+          if (!isFlat) {
+            const Fris = solverVals.Fris || 0;
+            let stato;
+            if (Fris <= 0.01) {
+              stato = '<span style="color:var(--success);font-weight:600;">Equilibrio (Fris \u2264 0)</span>';
+            } else {
+              stato = '<span style="color:var(--danger);font-weight:600;">Scivola (Fris > 0)</span>';
+            }
+            statusHtml = `<div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
           }
-          statusHtml = `<div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
         }
         sections.push({ title: 'Parametri e Risultati', content: panel.html + statusHtml });
         scenarioState._wireEvents = panel.wireEvents;
+
+        // Custom forces panel (only on inclined-plane when flat)
+        if (activeScenario === 'inclined-plane') {
+          const alphaVal = solverVals.alpha || 0;
+          const isFlat = Math.abs(alphaVal) < 0.5;
+          if (isFlat) {
+            let forcesHtml = '';
+            scenarioState.customForces.forEach((f, i) => {
+              forcesHtml += `<div style="margin-bottom:8px;padding:6px;border:1px solid var(--border-color);border-radius:4px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                  <strong style="color:var(--text-accent);">${f.name}</strong>
+                  <button class="remove-force" data-idx="${i}" style="color:var(--danger);background:none;border:none;cursor:pointer;font-size:14px;">\u2715</button>
+                </div>
+                ${createInputRow('Modulo', `cf-mag-${i}`, f.magnitude, 'N', 'step="1"')}
+                ${createInputRow('Angolo', `cf-ang-${i}`, f.angleDeg, '\u00B0', 'step="5"')}
+              </div>`;
+            });
+            forcesHtml += `<button id="btn-add-custom-force" style="width:100%;padding:8px;background:var(--accent);color:white;border-radius:var(--radius-sm);font-size:13px;font-weight:600;">+ Aggiungi forza</button>`;
+            sections.push({ title: 'Forze personalizzate', content: forcesHtml });
+          }
+        }
         break;
       }
     }
@@ -129,7 +154,44 @@ export function renderForcesPage(container) {
   }
 
   function wireUpEvents() {
-    // inclined-plane, spring, pulley handled by dynamic panel wireEvents
+    // Custom forces UI (only when inclined-plane is flat)
+    if (activeScenario === 'inclined-plane' && scenarioState.customForces) {
+      const addBtn = rightPanel.querySelector('#btn-add-custom-force');
+      if (addBtn) {
+        addBtn.addEventListener('click', () => {
+          const idx = scenarioState.customForces.length + 1;
+          scenarioState.customForces.push({ name: `F${idx}`, magnitude: 10, angleDeg: 0 });
+          updateScene();
+          updatePanel();
+        });
+      }
+      scenarioState.customForces.forEach((f, i) => {
+        const magInput = rightPanel.querySelector(`#cf-mag-${i}`);
+        const angInput = rightPanel.querySelector(`#cf-ang-${i}`);
+        if (magInput) {
+          magInput.addEventListener('change', (e) => {
+            scenarioState.customForces[i].magnitude = parseFloat(e.target.value) || 0;
+            updateScene();
+            updatePanel();
+          });
+        }
+        if (angInput) {
+          angInput.addEventListener('change', (e) => {
+            scenarioState.customForces[i].angleDeg = parseFloat(e.target.value) || 0;
+            updateScene();
+            updatePanel();
+          });
+        }
+      });
+      rightPanel.querySelectorAll('.remove-force').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          const idx = parseInt(e.target.dataset.idx, 10);
+          scenarioState.customForces.splice(idx, 1);
+          updateScene();
+          updatePanel();
+        });
+      });
+    }
   }
 
   const unsubState = subscribe(() => {
