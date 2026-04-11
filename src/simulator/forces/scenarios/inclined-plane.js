@@ -110,8 +110,33 @@ export function calcTriangle(angleDeg) {
 
 export function drawTriangle(sceneManager, tri, isLight, angleLabel) {
   const { A, B, C, angleRad } = tri;
+  const isFlat = Math.abs(angleRad) < 0.01;
 
-  // Fill
+  if (isFlat) {
+    // Flat surface: just a horizontal line from C to A (B coincides with C)
+    // Draw the base with slight thickness as a filled rectangle
+    const thickness = 0.15;
+    const flatShape = new THREE.Shape();
+    flatShape.moveTo(C.x, C.y);
+    flatShape.lineTo(A.x, A.y);
+    flatShape.lineTo(A.x, A.y - thickness);
+    flatShape.lineTo(C.x, C.y - thickness);
+    flatShape.closePath();
+    sceneManager.objects.add(new THREE.Mesh(
+      new THREE.ShapeGeometry(flatShape),
+      new THREE.MeshBasicMaterial({ color: isLight ? 0xc8d4e0 : 0x1a2a4c, side: THREE.DoubleSide })
+    ));
+    // Top line (the surface)
+    addLine(sceneManager, C.x, C.y, A.x, A.y, 0x4fc3f7);
+
+    // Labels: only A (right) and B (left, renamed from C since they coincide)
+    addTextLabel(sceneManager, 'A', A.x + 0.5, A.y - 0.5, '#4fc3f7');
+    addTextLabel(sceneManager, 'B', C.x - 0.5, C.y - 0.5, '#4fc3f7');
+    addTextLabel(sceneManager, 'b', (C.x + A.x) / 2, C.y - 0.6, '#4fc3f7');
+    return;
+  }
+
+  // Filled triangle
   const shape = new THREE.Shape();
   shape.moveTo(C.x, C.y);
   shape.lineTo(A.x, A.y);
