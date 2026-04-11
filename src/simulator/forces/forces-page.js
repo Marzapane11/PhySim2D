@@ -135,34 +135,6 @@ export function renderForcesPage(container) {
           statusHtml = `${extra}<div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
         }
 
-        if (activeScenario === 'spring') {
-          const alphaVal = solverVals.alpha || 0;
-          const rad = (alphaVal * Math.PI) / 180;
-          const sdx = -Math.cos(rad);
-          const sdy = Math.sin(rad);
-          let fcSlope = 0;
-          scenarioState.customForces.forEach((f) => {
-            const fr = (f.angleDeg * Math.PI) / 180;
-            const fx = f.magnitude * Math.cos(fr);
-            const fy = f.magnitude * Math.sin(fr);
-            fcSlope += fx * sdx + fy * sdy;
-          });
-          const Px = solverVals.Px || 0;
-          const Fa = solverVals.Fa || 0;
-          const Fe = solverVals.Fe || 0;
-          // Fris = Px - Fa - Fe - fcSlope (Fe pulls up-slope, Fa is up-slope friction, Px is down-slope)
-          const FrisTotal = Px - Fa - Fe - fcSlope;
-
-          let stato;
-          if (FrisTotal <= 0.01 && FrisTotal >= -0.01) {
-            stato = '<span style="color:var(--success);font-weight:600;">Equilibrio (Fris = 0)</span>';
-          } else if (FrisTotal > 0) {
-            stato = '<span style="color:var(--danger);font-weight:600;">Scivola giù (Fris > 0)</span>';
-          } else {
-            stato = '<span style="color:var(--warning);font-weight:600;">Sale (Fris < 0)</span>';
-          }
-          statusHtml = `<div class="panel-row"><span class="panel-row-label"><span class="vec-arrow">F</span>ris (risultante)</span><span class="panel-row-value">${FrisTotal.toFixed(2)} N</span></div><div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
-        }
         sections.push({ title: 'Parametri e Risultati', content: panel.html + statusHtml });
         scenarioState._wireEvents = panel.wireEvents;
 
