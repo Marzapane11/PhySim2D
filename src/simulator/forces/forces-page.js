@@ -99,17 +99,40 @@ export function renderForcesPage(container) {
         let statusHtml = '';
         if (activeScenario === 'inclined-plane') {
           const alphaVal = solverVals.alpha || 0;
-          const isFlat = Math.abs(alphaVal) < 0.5;
-          if (!isFlat) {
-            const Fris = solverVals.Fris || 0;
-            let stato;
-            if (Fris <= 0.01) {
-              stato = '<span style="color:var(--success);font-weight:600;">Equilibrio (Fris \u2264 0)</span>';
-            } else {
-              stato = '<span style="color:var(--danger);font-weight:600;">Scivola (Fris > 0)</span>';
-            }
-            statusHtml = `<div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
+          const rad = (alphaVal * Math.PI) / 180;
+          // Slope direction (from A up to B): (-cos α, sin α)
+          const sdx = -Math.cos(rad);
+          const sdy = Math.sin(rad);
+          // Project custom forces along slope direction (positive = up slope)
+          let fcSlope = 0;
+          let fcNormal = 0;
+          const ndx = sdy;
+          const ndy = -sdx;
+          scenarioState.customForces.forEach((f) => {
+            const fr = (f.angleDeg * Math.PI) / 180;
+            const fx = f.magnitude * Math.cos(fr);
+            const fy = f.magnitude * Math.sin(fr);
+            fcSlope += fx * sdx + fy * sdy; // up slope positive
+            fcNormal += fx * ndx + fy * ndy; // away from surface positive
+          });
+          // Fris (down slope) with custom forces: Px - Fa - fcSlope
+          // fcSlope is up-slope contribution, so subtract it from down-slope Fris
+          const Px = solverVals.Px || 0;
+          const Fa = solverVals.Fa || 0;
+          const FrisTotal = Px - Fa - fcSlope;
+
+          let stato;
+          if (FrisTotal <= 0.01 && FrisTotal >= -0.01) {
+            stato = '<span style="color:var(--success);font-weight:600;">Equilibrio (Fris = 0)</span>';
+          } else if (FrisTotal > 0) {
+            stato = '<span style="color:var(--danger);font-weight:600;">Scivola giù (Fris > 0)</span>';
+          } else {
+            stato = '<span style="color:var(--warning);font-weight:600;">Sale (Fris < 0)</span>';
           }
+          const extra = scenarioState.customForces.length > 0
+            ? `<div class="panel-row"><span class="panel-row-label">Fris totale</span><span class="panel-row-value">${FrisTotal.toFixed(2)} N</span></div>`
+            : '';
+          statusHtml = `${extra}<div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
         }
         sections.push({ title: 'Parametri e Risultati', content: panel.html + statusHtml });
         scenarioState._wireEvents = panel.wireEvents;
