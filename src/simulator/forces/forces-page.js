@@ -14,6 +14,7 @@ import { renderInclinedPlane, getInclinedPlaneConfig, computeInclinedPlane, crea
 import { renderSpring, getSpringConfig, computeSpring, createSpringSolver } from './scenarios/spring.js';
 import { renderPulley, getPulleyConfig, computePulley, createPulleySolver } from './scenarios/pulley.js';
 import { renderDynamicPanel } from '../dynamic-panel.js';
+import { computeInclinedPlaneState, computeSpringEquilibriumDx } from './physics.js';
 
 const SCENARIO_TOOLS = [
   { id: 'inclined-plane', label: 'Piano e Piano inclinato', icon: '<svg viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="18" x2="13" y2="18"/><path d="M17 18h14L17 6z"/></svg>' },
@@ -66,85 +67,35 @@ export function renderForcesPage(container) {
     const faVar = vars.find(v => v.id === 'Fa');
     const frisVar = vars.find(v => v.id === 'Fris');
     if (!faVar || !frisVar) return;
-    // Only override if Fa is in output mode (user isn't setting it manually)
     if (faVar.mode !== 'output' || frisVar.mode !== 'output') return;
 
     const vals = scenarioState.solver.getValues();
-    const alpha = vals.alpha || 0;
-    const rad = (alpha * Math.PI) / 180;
-    const sdx = -Math.cos(rad);
-    const sdy = Math.sin(rad);
-    const ndx = sdy;
-    const ndy = -sdx;
-
-    let fcSlope = 0, fcNormal = 0;
-    (scenarioState.customForces || []).forEach((f) => {
-      const fr = ((f.angleDeg - alpha) * Math.PI) / 180;
-      const fx = f.magnitude * Math.cos(fr);
-      const fy = f.magnitude * Math.sin(fr);
-      fcSlope += fx * sdx + fy * sdy;
-      fcNormal += fx * ndx + fy * ndy;
+    const result = computeInclinedPlaneState({
+      mass: vals.m || 0,
+      angleDeg: vals.alpha || 0,
+      mu: vals.mu || 0,
+      customForces: scenarioState.customForces || [],
     });
 
-    const P = vals.P || 0;
-    const mu = vals.mu || 0;
-    const Px = P * Math.sin(rad);
-    const N_tot = Math.max(0, P * Math.cos(rad) - fcNormal);
-    const FaMax = mu * N_tot;
-    const netNoFa = Px - fcSlope;
-
-    let FrisReal, FaReal;
-    if (Math.abs(netNoFa) <= FaMax) {
-      FaReal = Math.abs(netNoFa);
-      FrisReal = 0;
-    } else {
-      FaReal = FaMax;
-      FrisReal = netNoFa - Math.sign(netNoFa) * FaMax;
-    }
-
-    scenarioState.solver.setValue('Fa', FaReal);
-    scenarioState.solver.setValue('Fris', FrisReal);
+    scenarioState.solver.setValue('Fa', result.Fa);
+    scenarioState.solver.setValue('Fris', result.Fris);
+    scenarioState.solver.setValue('N', result.N);
   }
 
-  // Recompute spring deformation from equilibrium when custom forces are present
+  // Recompute spring deformation from equilibrium when dx is in output mode
   function updateSpringEquilibrium() {
     if (activeScenario !== 'spring' || !scenarioState.customForces) return;
-    if (scenarioState.customForces.length === 0) return;
-
     const vars = scenarioState.solver.getVariables();
     const dxVar = vars.find(v => v.id === 'dx');
     if (!dxVar || dxVar.mode !== 'output') return;
 
     const vals = scenarioState.solver.getValues();
-    const alpha = vals.alpha || 0;
-    const rad = (alpha * Math.PI) / 180;
-    const m = vals.m || 0;
-    const k = vals.k || 0;
-    const mu = vals.mu || 0;
-    const G = 9.81;
-
-    // Slope direction up (from A toward B): (-cos α, sin α)
-    const sdx = -Math.cos(rad);
-    const sdy = Math.sin(rad);
-
-    let fcSlope = 0;
-    let fcNormal = 0;
-    const ndx = sdy;
-    const ndy = -sdx;
-    scenarioState.customForces.forEach((f) => {
-      const fr = ((f.angleDeg - alpha) * Math.PI) / 180;
-      const fx = f.magnitude * Math.cos(fr);
-      const fy = f.magnitude * Math.sin(fr);
-      fcSlope += fx * sdx + fy * sdy;
-      fcNormal += fx * ndx + fy * ndy;
+    const dx_eq = computeSpringEquilibriumDx({
+      mass: vals.m || 0,
+      angleDeg: vals.alpha || 0,
+      k: vals.k || 0,
+      customForces: scenarioState.customForces,
     });
-
-    const Px = m * G * Math.sin(rad);
-    const N = Math.max(0, m * G * Math.cos(rad) - fcNormal);
-    // Spring balances net down-slope force (friction helps but is unknown in static case)
-    // Use zero-friction equilibrium as the canonical deformation
-    const netNoSpringNoFa = Px - fcSlope;
-    const dx_eq = k > 0 ? netNoSpringNoFa / k : 0;
     scenarioState.solver.setValue('dx', dx_eq);
   }
 
@@ -199,53 +150,20 @@ export function renderForcesPage(container) {
         const solverVals = scenarioState.solver.getValues();
         let statusHtml = '';
         if (activeScenario === 'inclined-plane') {
-          const alphaVal = solverVals.alpha || 0;
-          const rad = (alphaVal * Math.PI) / 180;
-          // Up-slope direction: (-cos α, sin α)
-          const sdx = -Math.cos(rad);
-          const sdy = Math.sin(rad);
-          const ndx = sdy;   // outward normal
-          const ndy = -sdx;
-
-          let fcSlope = 0;   // up-slope positive
-          let fcNormal = 0;  // outward positive (lifts off surface)
-          scenarioState.customForces.forEach((f) => {
-            const fr = ((f.angleDeg - alphaVal) * Math.PI) / 180;
-            const fx = f.magnitude * Math.cos(fr);
-            const fy = f.magnitude * Math.sin(fr);
-            fcSlope += fx * sdx + fy * sdy;
-            fcNormal += fx * ndx + fy * ndy;
+          const result = computeInclinedPlaneState({
+            mass: solverVals.m || 0,
+            angleDeg: solverVals.alpha || 0,
+            mu: solverVals.mu || 0,
+            customForces: scenarioState.customForces || [],
           });
-
-          const P = solverVals.P || 0;
-          const mu = solverVals.mu || 0;
-          const Px = P * Math.sin(rad);                // down-slope magnitude
-          // Total normal: P·cos α minus any outward-pushing custom force component
-          const N_tot = Math.max(0, P * Math.cos(rad) - fcNormal);
-          const FaMax = mu * N_tot;
-
-          // Net down-slope force WITHOUT friction, including custom forces
-          const netNoFa = Px - fcSlope;
-
-          // Friction opposes motion: use static if it can balance, else kinetic
-          let Fris, FaActual;
-          if (Math.abs(netNoFa) <= FaMax) {
-            FaActual = Math.abs(netNoFa);
-            Fris = 0;
-          } else {
-            FaActual = FaMax;
-            Fris = netNoFa - Math.sign(netNoFa) * FaMax;
-          }
-
           let stato;
-          if (Math.abs(Fris) < 0.01) {
+          if (result.status === 'Equilibrio') {
             stato = '<span style="color:var(--success);font-weight:600;">Equilibrio</span>';
-          } else if (Fris > 0) {
+          } else if (result.status === 'Scivola giù') {
             stato = '<span style="color:var(--danger);font-weight:600;">Scivola gi\u00F9</span>';
           } else {
             stato = '<span style="color:var(--warning);font-weight:600;">Sale</span>';
           }
-
           statusHtml = `<div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
         }
 
