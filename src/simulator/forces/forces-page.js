@@ -82,7 +82,8 @@ export function renderForcesPage(container) {
 
     let fcSlope = 0;
     scenarioState.customForces.forEach((f) => {
-      const fr = (f.angleDeg * Math.PI) / 180;
+      // Custom angle is relative to Px (down-slope). World angle = customAngle - alpha
+      const fr = ((f.angleDeg - alpha) * Math.PI) / 180;
       fcSlope += f.magnitude * Math.cos(fr) * sdx + f.magnitude * Math.sin(fr) * sdy;
     });
 
@@ -151,7 +152,8 @@ export function renderForcesPage(container) {
           const ndx = sdy;
           const ndy = -sdx;
           scenarioState.customForces.forEach((f) => {
-            const fr = (f.angleDeg * Math.PI) / 180;
+            // Angle is relative to Px (down slope). World angle = customAngle - alpha
+            const fr = ((f.angleDeg - alphaVal) * Math.PI) / 180;
             const fx = f.magnitude * Math.cos(fr);
             const fy = f.magnitude * Math.sin(fr);
             fcSlope += fx * sdx + fy * sdy; // up slope positive

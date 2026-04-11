@@ -216,11 +216,11 @@ export function renderSpring(sceneManager, state, visibility) {
         if (faA) sceneManager.objects.add(faA);
       }
 
-      // Custom forces (always shown)
+      // Custom forces (always shown) — angle relative to Px direction (down slope)
       if (state.customForces && state.customForces.length > 0) {
         const customColors = [0xec407a, 0x26c6da, 0xd4e157, 0xab47bc, 0xef5350, 0x8d6e63];
         state.customForces.forEach((f, i) => {
-          const rad = (f.angleDeg * Math.PI) / 180;
+          const rad = ((f.angleDeg - state.angleDeg) * Math.PI) / 180;
           const fx = f.magnitude * Math.cos(rad);
           const fy = f.magnitude * Math.sin(rad);
           const fVec = scaleForceVector(fx, fy);
