@@ -18,14 +18,17 @@ export function getNextColor() {
 }
 
 /**
- * Logarithmic force scaling: log-based, very gentle growth.
- * Converts a force vector into a visually manageable arrow vector.
- * 1 N -> 0.7, 10 N -> 2.4, 100 N -> 4.6, 1000 N -> 6.9, 5000 N -> 7.7
+ * Very gentle force scaling with a cap.
+ * Uses log + cap so arrows stay small and don't grow much with large forces.
+ * 1 N -> 0.35, 10 N -> 1.2, 50 N -> 1.9, 100 N -> 2.3, 500 N -> 3.1, 1000 N -> 3.4, ∞ -> 4.0
  */
-export function scaleForceVector(fx, fy, factor = 1.0) {
+export function scaleForceVector(fx, fy, factor = 0.5) {
   const mag = Math.sqrt(fx * fx + fy * fy);
   if (mag < 0.0001) return { x: 0, y: 0 };
-  const newMag = Math.log(1 + mag) * factor;
+  const rawMag = Math.log(1 + mag) * factor;
+  // Cap at 4.0 units so even huge forces stay within the triangle
+  const cap = 4.0;
+  const newMag = Math.min(rawMag, cap);
   return { x: (fx / mag) * newMag, y: (fy / mag) * newMag };
 }
 
