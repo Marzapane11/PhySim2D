@@ -22,7 +22,7 @@ export function getNextColor() {
  * Uses log + cap so arrows stay small and don't grow much with large forces.
  * 1 N -> 0.35, 10 N -> 1.2, 50 N -> 1.9, 100 N -> 2.3, 500 N -> 3.1, 1000 N -> 3.4, ∞ -> 4.0
  */
-export function scaleForceVector(fx, fy, factor = 0.5) {
+export function scaleForceVector(fx, fy, factor = 0.35) {
   const mag = Math.sqrt(fx * fx + fy * fy);
   if (mag < 0.0001) return { x: 0, y: 0 };
   const rawMag = Math.log(1 + mag) * factor;

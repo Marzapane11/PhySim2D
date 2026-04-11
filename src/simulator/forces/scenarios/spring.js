@@ -10,10 +10,10 @@ export function computeSpring(params) { return springForce(params); }
 export function createSpringSolver() {
   return createSolver({
     variables: [
-      { id: 'm', label: 'Massa (m)', unit: 'kg', defaultValue: 5, mode: 'input' },
-      { id: 'alpha', label: 'Angolo (\u03B8)', unit: '\u00B0', defaultValue: 30, mode: 'input' },
-      { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.3, mode: 'input' },
-      { id: 'k', label: 'Costante (k)', unit: 'N/m', defaultValue: 80, mode: 'input' },
+      { id: 'm', label: 'Massa (m)', unit: 'kg', defaultValue: 4, mode: 'input' },
+      { id: 'alpha', label: 'Angolo (\u03B8)', unit: '\u00B0', defaultValue: 45, mode: 'input' },
+      { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.7, mode: 'input' },
+      { id: 'k', label: 'Costante (k)', unit: 'N/m', defaultValue: 60, mode: 'input' },
       { id: 'dx', label: 'Deformazione (\u0394x)', unit: 'm', defaultValue: 0.5, mode: 'input' },
       { id: 'P', label: 'Peso (<span class="vec-arrow">P</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Px', label: 'Px (lungo piano)', unit: 'N', defaultValue: 0, mode: 'output' },
@@ -55,7 +55,7 @@ export function createSpringSolver() {
 }
 
 export function getSpringConfig() {
-  return { id: 'spring', label: 'Molla (Hooke)', defaults: { k: 100, x: 0.5, mass: 5, angleDeg: 30, frictionCoeff: 0.2 } };
+  return { id: 'spring', label: 'Molla (Hooke)', defaults: { k: 60, x: 0.5, mass: 4, angleDeg: 45, frictionCoeff: 0.7 } };
 }
 
 export function renderSpring(sceneManager, state, visibility) {
