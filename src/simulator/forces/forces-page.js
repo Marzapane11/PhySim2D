@@ -10,21 +10,18 @@ import { renderContextualTip } from '../../theory/contextual-tip.js';
 import { getState, subscribe } from '../../state.js';
 import { magnitude, direction } from '../../math/vector-math.js';
 
-import { renderPointForces, getPointForcesConfig, computePointForces } from './scenarios/point-forces.js';
 import { renderInclinedPlane, getInclinedPlaneConfig, computeInclinedPlane, createInclinedPlaneSolver } from './scenarios/inclined-plane.js';
 import { renderSpring, getSpringConfig, computeSpring, createSpringSolver } from './scenarios/spring.js';
 import { renderPulley, getPulleyConfig, computePulley, createPulleySolver } from './scenarios/pulley.js';
 import { renderDynamicPanel } from '../dynamic-panel.js';
 
 const SCENARIO_TOOLS = [
-  { id: 'point-forces', label: 'Forze su un punto', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><line x1="12" y1="10" x2="12" y2="3"/><line x1="14" y1="12" x2="21" y2="12"/><line x1="10" y1="14" x2="5" y2="19"/></svg>' },
   { id: 'inclined-plane', label: 'Piano inclinato', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18L3 6z"/></svg>' },
   { id: 'spring', label: 'Molla', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h2l1-3 2 6 2-6 2 6 2-6 2 6 1-3h2"/></svg>' },
   { id: 'pulley', label: 'Carrucola', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="6" r="4"/><line x1="8" y1="6" x2="8" y2="20"/><line x1="16" y1="6" x2="16" y2="20"/><rect x="6" y="18" width="4" height="4"/><rect x="14" y="16" width="4" height="4"/></svg>' },
 ];
 
 const TIP_MAP = {
-  'point-forces': 'point-forces',
   'inclined-plane': 'inclined-plane',
   'spring': 'force-hooke',
   'pulley': 'force-tension',
@@ -32,10 +29,6 @@ const TIP_MAP = {
 
 function initScenarioState(id) {
   switch (id) {
-    case 'point-forces': {
-      const cfg = getPointForcesConfig();
-      return { forces: cfg.defaultForces.map((f) => ({ ...f })) };
-    }
     case 'inclined-plane':
       return { type: 'inclined-plane', solver: createInclinedPlaneSolver() };
     case 'spring':
@@ -55,7 +48,7 @@ export function renderForcesPage(container) {
   setAxesVisible(gridGroup, false); // Grid si, assi no
   const labelManager = new LabelManager(canvasContainer);
 
-  let activeScenario = 'point-forces';
+  let activeScenario = 'inclined-plane';
   let scenarioState = initScenarioState(activeScenario);
 
   renderToolbar(toolbar, SCENARIO_TOOLS, (toolId) => {
@@ -73,9 +66,6 @@ export function renderForcesPage(container) {
     const vis = getState().visibility;
 
     switch (activeScenario) {
-      case 'point-forces':
-        renderPointForces(sceneManager, scenarioState.forces, vis);
-        break;
       case 'inclined-plane': {
         scenarioState.solver.solve();
         const ipv = scenarioState.solver.getValues();
@@ -101,32 +91,6 @@ export function renderForcesPage(container) {
     const sections = [];
 
     switch (activeScenario) {
-      case 'point-forces': {
-        const forces = scenarioState.forces;
-        let forceRows = '';
-        forces.forEach((f, i) => {
-          forceRows +=
-            `<div style="margin-bottom:6px;padding:4px 0;border-bottom:1px solid var(--border);">` +
-            `<strong style="color:var(--text-primary);font-size:13px;">${f.name}</strong>` +
-            createInputRow('X', `pf-x-${i}`, f.x, 'N', 'step="0.5"') +
-            createInputRow('Y', `pf-y-${i}`, f.y, 'N', 'step="0.5"') +
-            `</div>`;
-        });
-        forceRows += `<button id="btn-add-force" style="margin-top:8px;width:100%;padding:6px;background:var(--accent);color:white;border-radius:var(--radius-sm);font-size:12px;">Aggiungi forza</button>`;
-        sections.push({ title: 'Forze', content: forceRows });
-
-        const result = computePointForces(forces);
-        sections.push({
-          title: 'Risultante',
-          content:
-            createPropertyRow('Rx', result.resultant.x.toFixed(2) + ' N') +
-            createPropertyRow('Ry', result.resultant.y.toFixed(2) + ' N') +
-            createPropertyRow('|R|', result.magnitude.toFixed(2) + ' N') +
-            createPropertyRow('\u03b8', result.direction.toFixed(1) + '\u00b0'),
-        });
-        break;
-      }
-
       case 'inclined-plane':
       case 'spring':
       case 'pulley': {
@@ -150,7 +114,7 @@ export function renderForcesPage(container) {
     }
 
     // Theory tip
-    const tipId = TIP_MAP[activeScenario] || 'point-forces';
+    const tipId = TIP_MAP[activeScenario] || 'inclined-plane';
     sections.push({ title: 'Teoria', content: renderContextualTip(tipId) });
 
     renderPropertiesPanel(rightPanel, sections);
@@ -165,40 +129,7 @@ export function renderForcesPage(container) {
   }
 
   function wireUpEvents() {
-    switch (activeScenario) {
-      case 'point-forces': {
-        scenarioState.forces.forEach((f, i) => {
-          const xInput = rightPanel.querySelector(`#pf-x-${i}`);
-          const yInput = rightPanel.querySelector(`#pf-y-${i}`);
-          if (xInput) {
-            xInput.addEventListener('change', (e) => {
-              scenarioState.forces[i].x = parseFloat(e.target.value) || 0;
-              updateScene();
-              updatePanel();
-            });
-          }
-          if (yInput) {
-            yInput.addEventListener('change', (e) => {
-              scenarioState.forces[i].y = parseFloat(e.target.value) || 0;
-              updateScene();
-              updatePanel();
-            });
-          }
-        });
-        const addBtn = rightPanel.querySelector('#btn-add-force');
-        if (addBtn) {
-          addBtn.addEventListener('click', () => {
-            const idx = scenarioState.forces.length + 1;
-            scenarioState.forces.push({ x: 1, y: 0, name: `F${idx}` });
-            updateScene();
-            updatePanel();
-          });
-        }
-        break;
-      }
-
-      // inclined-plane, spring, pulley handled by dynamic panel wireEvents
-    }
+    // inclined-plane, spring, pulley handled by dynamic panel wireEvents
   }
 
   const unsubState = subscribe(() => {
