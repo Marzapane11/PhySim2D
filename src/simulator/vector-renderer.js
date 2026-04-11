@@ -18,14 +18,14 @@ export function getNextColor() {
 }
 
 /**
- * Sub-linear force scaling: sqrt-based.
+ * Logarithmic force scaling: log-based, very gentle growth.
  * Converts a force vector into a visually manageable arrow vector.
- * 10 N -> ~0.7, 100 N -> ~2.2, 500 N -> ~4.9, 1000 N -> ~6.9
+ * 1 N -> 0.7, 10 N -> 2.4, 100 N -> 4.6, 1000 N -> 6.9, 5000 N -> 7.7
  */
-export function scaleForceVector(fx, fy, factor = 0.22) {
+export function scaleForceVector(fx, fy, factor = 1.0) {
   const mag = Math.sqrt(fx * fx + fy * fy);
   if (mag < 0.0001) return { x: 0, y: 0 };
-  const newMag = Math.sqrt(mag) * factor;
+  const newMag = Math.log(1 + mag) * factor;
   return { x: (fx / mag) * newMag, y: (fy / mag) * newMag };
 }
 
