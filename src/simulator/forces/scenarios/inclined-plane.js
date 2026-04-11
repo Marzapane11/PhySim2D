@@ -24,8 +24,7 @@ export function createInclinedPlaneSolver() {
         visibleIf: (v) => v.alpha == null || Math.abs(v.alpha) >= 0.5 },
       { id: 'N', label: 'Normale (<span class="vec-arrow">N</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Fa', label: 'Attrito (<span class="vec-arrow">F</span>a)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'Fris', label: '<span class="vec-arrow">F</span>ris (risultante)', unit: 'N', defaultValue: 0, mode: 'output',
-        visibleIf: (v) => v.alpha == null || Math.abs(v.alpha) >= 0.5 },
+      { id: 'Fris', label: '<span class="vec-arrow">F</span>ris (risultante)', unit: 'N', defaultValue: 0, mode: 'output' },
     ],
     solve(vals, inputIds) {
       const G = 9.81;
