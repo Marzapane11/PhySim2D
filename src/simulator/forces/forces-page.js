@@ -59,11 +59,52 @@ export function renderForcesPage(container) {
     updatePanel();
   });
 
+  // Recompute spring deformation from equilibrium when custom forces are present
+  function updateSpringEquilibrium() {
+    if (activeScenario !== 'spring' || !scenarioState.customForces) return;
+    if (scenarioState.customForces.length === 0) return;
+
+    const vars = scenarioState.solver.getVariables();
+    const dxVar = vars.find(v => v.id === 'dx');
+    if (!dxVar || dxVar.mode !== 'output') return;
+
+    const vals = scenarioState.solver.getValues();
+    const alpha = vals.alpha || 0;
+    const rad = (alpha * Math.PI) / 180;
+    const m = vals.m || 0;
+    const k = vals.k || 0;
+    const mu = vals.mu || 0;
+    const G = 9.81;
+
+    // Slope direction up (from A toward B): (-cos α, sin α)
+    const sdx = -Math.cos(rad);
+    const sdy = Math.sin(rad);
+
+    let fcSlope = 0;
+    scenarioState.customForces.forEach((f) => {
+      const fr = (f.angleDeg * Math.PI) / 180;
+      fcSlope += f.magnitude * Math.cos(fr) * sdx + f.magnitude * Math.sin(fr) * sdy;
+    });
+
+    const Px = m * G * Math.sin(rad);
+    const N = m * G * Math.cos(rad);
+    // Net down-slope force without spring
+    const netNoSpring = Px - fcSlope;
+    // Friction opposes motion tendency; clamped to max static
+    const FaMax = mu * N;
+    const Fa = Math.sign(netNoSpring) * Math.min(Math.abs(netNoSpring), FaMax);
+    // Spring must balance the rest
+    const Fe_eq = netNoSpring - Fa;
+    const dx_eq = k > 0 ? Fe_eq / k : 0;
+    scenarioState.solver.setValue('dx', dx_eq);
+  }
+
   function updateScene() {
     sceneManager.clearObjects();
     labelManager.clear();
 
     const vis = getState().visibility;
+    updateSpringEquilibrium();
 
     switch (activeScenario) {
       case 'inclined-plane': {
@@ -89,6 +130,7 @@ export function renderForcesPage(container) {
 
   function updatePanel() {
     const sections = [];
+    updateSpringEquilibrium();
 
     switch (activeScenario) {
       case 'inclined-plane':
