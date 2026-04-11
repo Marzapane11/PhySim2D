@@ -25,51 +25,62 @@ export function createInclinedPlaneSolver() {
     solve(vals, inputIds) {
       const G = 9.81;
       const has = (id) => inputIds.includes(id);
-      let { m, alpha, mu, l, h, b, P, Px, Py, N, Fa, Fris } = vals;
+      // Start with only inputs known; outputs are null until computed
+      let m = has('m') ? vals.m : null;
+      let alpha = has('alpha') ? vals.alpha : null;
+      let mu = has('mu') ? vals.mu : null;
+      let l = has('l') ? vals.l : null;
+      let h = has('h') ? vals.h : null;
+      let b = has('b') ? vals.b : null;
+      let P = has('P') ? vals.P : null;
+      let Px = has('Px') ? vals.Px : null;
+      let Py = has('Py') ? vals.Py : null;
+      let N = has('N') ? vals.N : null;
+      let Fa = has('Fa') ? vals.Fa : null;
+      let Fris = has('Fris') ? vals.Fris : null;
 
-      // === Geometry: solve for alpha, h, b, l ===
-      // Priority: if alpha is input, use it. Else derive from geometric values.
-      if (!has('alpha')) {
-        if (has('h') && has('b')) {
+      // === Geometry: derive alpha if not given ===
+      if (alpha == null) {
+        if (h != null && b != null) {
           alpha = Math.atan2(h, b) * 180 / Math.PI;
-        } else if (has('h') && has('l') && l > 0) {
+        } else if (h != null && l != null && l > 0) {
           alpha = Math.asin(Math.min(1, h / l)) * 180 / Math.PI;
-        } else if (has('b') && has('l') && l > 0) {
+        } else if (b != null && l != null && l > 0) {
           alpha = Math.acos(Math.min(1, b / l)) * 180 / Math.PI;
         }
       }
-      const rad = (alpha * Math.PI) / 180;
 
-      // Derive the missing side(s) from alpha and any given side
-      if (has('l')) {
-        if (!has('h')) h = l * Math.sin(rad);
-        if (!has('b')) b = l * Math.cos(rad);
-      } else if (has('h')) {
-        if (Math.sin(rad) > 0.0001) l = h / Math.sin(rad);
-        if (!has('b')) b = l * Math.cos(rad);
-      } else if (has('b')) {
-        if (Math.cos(rad) > 0.0001) l = b / Math.cos(rad);
-        if (!has('h')) h = l * Math.sin(rad);
+      if (alpha != null) {
+        const rad = (alpha * Math.PI) / 180;
+        // Derive missing sides
+        if (l != null) {
+          if (h == null) h = l * Math.sin(rad);
+          if (b == null) b = l * Math.cos(rad);
+        } else if (h != null && Math.sin(rad) > 0.0001) {
+          l = h / Math.sin(rad);
+          if (b == null) b = l * Math.cos(rad);
+        } else if (b != null && Math.cos(rad) > 0.0001) {
+          l = b / Math.cos(rad);
+          if (h == null) h = l * Math.sin(rad);
+        }
+
+        // === Forces ===
+        if (P == null && m != null) P = m * G;
+        else if (m == null && P != null) m = P / G;
+
+        if (P != null) {
+          if (Px == null) Px = P * Math.sin(rad);
+          if (Py == null) Py = P * Math.cos(rad);
+        }
+
+        if (N == null && Py != null) N = Py;
+        else if (Py == null && N != null) Py = N;
+
+        if (Fa == null && mu != null && N != null) Fa = mu * N;
+        else if (mu == null && Fa != null && N != null && N > 0) mu = Fa / N;
+
+        if (Fris == null && Px != null && Fa != null) Fris = Px - Fa;
       }
-
-      // === Forces ===
-      if (has('m')) P = m * G;
-      else if (has('P')) m = P / G;
-
-      if (P > 0) {
-        if (!has('Px')) Px = P * Math.sin(rad);
-        if (!has('Py')) Py = P * Math.cos(rad);
-      }
-
-      N = Py;
-
-      if (has('mu') && N > 0) {
-        Fa = mu * N;
-      } else if (has('Fa') && N > 0) {
-        mu = Fa / N;
-      }
-
-      Fris = Px - Fa;
 
       return { m, alpha, mu, l, h, b, P, Px, Py, N, Fa, Fris };
     }

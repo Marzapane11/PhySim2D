@@ -27,53 +27,63 @@ export function createSpringSolver() {
     solve(vals, inputIds) {
       const G = 9.81;
       const has = (id) => inputIds.includes(id);
-      let { m, alpha, mu, l, h, b, k, dx, P, Px, N, Fa, Fe } = vals;
+      // Start with only inputs; outputs null until computed
+      let m = has('m') ? vals.m : null;
+      let alpha = has('alpha') ? vals.alpha : null;
+      let mu = has('mu') ? vals.mu : null;
+      let l = has('l') ? vals.l : null;
+      let h = has('h') ? vals.h : null;
+      let b = has('b') ? vals.b : null;
+      let k = has('k') ? vals.k : null;
+      let dx = has('dx') ? vals.dx : null;
+      let P = has('P') ? vals.P : null;
+      let Px = has('Px') ? vals.Px : null;
+      let N = has('N') ? vals.N : null;
+      let Fa = has('Fa') ? vals.Fa : null;
+      let Fe = has('Fe') ? vals.Fe : null;
 
       // === Geometry ===
-      if (!has('alpha')) {
-        if (has('h') && has('b')) {
+      if (alpha == null) {
+        if (h != null && b != null) {
           alpha = Math.atan2(h, b) * 180 / Math.PI;
-        } else if (has('h') && has('l') && l > 0) {
+        } else if (h != null && l != null && l > 0) {
           alpha = Math.asin(Math.min(1, h / l)) * 180 / Math.PI;
-        } else if (has('b') && has('l') && l > 0) {
+        } else if (b != null && l != null && l > 0) {
           alpha = Math.acos(Math.min(1, b / l)) * 180 / Math.PI;
         }
       }
-      const rad = (alpha * Math.PI) / 180;
 
-      if (has('l')) {
-        if (!has('h')) h = l * Math.sin(rad);
-        if (!has('b')) b = l * Math.cos(rad);
-      } else if (has('h')) {
-        if (Math.sin(rad) > 0.0001) l = h / Math.sin(rad);
-        if (!has('b')) b = l * Math.cos(rad);
-      } else if (has('b')) {
-        if (Math.cos(rad) > 0.0001) l = b / Math.cos(rad);
-        if (!has('h')) h = l * Math.sin(rad);
+      if (alpha != null) {
+        const rad = (alpha * Math.PI) / 180;
+
+        if (l != null) {
+          if (h == null) h = l * Math.sin(rad);
+          if (b == null) b = l * Math.cos(rad);
+        } else if (h != null && Math.sin(rad) > 0.0001) {
+          l = h / Math.sin(rad);
+          if (b == null) b = l * Math.cos(rad);
+        } else if (b != null && Math.cos(rad) > 0.0001) {
+          l = b / Math.cos(rad);
+          if (h == null) h = l * Math.sin(rad);
+        }
+
+        // === Forces ===
+        if (P == null && m != null) P = m * G;
+        else if (m == null && P != null) m = P / G;
+
+        if (P != null) {
+          if (Px == null) Px = P * Math.sin(rad);
+          if (N == null) N = P * Math.cos(rad);
+        }
+
+        if (Fa == null && mu != null && N != null) Fa = mu * N;
+        else if (mu == null && Fa != null && N != null && N > 0) mu = Fa / N;
       }
 
-      // === Forces ===
-      if (has('m')) P = m * G;
-      else if (has('P')) m = P / G;
-
-      if (P > 0) {
-        Px = P * Math.sin(rad);
-        N = P * Math.cos(rad);
-      }
-
-      if (has('mu') && N > 0) {
-        Fa = mu * N;
-      } else if (has('Fa') && N > 0) {
-        mu = Fa / N;
-      }
-
-      if (has('k') && has('dx')) {
-        Fe = Math.abs(k * dx);
-      } else if (has('Fe') && has('k') && k > 0) {
-        dx = Fe / k;
-      } else if (has('Fe') && has('dx') && dx !== 0) {
-        k = Fe / Math.abs(dx);
-      }
+      // Elastic force is independent of geometry
+      if (Fe == null && k != null && dx != null) Fe = Math.abs(k * dx);
+      else if (dx == null && Fe != null && k != null && k > 0) dx = Fe / k;
+      else if (k == null && Fe != null && dx != null && dx !== 0) k = Fe / Math.abs(dx);
 
       return { m, alpha, mu, l, h, b, k, dx, P, Px, N, Fa, Fe };
     }
