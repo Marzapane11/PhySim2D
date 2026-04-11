@@ -179,8 +179,9 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
       const pA = createArrow(o, pVec, 0x4fc3f7, 'P');
       if (pA) sceneManager.objects.add(pA);
 
-      // Dashed decomposition of P into Px (along slope) and Py (along normal)
-      const compLines = createSlopeComponentLines(o, pVec, tri.sd, tri.nd, 0x4fc3f7, 0.04);
+      // Dashed decomposition of P into Px (along slope, down) and Py (along normal, into surface)
+      // pxRaw is down the slope (opposite of sd, which points toward B)
+      const compLines = createSlopeComponentLines(o, pVec, { x: -tri.sd.x, y: -tri.sd.y }, tri.nd, calc.parallel, calc.perpendicular, 0x4fc3f7, 0.04);
       sceneManager.objects.add(compLines);
 
       // N — normal, away from surface

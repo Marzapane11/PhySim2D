@@ -141,55 +141,51 @@ export function createComponentLines(origin, vector, color, z) {
  * Draw component decomposition along slope/normal directions (for inclined plane).
  * From the tip of the force vector, draw dashed lines to the slope and normal axes.
  */
-export function createSlopeComponentLines(origin, vector, sd, nd, color, z) {
+export function createSlopeComponentLines(origin, pVec, sd, nd, pxRaw, pyRaw, color, z) {
   const group = new THREE.Group();
-  const tipX = origin.x + vector.x;
-  const tipY = origin.y + vector.y;
+  const tipX = origin.x + pVec.x;
+  const tipY = origin.y + pVec.y;
   const dashSize = 0.15;
   const gapSize = 0.1;
 
-  // Project vector onto slope direction: Px = (vector · sd) * sd
-  const projSlope = vector.x * sd.x + vector.y * sd.y;
-  // Project vector onto normal direction: Py = (vector · nd) * nd
-  const projNormal = vector.x * nd.x + vector.y * nd.y;
+  // Scale Px and Py independently (same scaling as other force arrows)
+  const pxVec = scaleForceVector(sd.x * pxRaw, sd.y * pxRaw);
+  const pyVec = scaleForceVector(-nd.x * pyRaw, -nd.y * pyRaw); // Py points into surface (opposite to normal)
 
-  // End of slope projection (from origin along slope)
-  const slopeEndX = origin.x + projSlope * sd.x;
-  const slopeEndY = origin.y + projSlope * sd.y;
+  // Px arrow end point
+  const pxEndX = origin.x + pxVec.x;
+  const pxEndY = origin.y + pxVec.y;
+  // Py arrow end point
+  const pyEndX = origin.x + pyVec.x;
+  const pyEndY = origin.y + pyVec.y;
 
-  // End of normal projection (from origin along normal)
-  const normalEndX = origin.x + projNormal * nd.x;
-  const normalEndY = origin.y + projNormal * nd.y;
-
-  // Dashed line from tip to slope projection
-  const dashToSlope = new THREE.BufferGeometry().setFromPoints([
+  // Dashed line from tip of P to end of Px
+  const dashToPx = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(tipX, tipY, z),
-    new THREE.Vector3(slopeEndX, slopeEndY, z),
+    new THREE.Vector3(pxEndX, pxEndY, z),
   ]);
-  const line1 = new THREE.Line(dashToSlope, new THREE.LineDashedMaterial({
-    color, dashSize, gapSize, transparent: true, opacity: 0.7
+  const line1 = new THREE.Line(dashToPx, new THREE.LineDashedMaterial({
+    color, dashSize, gapSize, transparent: true, opacity: 0.5
   }));
   line1.computeLineDistances();
   group.add(line1);
 
-  // Dashed line from tip to normal projection
-  const dashToNormal = new THREE.BufferGeometry().setFromPoints([
+  // Dashed line from tip of P to end of Py
+  const dashToPy = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(tipX, tipY, z),
-    new THREE.Vector3(normalEndX, normalEndY, z),
+    new THREE.Vector3(pyEndX, pyEndY, z),
   ]);
-  const line2 = new THREE.Line(dashToNormal, new THREE.LineDashedMaterial({
-    color, dashSize, gapSize, transparent: true, opacity: 0.7
+  const line2 = new THREE.Line(dashToPy, new THREE.LineDashedMaterial({
+    color, dashSize, gapSize, transparent: true, opacity: 0.5
   }));
   line2.computeLineDistances();
   group.add(line2);
 
-  // Px arrow (slope component)
-  const pxVec = { x: projSlope * sd.x, y: projSlope * sd.y };
+  // Px arrow (independent log-scaled)
   const pxArrow = makeArrow2D(origin, pxVec, 0xffa726, z);
   if (pxArrow) group.add(pxArrow);
 
-  // Py arrow (normal component)
-  const pyVec = { x: projNormal * nd.x, y: projNormal * nd.y };
+  // Py arrow (independent log-scaled)
   const pyArrow = makeArrow2D(origin, pyVec, 0x26c6da, z);
   if (pyArrow) group.add(pyArrow);
 

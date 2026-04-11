@@ -149,8 +149,10 @@ export function renderSpring(sceneManager, state, visibility) {
       const pA = createArrow(center, pVec, 0x4fc3f7, 'P');
       if (pA) sceneManager.objects.add(pA);
 
-      // Dashed decomposition of P into Px (along slope) and Py (along normal)
-      const compLines = createSlopeComponentLines(center, pVec, sd, nd, 0x4fc3f7, 0.04);
+      // Dashed decomposition of P into Px (along slope, down) and Py (along normal, into surface)
+      const pxRaw = W * Math.sin(tri.angleRad);
+      const pyRaw = W * Math.cos(tri.angleRad);
+      const compLines = createSlopeComponentLines(center, pVec, { x: -sd.x, y: -sd.y }, nd, pxRaw, pyRaw, 0x4fc3f7, 0.04);
       sceneManager.objects.add(compLines);
 
       // N — normal
