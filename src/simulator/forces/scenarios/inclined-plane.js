@@ -118,7 +118,7 @@ export function drawTriangle(sceneManager, tri, isLight, angleLabel) {
   addTextLabel(sceneManager, 'C', C.x - 0.5, C.y - 0.5, '#4fc3f7');
   addTextLabel(sceneManager, angleLabel || '\u03B1', A.x - 1.5, A.y + 0.4, '#66bb6a');
   addTextLabel(sceneManager, 'h', C.x - 0.7, (C.y + B.y) / 2, '#66bb6a');
-  addTextLabel(sceneManager, 'd', (C.x + A.x) / 2, C.y - 0.5, '#4fc3f7');
+  addTextLabel(sceneManager, 'b', (C.x + A.x) / 2, C.y - 0.5, '#4fc3f7');
   // l label (italic) on the hypotenuse, close to the line, away from box
   const lT = 0.15;
   const lx = A.x + lT * (B.x - A.x) + tri.nd.x * 0.3;
