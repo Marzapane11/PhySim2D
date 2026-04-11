@@ -26,16 +26,16 @@ export function scaleForceVector(fx, fy, factor = 0.35) {
   const mag = Math.sqrt(fx * fx + fy * fy);
   if (mag < 0.0001) return { x: 0, y: 0 };
   const rawMag = Math.log(1 + mag) * factor;
-  // Cap at 4.0 units so even huge forces stay within the triangle
-  const cap = 4.0;
-  const newMag = Math.min(rawMag, cap);
+  const minLen = 0.7; // Minimum visible length for tiny forces
+  const cap = 4.0;    // Maximum length for huge forces
+  const newMag = Math.max(minLen, Math.min(rawMag, cap));
   return { x: (fx / mag) * newMag, y: (fy / mag) * newMag };
 }
 
 // Draw a 2D arrow: line + flat triangle tip. No 3D cones.
 function makeArrow2D(origin, vector, color, z) {
   const len = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
-  if (len < 0.2) return null;
+  if (len < 0.05) return null;
 
   const group = new THREE.Group();
 
