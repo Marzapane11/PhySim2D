@@ -17,7 +17,6 @@ const TOOLS = [
   { id: 'create', label: 'Crea Vettore', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="13 5 19 5 19 11"/></svg>' },
   { id: 'sum', label: 'Somma', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' },
   { id: 'difference', label: 'Differenza', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>' },
-  { id: 'scalar', label: 'Scalare x Vettore', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><text x="6" y="17" font-size="14" font-weight="bold" fill="currentColor" stroke="none">k</text><line x1="14" y1="16" x2="22" y2="8"/><polyline points="18 8 22 8 22 12"/></svg>' },
   { id: 'decompose', label: 'Scomponi', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="20" x2="20" y2="4"/><polyline points="14 4 20 4 20 10"/><line x1="4" y1="20" x2="20" y2="20" stroke-dasharray="3,3"/><line x1="20" y1="20" x2="20" y2="4" stroke-dasharray="3,3"/></svg>' },
 ];
 
