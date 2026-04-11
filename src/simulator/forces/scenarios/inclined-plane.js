@@ -259,9 +259,8 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
         if (faA) sceneManager.objects.add(faA);
       }
 
-      // Custom forces (only shown when flat)
-      const isFlat = Math.abs(state.angleDeg) < 0.5;
-      if (isFlat && state.customForces && state.customForces.length > 0) {
+      // Custom forces (always shown)
+      if (state.customForces && state.customForces.length > 0) {
         const customColors = [0xec407a, 0x26c6da, 0xd4e157, 0xab47bc, 0xef5350, 0x8d6e63];
         state.customForces.forEach((f, i) => {
           const rad = (f.angleDeg * Math.PI) / 180;

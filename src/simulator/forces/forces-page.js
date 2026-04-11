@@ -114,25 +114,21 @@ export function renderForcesPage(container) {
         sections.push({ title: 'Parametri e Risultati', content: panel.html + statusHtml });
         scenarioState._wireEvents = panel.wireEvents;
 
-        // Custom forces panel (only on inclined-plane when flat)
+        // Custom forces panel (always shown on inclined-plane)
         if (activeScenario === 'inclined-plane') {
-          const alphaVal = solverVals.alpha || 0;
-          const isFlat = Math.abs(alphaVal) < 0.5;
-          if (isFlat) {
-            let forcesHtml = '';
-            scenarioState.customForces.forEach((f, i) => {
-              forcesHtml += `<div style="margin-bottom:8px;padding:6px;border:1px solid var(--border-color);border-radius:4px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                  <strong style="color:var(--text-accent);">${f.name}</strong>
-                  <button class="remove-force" data-idx="${i}" style="color:var(--danger);background:none;border:none;cursor:pointer;font-size:14px;">\u2715</button>
-                </div>
-                ${createInputRow('Modulo', `cf-mag-${i}`, f.magnitude, 'N', 'step="1"')}
-                ${createInputRow('Angolo', `cf-ang-${i}`, f.angleDeg, '\u00B0', 'step="5"')}
-              </div>`;
-            });
-            forcesHtml += `<button id="btn-add-custom-force" style="width:100%;padding:8px;background:var(--accent);color:white;border-radius:var(--radius-sm);font-size:13px;font-weight:600;">+ Aggiungi forza</button>`;
-            sections.push({ title: 'Forze personalizzate', content: forcesHtml });
-          }
+          let forcesHtml = '';
+          scenarioState.customForces.forEach((f, i) => {
+            forcesHtml += `<div style="margin-bottom:8px;padding:6px;border:1px solid var(--border-color);border-radius:4px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <strong style="color:var(--text-accent);">${f.name}</strong>
+                <button class="remove-force" data-idx="${i}" style="color:var(--danger);background:none;border:none;cursor:pointer;font-size:14px;">\u2715</button>
+              </div>
+              ${createInputRow('Modulo', `cf-mag-${i}`, f.magnitude, 'N', 'step="1"')}
+              ${createInputRow('Angolo', `cf-ang-${i}`, f.angleDeg, '\u00B0', 'step="5"')}
+            </div>`;
+          });
+          forcesHtml += `<button id="btn-add-custom-force" style="width:100%;padding:8px;background:var(--accent);color:white;border-radius:var(--radius-sm);font-size:13px;font-weight:600;">+ Aggiungi forza</button>`;
+          sections.push({ title: 'Forze personalizzate', content: forcesHtml });
         }
         break;
       }
