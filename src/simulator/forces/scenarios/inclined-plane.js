@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { inclinedPlane } from '../../../math/force-math.js';
-import { createArrow, createSlopeComponentLines } from '../../vector-renderer.js';
+import { createArrow, createSlopeComponentLines, scaleForceVector } from '../../vector-renderer.js';
 import { getState } from '../../../state.js';
 import { createSolver } from '../../dynamic-solver.js';
 
@@ -172,11 +172,10 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
     const center = drawBox(sceneManager, bx, by, tri.sd, tri.nd, 1.2, 0.9);
 
     if (visibility.forceArrows) {
-      const s = 0.025;
       const o = center;
 
       // P — weight, straight down
-      const pVec = { x: 0, y: -calc.weight * s };
+      const pVec = scaleForceVector(0, -calc.weight);
       const pA = createArrow(o, pVec, 0x4fc3f7, 'P');
       if (pA) sceneManager.objects.add(pA);
 
@@ -185,12 +184,14 @@ export function renderInclinedPlane(sceneManager, state, visibility) {
       sceneManager.objects.add(compLines);
 
       // N — normal, away from surface
-      const nA = createArrow(o, { x: tri.nd.x * calc.normal * s, y: tri.nd.y * calc.normal * s }, 0x66bb6a, 'N');
+      const nVec = scaleForceVector(tri.nd.x * calc.normal, tri.nd.y * calc.normal);
+      const nA = createArrow(o, nVec, 0x66bb6a, 'N');
       if (nA) sceneManager.objects.add(nA);
 
       // Fa — friction, up the slope
       if (calc.friction > 0.01) {
-        const faA = createArrow(o, { x: tri.sd.x * calc.friction * s, y: tri.sd.y * calc.friction * s }, 0xab47bc, 'Fa');
+        const faVec = scaleForceVector(tri.sd.x * calc.friction, tri.sd.y * calc.friction);
+        const faA = createArrow(o, faVec, 0xffff00, 'Fa');
         if (faA) sceneManager.objects.add(faA);
       }
     }

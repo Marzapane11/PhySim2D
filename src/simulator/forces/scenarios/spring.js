@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { springForce, weight } from '../../../math/force-math.js';
-import { createArrow, createSlopeComponentLines } from '../../vector-renderer.js';
+import { createArrow, createSlopeComponentLines, scaleForceVector } from '../../vector-renderer.js';
 import { getState } from '../../../state.js';
 import { createSolver } from '../../dynamic-solver.js';
 import { calcTriangle, drawTriangle, drawBox, addLine, addTextLabel } from './inclined-plane.js';
@@ -144,10 +144,8 @@ export function renderSpring(sceneManager, state, visibility) {
     const center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
 
     if (visibility.forceArrows) {
-      const s = 0.025;
-
       // P — weight down
-      const pVec = { x: 0, y: -W * s };
+      const pVec = scaleForceVector(0, -W);
       const pA = createArrow(center, pVec, 0x4fc3f7, 'P');
       if (pA) sceneManager.objects.add(pA);
 
@@ -157,21 +155,23 @@ export function renderSpring(sceneManager, state, visibility) {
 
       // N — normal
       const nVal = W * Math.cos(tri.angleRad);
-      const nA = createArrow(center, { x: nd.x * nVal * s, y: nd.y * nVal * s }, 0x66bb6a, 'N');
+      const nVec = scaleForceVector(nd.x * nVal, nd.y * nVal);
+      const nA = createArrow(center, nVec, 0x66bb6a, 'N');
       if (nA) sceneManager.objects.add(nA);
 
       // Fe — elastic force (drawn first, so Fa goes on top)
       if (calc.force > 0.01) {
         const dir = state.x > 0 ? 1 : -1;
-        const feA = createArrow(center, { x: dir * sd.x * calc.force * s, y: dir * sd.y * calc.force * s }, 0xaa00ff, 'Fe');
+        const feVec = scaleForceVector(dir * sd.x * calc.force, dir * sd.y * calc.force);
+        const feA = createArrow(center, feVec, 0xaa00ff, 'Fe');
         if (feA) sceneManager.objects.add(feA);
       }
 
       // Fa — friction, up the slope (drawn LAST so it's on top and visible)
       const faVal = state.mass ? state.mass * 9.81 * Math.cos(tri.angleRad) * (state.frictionCoeff || 0) : 0;
       if (faVal > 0.01) {
-        const faScale = s * 1.5;
-        const faA = createArrow(center, { x: sd.x * faVal * faScale, y: sd.y * faVal * faScale }, 0xffff00, 'Fa');
+        const faVec = scaleForceVector(sd.x * faVal, sd.y * faVal, 0.28);
+        const faA = createArrow(center, faVec, 0xffff00, 'Fa');
         if (faA) sceneManager.objects.add(faA);
       }
     }

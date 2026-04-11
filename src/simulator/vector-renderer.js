@@ -17,6 +17,18 @@ export function getNextColor() {
   return color;
 }
 
+/**
+ * Sub-linear force scaling: sqrt-based.
+ * Converts a force vector into a visually manageable arrow vector.
+ * 10 N -> ~0.7, 100 N -> ~2.2, 500 N -> ~4.9, 1000 N -> ~6.9
+ */
+export function scaleForceVector(fx, fy, factor = 0.22) {
+  const mag = Math.sqrt(fx * fx + fy * fy);
+  if (mag < 0.0001) return { x: 0, y: 0 };
+  const newMag = Math.sqrt(mag) * factor;
+  return { x: (fx / mag) * newMag, y: (fy / mag) * newMag };
+}
+
 // Draw a 2D arrow: line + flat triangle tip. No 3D cones.
 function makeArrow2D(origin, vector, color, z) {
   const len = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
