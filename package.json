@@ -1,7 +1,7 @@
 {
-  "name": "simulatore-forze-fisica",
+  "name": "physim2d",
   "version": "1.0.0",
-  "description": "Simulatore 2D di forze e vettori con visuale 3D per studenti di prima superiore",
+  "description": "PhySim2D — Simulatore 2D di forze e vettori per studenti di prima superiore",
   "main": "electron/main.js",
   "scripts": {
     "dev": "concurrently \"vite\" \"sleep 2 && electron .\"",
@@ -22,8 +22,8 @@
     "three": "^0.160.0"
   },
   "build": {
-    "appId": "com.simulatore.forze-fisica",
-    "productName": "Simulatore Forze e Vettori",
+    "appId": "com.physim2d",
+    "productName": "PhySim2D",
     "win": {
       "target": "nsis"
     },

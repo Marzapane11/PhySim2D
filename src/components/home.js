@@ -2,10 +2,10 @@ export function renderHomePage(container) {
   container.innerHTML = `
     <div style="padding: 40px; max-width: 700px;">
       <h1 style="font-size: 28px; color: var(--text-accent); margin-bottom: 8px;">
-        Simulatore Forze e Vettori
+        PhySim2D
       </h1>
       <p style="color: var(--text-secondary); margin-bottom: 32px; font-size: 15px;">
-        Programma di Fisica — Liceo Enrico Medi, Cicciano
+        Simulatore interattivo di Forze e Vettori 2D
       </p>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
         <a href="#/mod0" class="home-card" style="
