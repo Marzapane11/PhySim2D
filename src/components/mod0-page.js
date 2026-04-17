@@ -15,7 +15,7 @@ export function renderMod0Page(container) {
         <div class="theory-card-title">Le grandezze fondamentali</div>
         <div class="theory-card-content" style="display:block">
           <p>Il <strong>Sistema Internazionale</strong> (S.I.) definisce 7 grandezze fondamentali:</p>
-          <table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;">
+          <div class="table-scroll"><table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;min-width:360px;">
             <tr style="border-bottom:1px solid var(--border-color);">
               <th style="text-align:left;padding:6px;color:var(--text-accent);">Grandezza</th>
               <th style="text-align:left;padding:6px;color:var(--text-accent);">Unità</th>
@@ -42,7 +42,7 @@ export function renderMod0Page(container) {
             <tr>
               <td style="padding:6px;">Intensità luminosa</td><td style="padding:6px;">candela</td><td style="padding:6px;">cd</td>
             </tr>
-          </table>
+          </table></div>
         </div>
       </div>
 
@@ -50,7 +50,7 @@ export function renderMod0Page(container) {
         <div class="theory-card-title">Grandezze derivate</div>
         <div class="theory-card-content" style="display:block">
           <p>Le <strong>grandezze derivate</strong> si ottengono combinando le grandezze fondamentali:</p>
-          <table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;">
+          <div class="table-scroll"><table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;min-width:360px;">
             <tr style="border-bottom:1px solid var(--border-color);">
               <th style="text-align:left;padding:6px;color:var(--text-accent);">Grandezza</th>
               <th style="text-align:left;padding:6px;color:var(--text-accent);">Formula</th>
@@ -71,7 +71,7 @@ export function renderMod0Page(container) {
             <tr>
               <td style="padding:6px;">Energia/Lavoro</td><td style="padding:6px;">L = F·s</td><td style="padding:6px;">J (Joule)</td>
             </tr>
-          </table>
+          </table></div>
         </div>
       </div>
     </div>
