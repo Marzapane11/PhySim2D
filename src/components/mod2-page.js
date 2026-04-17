@@ -153,19 +153,19 @@ h2 = \u03c11 \u00b7 h1 / \u03c12 = 1000 \u00b7 20 / 800 = 25 cm (olio)</div>
       <div class="theory-card expanded">
         <div class="theory-card-title">Legge di Archimede</div>
         <div class="theory-card-content" style="display:block">
-          <p><strong>Legge di Archimede</strong>: un corpo immerso in un fluido riceve una spinta verso l'alto (spinta di Archimede) uguale al peso del fluido spostato.</p>
-          <div class="theory-formula-block">Fa = \u03c1f \u00b7 g \u00b7 V</div>
+          <p><strong>Legge di Archimede</strong>: un corpo immerso in un fluido riceve una <strong>spinta</strong> verso l'alto (indicata con <span class="vec-arrow">F</span>A, per distinguerla dalla forza di attrito Fa) uguale al peso del fluido spostato.</p>
+          <div class="theory-formula-block">FA = \u03c1f \u00b7 g \u00b7 V</div>
           <p>dove \u03c1f è la densità del fluido e V è il volume della parte immersa del corpo.</p>
           <ul style="margin:8px 0 8px 20px;">
-            <li>Se Fa > P: il corpo <strong>galleggia</strong> (sale)</li>
-            <li>Se Fa = P: il corpo <strong>resta sospeso</strong></li>
-            <li>Se Fa < P: il corpo <strong>affonda</strong></li>
+            <li>Se FA > P: il corpo <strong>galleggia</strong> (sale)</li>
+            <li>Se FA = P: il corpo <strong>resta sospeso</strong></li>
+            <li>Se FA < P: il corpo <strong>affonda</strong></li>
           </ul>
           <div class="theory-example-block">Cubo di legno (lato 10 cm), massa 0.6 kg, immerso in acqua:
 V = 0.001 m\u00b3
 P = 0.6 \u00b7 9.81 = 5.89 N
-Fa = 1000 \u00b7 9.81 \u00b7 0.001 = 9.81 N
-Fa > P \u2192 il cubo galleggia</div>
+FA = 1000 \u00b7 9.81 \u00b7 0.001 = 9.81 N
+FA > P \u2192 il cubo galleggia</div>
         </div>
       </div>
 

@@ -117,12 +117,12 @@ export const THEORY_TOPICS = {
   'force-hooke': {
     title: 'Forza Elastica / Hooke',
     category: 'forze',
-    content: `<p>La <strong>legge di Hooke</strong> descrive la forza elastica <span class="vec-arrow">F</span> esercitata da una molla.</p>
-<p>La forza è proporzionale all'allungamento (o compressione) della molla rispetto alla sua posizione di equilibrio: <span class="vec-arrow">F</span> = -k \u00b7 \u0394x.</p>
+    content: `<p>La <strong>legge di Hooke</strong> descrive la forza elastica <span class="vec-arrow">F</span>e esercitata da una molla.</p>
+<p>La forza è proporzionale all'allungamento (o compressione) <strong>\u0394x</strong> della molla rispetto alla sua posizione di equilibrio: <span class="vec-arrow">F</span>e = -k \u00b7 \u0394x.</p>
 <p>Il segno negativo indica che la forza è di richiamo: si oppone alla deformazione.</p>
 <p><strong>k</strong> è la costante elastica della molla, misurata in N/m.</p>`,
-    formula: 'F = -k \u00b7 x',
-    example: 'k = 200 N/m, x = 0.05 m\nF = -200 \u00b7 0.05 = -10 N\n(La forza di 10 N richiama verso l\'equilibrio)',
+    formula: 'Fe = -k \u00b7 \u0394x',
+    example: 'k = 200 N/m, \u0394x = 0.05 m\nFe = -200 \u00b7 0.05 = -10 N\n(La forza di 10 N richiama verso l\'equilibrio)',
   },
 
   'force-friction': {
@@ -152,10 +152,14 @@ export const THEORY_TOPICS = {
     category: 'forze',
     content: `<p>La <strong>tensione</strong> <span class="vec-arrow">T</span> è la forza trasmessa attraverso una corda, filo o cavo quando viene tirato.</p>
 <p>In una corda ideale (senza massa e inestensibile), la tensione è la stessa in ogni punto.</p>
-<p>La <strong>macchina di Atwood</strong> è un sistema con due masse collegate da una corda che passa su una carrucola.</p>
-<p>Se le masse sono diverse, il sistema accelera nella direzione della massa maggiore.</p>`,
-    formula: 'Macchina di Atwood:\na = (m1 - m2) \u00b7 g / (m1 + m2)\nT = 2 \u00b7 m1 \u00b7 m2 \u00b7 g / (m1 + m2)',
-    example: 'm1 = 8 kg, m2 = 5 kg\na = (8 - 5) \u00b7 9.81 / (8 + 5) = 2.26 m/s\u00b2\nT = 2 \u00b7 8 \u00b7 5 \u00b7 9.81 / 13 = 60.37 N',
+<p>La <strong>carrucola</strong> è un disco che cambia la direzione della corda senza variarne la tensione.</p>
+<p>Nel simulatore: <strong>m\u2081</strong> (sul piano inclinato con attrito \u03bc e angolo \u03b8) e <strong>m\u2082</strong> (appesa verticalmente) sono collegate dalla fune che passa sulla carrucola in cima al piano.</p>
+<p>Definita la "forza motrice" <strong>driving = P\u2082 \u2212 P\u2081x</strong> (positiva se m\u2082 tira m\u2081 verso l'alto del piano), ci sono tre casi:</p>
+<ul><li>|driving| \u2264 \u03bc\u00b7N \u2192 <strong>equilibrio</strong> (a = 0, T = P\u2082)</li>
+<li>driving > \u03bc\u00b7N \u2192 <strong>m\u2081 sale</strong> sul piano, m\u2082 scende</li>
+<li>driving < \u2212\u03bc\u00b7N \u2192 <strong>m\u2081 scende</strong>, m\u2082 sale</li></ul>`,
+    formula: 'P\u2081 = m\u2081\u00b7g   P\u2082 = m\u2082\u00b7g\nP\u2081x = m\u2081\u00b7g\u00b7sin(\u03b8)   N = m\u2081\u00b7g\u00b7cos(\u03b8)\n\nEquilibrio: T = P\u2082, a = 0\nm\u2081 sale: a = (P\u2082 \u2212 P\u2081x \u2212 \u03bc\u00b7N) / (m\u2081+m\u2082)\n         T = m\u2082\u00b7(g \u2212 a)\nm\u2081 scende: a = (P\u2081x \u2212 P\u2082 \u2212 \u03bc\u00b7N) / (m\u2081+m\u2082)\n            T = m\u2082\u00b7(g + a)',
+    example: 'm\u2081 = 5 kg, m\u2082 = 3 kg, \u03b8 = 30\u00b0, \u03bc = 0.2\nP\u2081 = 49.05 N, P\u2082 = 29.43 N\nP\u2081x = 5\u00b79.81\u00b70.5 = 24.53 N\nN = 5\u00b79.81\u00b7cos(30\u00b0) = 42.48 N\n\u03bc\u00b7N = 0.2\u00b742.48 = 8.50 N\ndriving = 29.43 \u2212 24.53 = 4.90 N\n|driving| < \u03bc\u00b7N \u2192 Equilibrio, T = 29.43 N',
   },
 
   'equilibrium': {
@@ -244,10 +248,10 @@ export const THEORY_TOPICS = {
   'archimede': {
     title: 'Legge di Archimede',
     category: 'equilibrio',
-    content: `<p><strong>Legge di Archimede</strong>: un corpo immerso in un fluido riceve una spinta verso l'alto uguale al peso del fluido spostato.</p>
-<p>Se Fa > P il corpo galleggia; se Fa = P resta sospeso; se Fa < P affonda.</p>`,
-    formula: 'Fa = \u03c1f \u00b7 g \u00b7 V',
-    example: 'Cubo di legno (V = 0.001 m\u00b3), massa 0.6 kg, in acqua:\nP = 0.6\u00b79.81 = 5.89 N\nFa = 1000\u00b79.81\u00b70.001 = 9.81 N\nFa > P \u2192 galleggia',
+    content: `<p><strong>Legge di Archimede</strong>: un corpo immerso in un fluido riceve una <strong>spinta</strong> verso l'alto (indicata con <span class="vec-arrow">F</span>A, per distinguerla dalla forza di attrito Fa) uguale al peso del fluido spostato.</p>
+<p>Se FA > P il corpo galleggia; se FA = P resta sospeso; se FA < P affonda.</p>`,
+    formula: 'FA = \u03c1f \u00b7 g \u00b7 V',
+    example: 'Cubo di legno (V = 0.001 m\u00b3), massa 0.6 kg, in acqua:\nP = 0.6\u00b79.81 = 5.89 N\nFA = 1000\u00b79.81\u00b70.001 = 9.81 N\nFA > P \u2192 galleggia',
   },
 
   'pressione-atmosferica': {
