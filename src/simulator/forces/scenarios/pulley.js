@@ -115,38 +115,28 @@ export function renderPulley(sceneManager, state, visibility) {
     m1: state.m1, m2: state.m2, angleDeg: state.angleDeg, mu: state.mu,
   });
 
-  // === Carrucola: posizionata lungo la retta del piano estesa oltre B, poi spostata di r sulla normale.
-  // Cosi' il piano e' tangente al cerchio e la fune giace esattamente lungo il piano.
-  // Il parametro t sceglie quanto oltre B, in modo che la tangente verticale cada a distanza D a sinistra di B.
-  const pulleyR = 0.4;
-  const D = 0.6;  // distanza orizzontale desiderata tra B e la fune verticale
-  const thetaRad = tri.angleRad;
-  const cosT = Math.cos(thetaRad);
-  const sinT = Math.sin(thetaRad);
-  // vertTangentX = B.x + t*sd.x + r*(nd.x - 1) = B.x - t*cos(θ) - r*(1 - sin(θ))
-  // Risolvendo per t data la distanza D: t = (D - r*(1 - sin(θ))) / cos(θ)
-  let t = (D - pulleyR * (1 - sinT)) / Math.max(cosT, 0.15);
-  if (t < 0) t = 0;
-
-  const pulleyX = B.x + t * sd.x + pulleyR * nd.x;
-  const pulleyY = B.y + t * sd.y + pulleyR * nd.y;
+  // === Carrucola tangente al piano nel vertice B ===
+  // Centro = B + r*nd: slope tangente al cerchio in B, pulley visibilmente sul corner
+  const pulleyR = 0.5;
+  const pulleyX = B.x + pulleyR * nd.x;
+  const pulleyY = B.y + pulleyR * nd.y;
 
   const wheel = new THREE.Mesh(
-    new THREE.RingGeometry(pulleyR - 0.08, pulleyR, 32),
+    new THREE.RingGeometry(pulleyR - 0.1, pulleyR, 32),
     new THREE.MeshBasicMaterial({ color: 0x4fc3f7, side: THREE.DoubleSide })
   );
   wheel.position.set(pulleyX, pulleyY, 0.02);
   sceneManager.objects.add(wheel);
 
   const axle = new THREE.Mesh(
-    new THREE.CircleGeometry(0.07, 16),
+    new THREE.CircleGeometry(0.08, 16),
     new THREE.MeshBasicMaterial({ color: isLight ? 0x333333 : 0xe0e0e0 })
   );
   axle.position.set(pulleyX, pulleyY, 0.025);
   sceneManager.objects.add(axle);
 
-  // Etichetta B (al di sopra della carrucola, posizione personalizzata)
-  addTextLabel(sceneManager, 'B', pulleyX + 0.2, pulleyY + pulleyR + 0.25, '#4fc3f7');
+  // Etichetta B (in alto a sinistra della carrucola, vicino al vertice)
+  addTextLabel(sceneManager, 'B', pulleyX - pulleyR - 0.3, pulleyY + 0.3, '#4fc3f7');
 
   // === m2 sul piano ===
   const boxW = 1.2, boxH = 0.9;
@@ -159,21 +149,20 @@ export function renderPulley(sceneManager, state, visibility) {
   const ropeAttachX = boxBx + (boxW / 2) * sd.x;
   const ropeAttachY = boxBy + (boxW / 2) * sd.y;
 
-  // === Tangenti esatte sulla carrucola ===
-  // Lato piano: punto di tangenza sulla retta del piano (esattamente B + t*sd)
-  const ropeSlopeEndX = B.x + t * sd.x;
-  const ropeSlopeEndY = B.y + t * sd.y;
-  // Lato verticale: tangente a sinistra (fune perfettamente verticale)
-  const ropeVertEndX = pulleyX - pulleyR;
+  // Tangenti esatte sulla carrucola
+  const ropeSlopeEndX = B.x;                       // tangente esattamente in B
+  const ropeSlopeEndY = B.y;
+  const ropeVertEndX = pulleyX - pulleyR;          // tangente verticale sul lato sinistro
   const ropeVertEndY = pulleyY;
 
-  // === m1 sospesa in verticale dal tangente ===
+  // === m1 sospesa: spostata a sinistra per stare fuori dal triangolo ===
   const m1W = 0.7, m1H = 0.7;
-  const m1HangX = ropeVertEndX;
-  const m1HangY = pulleyY - 2.4;
+  const m1ShiftLeft = 0.35;
+  const m1HangX = ropeVertEndX - m1ShiftLeft;
+  const m1HangY = pulleyY - 2.5;
 
   const ropeMat = new THREE.LineBasicMaterial({ color: isLight ? 0x555555 : 0xc0c0c0 });
-  // Tratto m2 → carrucola lungo il piano (perfettamente sulla retta del piano)
+  // Tratto m2 → B lungo il piano (rope esattamente sulla retta del piano)
   sceneManager.objects.add(new THREE.Line(
     new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(ropeAttachX, ropeAttachY, 0.015),
@@ -181,7 +170,7 @@ export function renderPulley(sceneManager, state, visibility) {
     ]),
     ropeMat,
   ));
-  // Tratto carrucola → m1 (perfettamente verticale)
+  // Tratto carrucola → m1 (leggera diagonale per portare m1 fuori dal triangolo)
   sceneManager.objects.add(new THREE.Line(
     new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(ropeVertEndX, ropeVertEndY, 0.015),
