@@ -9,6 +9,32 @@
 }
 
 /* ============================================
+   Tabelle: scroll orizzontale su schermi piccoli
+   ============================================ */
+@media (max-width: 768px) {
+  .theory-card-content,
+  .theory-page {
+    overflow-x: auto;
+  }
+
+  .theory-card-content table,
+  .theory-page table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  .theory-card-content table td,
+  .theory-card-content table th,
+  .theory-page table td,
+  .theory-page table th {
+    white-space: nowrap;
+  }
+}
+
+/* ============================================
    Tablet piccolo / Mobile grande (<= 768px)
    Sidebar ridotta a icone, pannello laterale sotto
    ============================================ */
