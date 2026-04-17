@@ -58,7 +58,24 @@ export function renderForcesPage(container) {
     sceneManager.resetCamera();
     updateScene();
     updatePanel();
+    updateWipOverlay();
   });
+
+  // Overlay "In lavorazione" quando e' attivo lo scenario carrucola
+  function updateWipOverlay() {
+    let overlay = canvasContainer.querySelector('.wip-overlay');
+    if (activeScenario === 'pulley') {
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'wip-overlay';
+        overlay.style.cssText = 'position:absolute;inset:0;background:rgba(10,15,30,0.78);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;color:#ffd166;font-size:42px;font-weight:700;letter-spacing:2px;backdrop-filter:blur(3px);pointer-events:auto;';
+        overlay.innerHTML = '<div style="font-size:56px;margin-bottom:12px;">\u{1F6A7}</div><div>IN LAVORAZIONE</div><div style="font-size:16px;font-weight:400;color:#c0c0c0;margin-top:12px;letter-spacing:normal;">Scenario non ancora disponibile</div>';
+        canvasContainer.appendChild(overlay);
+      }
+    } else if (overlay) {
+      overlay.remove();
+    }
+  }
 
   // Override inclined-plane Fa and Fris with physically correct values (including custom forces)
   function updateInclinedPlaneRealValues() {
