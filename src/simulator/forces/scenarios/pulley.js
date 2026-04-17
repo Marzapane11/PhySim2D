@@ -169,14 +169,18 @@ export function renderPulley(sceneManager, state, visibility) {
   const boxBy = A.y + boxT * (B.y - A.y);
   const m2Center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
 
-  // Punto di attacco fune su m2: spigolo anteriore sul piano (lato verso B)
-  const ropeAttachX = boxBx + (boxW / 2) * sd.x;
-  const ropeAttachY = boxBy + (boxW / 2) * sd.y;
+  // Punto di attacco fune su m2: spigolo SUPERIORE verso B (alto, fuori dal piano)
+  const ropeAttachX = boxBx + (boxW / 2) * sd.x + boxH * nd.x;
+  const ropeAttachY = boxBy + (boxW / 2) * sd.y + boxH * nd.y;
 
-  // Tangenti esatte sulla carrucola
-  const ropeSlopeEndX = B.x;                       // tangente esattamente in B
-  const ropeSlopeEndY = B.y;
-  const ropeVertEndX = pulleyX - pulleyR;          // tangente verticale sul lato sinistro
+  // Estremita' della fune sulla carrucola: sulla circonferenza nel punto piu' vicino a m2
+  // (approssimazione tangenziale: va bene visivamente)
+  const dxm = pulleyX - ropeAttachX;
+  const dym = pulleyY - ropeAttachY;
+  const distM = Math.sqrt(dxm * dxm + dym * dym);
+  const ropeSlopeEndX = pulleyX - (dxm / distM) * pulleyR;
+  const ropeSlopeEndY = pulleyY - (dym / distM) * pulleyR;
+  const ropeVertEndX = pulleyX - pulleyR;          // tangente verticale a sinistra
   const ropeVertEndY = pulleyY;
 
   // === m1 sospesa direttamente sotto il tangente verticale della carrucola ===
