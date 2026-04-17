@@ -159,11 +159,14 @@ export function renderPulley(sceneManager, state, visibility) {
     m1: state.m1, m2: state.m2, angleDeg: state.angleDeg, mu: state.mu,
   });
 
-  // === Carrucola tangente al piano nel vertice B ===
-  // Centro = B + r*nd: slope tangente al cerchio in B, pulley visibilmente sul corner
+  // === Carrucola tangente alla retta parallela al piano a quota boxH/2 ===
+  // Cosi' la fune da m1 (attaccata al centro del lato, a quota boxH/2 dal piano)
+  // giace perfettamente parallela al piano.
   const pulleyR = 0.5;
-  const pulleyX = B.x + pulleyR * nd.x;
-  const pulleyY = B.y + pulleyR * nd.y;
+  const boxH_ref = 0.9; // stessa altezza del box m1 sul piano
+  const pulleyOffsetN = boxH_ref / 2 + pulleyR;
+  const pulleyX = B.x + pulleyOffsetN * nd.x;
+  const pulleyY = B.y + pulleyOffsetN * nd.y;
 
   const wheel = new THREE.Mesh(
     new THREE.RingGeometry(pulleyR - 0.1, pulleyR, 32),
@@ -193,16 +196,11 @@ export function renderPulley(sceneManager, state, visibility) {
   const ropeAttachX = boxBx + (boxW / 2) * sd.x + (boxH / 2) * nd.x;
   const ropeAttachY = boxBy + (boxW / 2) * sd.y + (boxH / 2) * nd.y;
 
-  // Tangente VERA: rope m2 → pulley tocca la circonferenza tangenzialmente
-  // sign=1 = tangente superiore (rope si avvolge sopra la puleggia)
-  const tan = tangentPoint(
-    { x: ropeAttachX, y: ropeAttachY },
-    { x: pulleyX, y: pulleyY },
-    pulleyR,
-    1,
-  );
-  const ropeSlopeEndX = tan.x;
-  const ropeSlopeEndY = tan.y;
+  // Tangente: la retta parallela al piano offset boxH/2 e' tangente al cerchio
+  // nel punto pulley_center - r*nd (punto piu' vicino al piano sulla pulleg.)
+  // Cosi' la fune da m1 giace esattamente parallela al piano.
+  const ropeSlopeEndX = pulleyX - pulleyR * nd.x;
+  const ropeSlopeEndY = pulleyY - pulleyR * nd.y;
   const ropeVertEndX = pulleyX - pulleyR;          // tangente verticale a sinistra
   const ropeVertEndY = pulleyY;
 
