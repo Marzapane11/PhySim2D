@@ -166,15 +166,24 @@ export function renderPulley(sceneManager, state, visibility) {
   const boxBy = A.y + boxT * (B.y - A.y);
   const m1Center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
 
-  // === Carrucola: sospesa chiaramente sopra e a sinistra del vertice B ===
+  // === Carrucola: posizionata lungo la retta parallela al piano passante per m1Center,
+  // spostata di (boxH/2 + r) lungo la normale, cosi' la fune m1 → carrucola e' PARALLELA
+  // all'ipotenusa del triangolo. Pulley shiftata leggermente a sinistra di B.
   const pulleyR = 0.3;
-  const pulleyX = B.x - 0.4;
-  const pulleyY = B.y + 1.4;
+  const boxHalf = boxH / 2;
+  const pulleyOffsetN = boxHalf + pulleyR;
+  const shiftLeftFromB = -0.25; // vogliamo pulleyX = B.x + shiftLeftFromB
+  // t lungo sd tale che pulleyX risulti = B.x + shiftLeftFromB
+  let tParam = (shiftLeftFromB - pulleyOffsetN * nd.x) / sd.x;
+  if (tParam < 0) tParam = 0;
 
-  // === m2 appesa direttamente sotto la carrucola (fune verticale) ===
+  const pulleyX = B.x + tParam * sd.x + pulleyOffsetN * nd.x;
+  const pulleyY = B.y + tParam * sd.y + pulleyOffsetN * nd.y;
+
+  // === m2 appesa direttamente sotto la tangente verticale, a meta' altezza del triangolo ===
   const m2W = 0.55, m2H = 0.65;
-  const m2HangX = pulleyX;
-  const m2HangY = pulleyY - 2.3;
+  const m2HangX = pulleyX - pulleyR;  // vertical rope tangent on the left of pulley
+  const m2HangY = (B.y + tri.C.y) / 2; // meta' di h
 
   // Staffa: asta semplice dal vertice B all'asse della carrucola
   const bracketColor = isLight ? 0x555555 : 0xb0b0b0;
@@ -256,21 +265,17 @@ export function renderPulley(sceneManager, state, visibility) {
   const ropeAttachM2X = m2HangX;
   const ropeAttachM2Y = m2HangY;
 
-  // Fune: entrambe terminano al bordo esterno della carrucola nella direzione giusta
-  // m1 side: punto sulla circonferenza verso m1
-  const tanM1 = tangentPoint(
-    { x: ropeAttachM1X, y: ropeAttachM1Y },
-    { x: pulleyX, y: pulleyY },
-    pulleyR,
-    1,
-  );
-  // m2 side: direttamente sul lato inferiore della puleggia (rope verticale)
-  const ropeM2EndX = pulleyX;
-  const ropeM2EndY = pulleyY - pulleyR;
+  // Tangenti esatte sulla puleggia
+  // m1 side: punto sulla circonferenza piu' vicino al piano (sulla retta parallela a quota boxH/2)
+  const ropeSlopeEndX = pulleyX - pulleyR * nd.x;
+  const ropeSlopeEndY = pulleyY - pulleyR * nd.y;
+  // m2 side: tangente verticale a sinistra della puleggia
+  const ropeVertEndX = pulleyX - pulleyR;
+  const ropeVertEndY = pulleyY;
 
   const ropeColor = isLight ? 0x5a3c28 : 0xc89a78;
-  drawRope(sceneManager, { x: ropeAttachM1X, y: ropeAttachM1Y }, { x: tanM1.x, y: tanM1.y }, ropeColor);
-  drawRope(sceneManager, { x: ropeAttachM2X, y: ropeAttachM2Y }, { x: ropeM2EndX, y: ropeM2EndY }, ropeColor);
+  drawRope(sceneManager, { x: ropeAttachM1X, y: ropeAttachM1Y }, { x: ropeSlopeEndX, y: ropeSlopeEndY }, ropeColor);
+  drawRope(sceneManager, { x: ropeAttachM2X, y: ropeAttachM2Y }, { x: ropeVertEndX, y: ropeVertEndY }, ropeColor);
 
   if (visibility.body) {
     // Disegna m2 come rettangolo
