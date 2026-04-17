@@ -159,78 +159,88 @@ export function renderPulley(sceneManager, state, visibility) {
     m1: state.m1, m2: state.m2, angleDeg: state.angleDeg, mu: state.mu,
   });
 
-  // === m1 sul piano (piu' grande) ===
+  // === m1 sul piano (box grande olivastro) ===
   const boxW = 1.2, boxH = 0.9;
   const boxT = 0.5;
   const boxBx = A.x + boxT * (B.x - A.x);
   const boxBy = A.y + boxT * (B.y - A.y);
   const m1Center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
 
-  // === Carrucola: centro all'altezza del centro del box m1 (boxH/2 dal piano) + r sulla normale
-  // Cosi' la retta parallela al piano passante per m1Center e' tangente alla puleggia,
-  // e la fune da m1Center al tangente e' perfettamente parallela all'ipotenusa.
-  const pulleyR = 0.4;
-  const pulleyOffsetN = boxH / 2 + pulleyR;
-  const pulleyX = B.x + pulleyOffsetN * nd.x;
-  const pulleyY = B.y + pulleyOffsetN * nd.y;
+  // === Carrucola: sospesa chiaramente sopra e a sinistra del vertice B ===
+  const pulleyR = 0.3;
+  const pulleyX = B.x - 0.4;
+  const pulleyY = B.y + 1.4;
 
-  // Staffa triangolare di supporto (sotto la puleggia, come nella foto)
-  const bracketColor = isLight ? 0xa94438 : 0xd04438;
+  // === m2 appesa direttamente sotto la carrucola (fune verticale) ===
+  const m2W = 0.55, m2H = 0.65;
+  const m2HangX = pulleyX;
+  const m2HangY = pulleyY - 2.3;
+
+  // Staffa triangolare sotto la carrucola (come nella foto di riferimento)
+  const bracketColor = isLight ? 0xc44438 : 0xd04438;
   const bracketMat = new THREE.LineBasicMaterial({ color: bracketColor });
-  // Base della staffa attaccata al vertice B e al punto (B.x + 0.4, B.y)
-  const bracketBase1 = { x: B.x, y: B.y };
-  const bracketBase2 = { x: B.x + 0.5, y: B.y };
-  const bracketApex = { x: pulleyX, y: pulleyY - pulleyR * 0.2 };
+  const bApex = { x: pulleyX, y: pulleyY - pulleyR };
+  const bL = { x: pulleyX - 0.22, y: pulleyY - pulleyR - 0.35 };
+  const bR = { x: pulleyX + 0.1, y: pulleyY - pulleyR - 0.35 };
+  const bC = { x: pulleyX - 0.06, y: pulleyY - pulleyR - 0.2 };
   sceneManager.objects.add(new THREE.Line(
     new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(bracketBase1.x, bracketBase1.y, 0.01),
-      new THREE.Vector3(bracketApex.x, bracketApex.y, 0.01),
-      new THREE.Vector3(bracketBase2.x, bracketBase2.y, 0.01),
-      new THREE.Vector3(bracketBase1.x, bracketBase1.y, 0.01),
+      new THREE.Vector3(bApex.x, bApex.y, 0.01),
+      new THREE.Vector3(bL.x, bL.y, 0.01),
+      new THREE.Vector3(bR.x, bR.y, 0.01),
+      new THREE.Vector3(bApex.x, bApex.y, 0.01),
+    ]),
+    bracketMat,
+  ));
+  // Piccola linea interna per dare spessore visivo
+  sceneManager.objects.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(bApex.x, bApex.y, 0.015),
+      new THREE.Vector3(bC.x, bC.y, 0.015),
     ]),
     bracketMat,
   ));
 
-  // Puleggia: disco pieno con bordo (come nella foto)
+  // Puleggia: disco pieno con bordo
   const wheelFill = new THREE.Mesh(
     new THREE.CircleGeometry(pulleyR, 32),
-    new THREE.MeshBasicMaterial({ color: isLight ? 0x9e9eff : 0x8585c8 })
+    new THREE.MeshBasicMaterial({ color: isLight ? 0x8080c8 : 0x9e9ee0 })
   );
   wheelFill.position.set(pulleyX, pulleyY, 0.02);
   sceneManager.objects.add(wheelFill);
-
-  // Bordo scuro della puleggia
   const wheelEdge = new THREE.Mesh(
-    new THREE.RingGeometry(pulleyR - 0.03, pulleyR, 32),
-    new THREE.MeshBasicMaterial({ color: isLight ? 0x333355 : 0x1a1a2e })
+    new THREE.RingGeometry(pulleyR - 0.025, pulleyR, 32),
+    new THREE.MeshBasicMaterial({ color: isLight ? 0x2a2a4a : 0x1a1a2e })
   );
   wheelEdge.position.set(pulleyX, pulleyY, 0.025);
   sceneManager.objects.add(wheelEdge);
 
-  // Etichetta B al vertice del triangolo (dove e' davvero B)
-  addTextLabel(sceneManager, 'B', B.x - 0.5, B.y + 0.4, '#4fc3f7');
+  // Etichetta B al vertice del triangolo
+  addTextLabel(sceneManager, 'B', B.x - 0.4, B.y + 0.3, '#4fc3f7');
 
-  // Punto di attacco fune su m1: centro del box (come nella foto di riferimento)
-  const ropeAttachX = m1Center.x;
-  const ropeAttachY = m1Center.y;
+  // Punti di attacco fune:
+  // m1: centro del lato superiore del box (top-center)
+  const ropeAttachM1X = boxBx + boxH * nd.x;
+  const ropeAttachM1Y = boxBy + boxH * nd.y;
+  // m2: centro del lato superiore del box
+  const ropeAttachM2X = m2HangX;
+  const ropeAttachM2Y = m2HangY + m2H / 2;
 
-  // Tangente esatta: il punto sulla puleggia piu' vicino al piano (centro - r*nd)
-  // si trova esattamente sulla retta parallela al piano a quota boxH/2 (dove sta m1Center),
-  // quindi la fune e' perfettamente parallela all'ipotenusa.
-  const ropeSlopeEndX = pulleyX - pulleyR * nd.x;
-  const ropeSlopeEndY = pulleyY - pulleyR * nd.y;
-  const ropeVertEndX = pulleyX - pulleyR;          // tangente verticale a sinistra
-  const ropeVertEndY = pulleyY;
+  // Fune: entrambe terminano al bordo esterno della carrucola nella direzione giusta
+  // m1 side: punto sulla circonferenza verso m1
+  const tanM1 = tangentPoint(
+    { x: ropeAttachM1X, y: ropeAttachM1Y },
+    { x: pulleyX, y: pulleyY },
+    pulleyR,
+    1,
+  );
+  // m2 side: direttamente sul lato inferiore della puleggia (rope verticale)
+  const ropeM2EndX = pulleyX;
+  const ropeM2EndY = pulleyY - pulleyR;
 
-  // === m2 sospesa: piu' piccola di m1, fuori dal lato del triangolo ===
-  const m2W = 0.6, m2H = 0.6;
-  const m2HangX = Math.min(ropeVertEndX, B.x - m2W / 2 - 0.1);
-  const m2HangY = pulleyY - 1.8;
-
-  // Fune disegnata come rettangolo sottile per essere ben visibile
-  const ropeColor = isLight ? 0x444444 : 0xd0d0d0;
-  drawRope(sceneManager, { x: ropeAttachX, y: ropeAttachY }, { x: ropeSlopeEndX, y: ropeSlopeEndY }, ropeColor);
-  drawRope(sceneManager, { x: ropeVertEndX, y: ropeVertEndY }, { x: m2HangX, y: m2HangY }, ropeColor);
+  const ropeColor = isLight ? 0x5a3c28 : 0xc89a78;
+  drawRope(sceneManager, { x: ropeAttachM1X, y: ropeAttachM1Y }, { x: tanM1.x, y: tanM1.y }, ropeColor);
+  drawRope(sceneManager, { x: ropeAttachM2X, y: ropeAttachM2Y }, { x: ropeM2EndX, y: ropeM2EndY }, ropeColor);
 
   if (visibility.body) {
     // Disegna m2 come rettangolo
