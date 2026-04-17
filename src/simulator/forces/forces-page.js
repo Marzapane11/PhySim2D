@@ -186,10 +186,10 @@ export function renderForcesPage(container) {
           let stato;
           if (pr.status === 'Equilibrio') {
             stato = '<span style="color:var(--success);font-weight:600;">Equilibrio</span>';
-          } else if (pr.status === 'm\u2082 sale') {
-            stato = '<span style="color:var(--warning);font-weight:600;">m\u2082 sale</span>';
+          } else if (pr.status === 'm\u2081 sale') {
+            stato = '<span style="color:var(--warning);font-weight:600;">m\u2081 sale</span>';
           } else {
-            stato = '<span style="color:var(--danger);font-weight:600;">m\u2082 scende</span>';
+            stato = '<span style="color:var(--danger);font-weight:600;">m\u2081 scende</span>';
           }
           statusHtml = `<div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
         }
