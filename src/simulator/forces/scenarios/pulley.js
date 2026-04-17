@@ -6,6 +6,30 @@ import { calcTriangle, drawTriangle, drawBox, addTextLabel } from './inclined-pl
 
 const G = 9.81;
 
+function drawRope(sceneManager, p1, p2, color) {
+  const dx = p2.x - p1.x;
+  const dy = p2.y - p1.y;
+  const len = Math.sqrt(dx * dx + dy * dy);
+  if (len < 0.001) return;
+  const ux = dx / len;
+  const uy = dy / len;
+  const perpX = -uy;
+  const perpY = ux;
+  const w = 0.05;
+  const shape = new THREE.Shape();
+  shape.moveTo(p1.x + perpX * w / 2, p1.y + perpY * w / 2);
+  shape.lineTo(p1.x - perpX * w / 2, p1.y - perpY * w / 2);
+  shape.lineTo(p2.x - perpX * w / 2, p2.y - perpY * w / 2);
+  shape.lineTo(p2.x + perpX * w / 2, p2.y + perpY * w / 2);
+  shape.closePath();
+  const mesh = new THREE.Mesh(
+    new THREE.ShapeGeometry(shape),
+    new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide })
+  );
+  mesh.position.z = 0.015;
+  sceneManager.objects.add(mesh);
+}
+
 /**
  * Carrucola con piano inclinato.
  * m1 appesa in verticale; m2 sul piano inclinato (angolo θ, attrito μ).
@@ -161,23 +185,10 @@ export function renderPulley(sceneManager, state, visibility) {
   const m1HangX = ropeVertEndX - m1ShiftLeft;
   const m1HangY = pulleyY - 2.5;
 
-  const ropeMat = new THREE.LineBasicMaterial({ color: isLight ? 0x555555 : 0xc0c0c0 });
-  // Tratto m2 → B lungo il piano (rope esattamente sulla retta del piano)
-  sceneManager.objects.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(ropeAttachX, ropeAttachY, 0.015),
-      new THREE.Vector3(ropeSlopeEndX, ropeSlopeEndY, 0.015),
-    ]),
-    ropeMat,
-  ));
-  // Tratto carrucola → m1 (leggera diagonale per portare m1 fuori dal triangolo)
-  sceneManager.objects.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(ropeVertEndX, ropeVertEndY, 0.015),
-      new THREE.Vector3(m1HangX, m1HangY + m1H / 2, 0.015),
-    ]),
-    ropeMat,
-  ));
+  // Fune disegnata come rettangolo sottile per essere ben visibile
+  const ropeColor = isLight ? 0x444444 : 0xd0d0d0;
+  drawRope(sceneManager, { x: ropeAttachX, y: ropeAttachY }, { x: ropeSlopeEndX, y: ropeSlopeEndY }, ropeColor);
+  drawRope(sceneManager, { x: ropeVertEndX, y: ropeVertEndY }, { x: m1HangX, y: m1HangY + m1H / 2 }, ropeColor);
 
   if (visibility.body) {
     // Disegna m1 come rettangolo (stile simile a drawBox)
