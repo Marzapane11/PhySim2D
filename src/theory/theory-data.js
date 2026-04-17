@@ -142,12 +142,9 @@ export const THEORY_TOPICS = {
     content: `<p>Il <strong>piano inclinato</strong> è una superficie piana che forma un angolo \u03b1 con l'orizzontale.</p>
 <p>La forza peso <span class="vec-arrow">P</span> si scompone in due componenti:</p>
 <p><strong>Px</strong> (componente parallela al piano): tende a far scivolare il corpo verso il basso.</p>
-<p><strong>Py</strong> (componente perpendicolare al piano): viene equilibrata dalla forza normale.</p>
-<p>La <strong>forza risultante lungo il piano</strong>, indicata nel simulatore con Fris, è la somma netta delle forze parallele al piano (Px meno l'attrito Fa):</p>
-<ul><li>Se |Px| \u2264 Fa_max = \u03bc\u00b7N \u2192 <strong>equilibrio statico</strong>, Fris = 0 (l'attrito si adatta)</li>
-<li>Altrimenti il corpo <strong>scivola</strong> e Fris = Px \u2212 sign(Px)\u00b7Fa</li></ul>`,
-    formula: 'Px = P \u00b7 sin(\u03b1) = m \u00b7 g \u00b7 sin(\u03b1)\nPy = P \u00b7 cos(\u03b1) = m \u00b7 g \u00b7 cos(\u03b1)\nN = Py = m \u00b7 g \u00b7 cos(\u03b1)\nFa = \u03bc \u00b7 N\nFris = Px \u2212 Fa   (se |Px| > Fa)\nFris = 0            (se |Px| \u2264 Fa, equilibrio)',
-    example: 'm = 10 kg, \u03b1 = 30\u00b0, \u03bc = 0.2\nP = 10 \u00b7 9.81 = 98.1 N\nPx = 98.1 \u00b7 sin(30\u00b0) = 49.05 N\nPy = 98.1 \u00b7 cos(30\u00b0) = 84.96 N\nFa_max = 0.2 \u00b7 84.96 = 16.99 N\nPx > Fa_max \u2192 scivola\nFris = 49.05 \u2212 16.99 = 32.06 N',
+<p><strong>Py</strong> (componente perpendicolare al piano): viene equilibrata dalla forza normale.</p>`,
+    formula: 'Px = P \u00b7 sin(\u03b1) = m \u00b7 g \u00b7 sin(\u03b1)\nPy = P \u00b7 cos(\u03b1) = m \u00b7 g \u00b7 cos(\u03b1)\nN = Py = m \u00b7 g \u00b7 cos(\u03b1)',
+    example: 'm = 10 kg, \u03b1 = 30\u00b0\nP = 10 \u00b7 9.81 = 98.1 N\nPx = 98.1 \u00b7 sin(30\u00b0) = 49.05 N\nPy = 98.1 \u00b7 cos(30\u00b0) = 84.96 N',
   },
 
   'force-tension': {
@@ -168,11 +165,11 @@ export const THEORY_TOPICS = {
   'equilibrium': {
     title: 'Equilibrio',
     category: 'forze',
-    content: `<p>Un corpo è in <strong>equilibrio</strong> quando la somma vettoriale di tutte le forze applicate è zero: \u03a3<span class="vec-arrow">F</span> = 0.</p>
+    content: `<p>Un corpo è in <strong>equilibrio</strong> quando la somma vettoriale di tutte le forze applicate è zero: Fris = 0.</p>
 <p>In equilibrio il corpo rimane fermo (equilibrio statico) o si muove a velocità costante (equilibrio dinamico).</p>
 <p>Per verificare l'equilibrio, si controlla che la somma delle componenti x e la somma delle componenti y siano entrambe zero.</p>`,
-    formula: '\u03a3F = 0\n\u03a3Fx = 0\n\u03a3Fy = 0',
-    example: 'Un libro su un tavolo:\nPeso P = 20 N (verso il basso)\nNormale N = 20 N (verso l\'alto)\n\u03a3F = P + N = -20 + 20 = 0 N \u2192 equilibrio',
+    formula: 'Fris = 0\nFrisx = 0\nFrisy = 0',
+    example: 'Un libro su un tavolo:\nPeso P = 20 N (verso il basso)\nNormale N = 20 N (verso l\'alto)\nFris = P + N = -20 + 20 = 0 N \u2192 equilibrio',
   },
 
   'point-forces': {
@@ -181,17 +178,17 @@ export const THEORY_TOPICS = {
     content: `<p>Quando più forze agiscono su uno stesso punto, si possono sommare vettorialmente per trovare la <strong>risultante</strong> <span class="vec-arrow">R</span>.</p>
 <p>Il metodo più pratico è scomporre ogni forza <span class="vec-arrow">F</span>\u2081, <span class="vec-arrow">F</span>\u2082, ... nelle componenti x e y, sommare separatamente le componenti, e poi ricomporre il vettore risultante.</p>
 <p>La risultante <span class="vec-arrow">R</span> ha lo stesso effetto di tutte le forze agenti insieme.</p>`,
-    formula: 'Rx = \u03a3Fix = F1x + F2x + ... + Fnx\nRy = \u03a3Fiy = F1y + F2y + ... + Fny\n|R| = \u221a(Rx\u00b2 + Ry\u00b2)\n\u03b8 = arctan(Ry / Rx)',
+    formula: 'Rx = Frisx = F1x + F2x + ... + Fnx\nRy = Frisy = F1y + F2y + ... + Fny\n|R| = \u221a(Rx\u00b2 + Ry\u00b2)\n\u03b8 = arctan(Ry / Rx)',
     example: 'F1 = (3, 0) N, F2 = (0, 4) N\nRx = 3 + 0 = 3 N\nRy = 0 + 4 = 4 N\n|R| = \u221a(9 + 16) = 5 N\n\u03b8 = arctan(4/3) \u2248 53.1\u00b0',
   },
 
   'equilibrio-punto': {
     title: 'Equilibrio del punto materiale',
     category: 'equilibrio',
-    content: `<p>Un punto materiale è in <strong>equilibrio</strong> quando la somma vettoriale di tutte le forze applicate è nulla: \u03a3<span class="vec-arrow">F</span> = 0.</p>
+    content: `<p>Un punto materiale è in <strong>equilibrio</strong> quando la somma vettoriale di tutte le forze applicate è nulla: Fris = 0.</p>
 <p>Si scompongono tutte le forze lungo due assi perpendicolari e si impone che la somma delle componenti su ciascun asse sia zero.</p>`,
-    formula: '\u03a3F = 0\n\u03a3Fx = 0   e   \u03a3Fy = 0',
-    example: 'Lampadario di 8 kg appeso al soffitto:\nP = 8 \u00b7 9.81 = 78.5 N (verso il basso)\nT = 78.5 N (verso l\'alto)\n\u03a3F = T - P = 0 \u2192 equilibrio',
+    formula: 'Fris = 0\nFrisx = 0   e   Frisy = 0',
+    example: 'Lampadario di 8 kg appeso al soffitto:\nP = 8 \u00b7 9.81 = 78.5 N (verso il basso)\nT = 78.5 N (verso l\'alto)\nFris = T - P = 0 \u2192 equilibrio',
   },
 
   'piano-inclinato-equilibrio': {
@@ -215,10 +212,10 @@ export const THEORY_TOPICS = {
   'corpo-rigido': {
     title: 'Equilibrio del corpo rigido e baricentro',
     category: 'equilibrio',
-    content: `<p>Un corpo rigido è in equilibrio quando: <strong>\u03a3<span class="vec-arrow">F</span> = 0</strong> (equilibrio alla traslazione) e <strong>\u03a3M = 0</strong> (equilibrio alla rotazione).</p>
+    content: `<p>Un corpo rigido è in equilibrio quando: <strong>Fris = 0</strong> (equilibrio alla traslazione) e <strong>Mris = 0</strong> (equilibrio alla rotazione).</p>
 <p>Il <strong>baricentro</strong> è il punto in cui si può considerare applicata tutta la forza peso. Un corpo appoggiato è in equilibrio stabile se la verticale dal baricentro cade nella base di appoggio.</p>`,
-    formula: '\u03a3F = 0   e   \u03a3M = 0',
-    example: 'Asta di 2 m con fulcro al centro:\nF1 = 30 N a 1 m dal fulcro\n\u03a3M = 0 \u2192 F2 = F1 \u00b7 d1/d2 = 30 N',
+    formula: 'Fris = 0   e   Mris = 0',
+    example: 'Asta di 2 m con fulcro al centro:\nF1 = 30 N a 1 m dal fulcro\nMris = 0 \u2192 F2 = F1 \u00b7 d1/d2 = 30 N',
   },
 
   'pressione': {

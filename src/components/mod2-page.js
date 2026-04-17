@@ -15,14 +15,14 @@ export function renderMod2Page(container) {
       <div class="theory-card expanded">
         <div class="theory-card-title">Equilibrio del punto materiale</div>
         <div class="theory-card-content" style="display:block">
-          <p>Un punto materiale è in <strong>equilibrio</strong> quando la somma vettoriale di tutte le forze applicate è nulla: \u03a3<span class="vec-arrow">F</span> = 0.</p>
-          <div class="theory-formula-block">\u03a3F = 0
-\u03a3Fx = 0   e   \u03a3Fy = 0</div>
+          <p>Un punto materiale è in <strong>equilibrio</strong> quando la somma vettoriale di tutte le forze applicate è nulla: Fris = 0.</p>
+          <div class="theory-formula-block">Fris = 0
+Frisx = 0   e   Frisy = 0</div>
           <p>In pratica, si scompongono tutte le forze lungo due assi perpendicolari e si impone che la somma delle componenti su ciascun asse sia zero.</p>
           <div class="theory-example-block">Un lampadario di 8 kg appeso al soffitto:
 P = m \u00b7 g = 8 \u00b7 9.81 = 78.5 N (verso il basso)
 T = 78.5 N (verso l'alto, tensione del filo)
-\u03a3F = T - P = 78.5 - 78.5 = 0 N \u2192 equilibrio</div>
+Fris = T - P = 78.5 - 78.5 = 0 N \u2192 equilibrio</div>
         </div>
       </div>
 
@@ -38,13 +38,10 @@ N = Py</div>
           <p>Per l'equilibrio sul piano inclinato con attrito:</p>
           <div class="theory-formula-block">Px = Fa   \u2192   m \u00b7 g \u00b7 sin(\u03b1) = \u03bcs \u00b7 m \u00b7 g \u00b7 cos(\u03b1)
 tan(\u03b1) = \u03bcs</div>
-          <p>La <strong>forza risultante lungo il piano</strong> Fris (mostrata nel simulatore) indica se il corpo scivola o resta fermo:</p>
-          <div class="theory-formula-block">|Px| \u2264 \u03bc\u00b7N  \u2192  Fris = 0 (equilibrio)
-|Px| >  \u03bc\u00b7N  \u2192  Fris = Px \u2212 sign(Px)\u00b7Fa (scivola)</div>
           <div class="theory-example-block">m = 5 kg, \u03b1 = 20\u00b0, \u03bcs = 0.4
 Px = 5 \u00b7 9.81 \u00b7 sin(20\u00b0) = 16.8 N
 Fa max = 0.4 \u00b7 5 \u00b7 9.81 \u00b7 cos(20\u00b0) = 18.4 N
-Fa max > Px \u2192 Fris = 0 \u2192 equilibrio</div>
+Fa max > Px \u2192 il corpo resta in equilibrio</div>
         </div>
       </div>
 
@@ -76,14 +73,14 @@ M = 20 \u00b7 0.5 = 10 N\u00b7m</div>
         <div class="theory-card-content" style="display:block">
           <p>Un <strong>corpo rigido</strong> è in equilibrio quando sono soddisfatte due condizioni:</p>
           <ol style="margin:8px 0 8px 20px;">
-            <li>La risultante di tutte le forze è nulla: <strong>\u03a3<span class="vec-arrow">F</span> = 0</strong> (equilibrio alla traslazione)</li>
-            <li>La somma di tutti i momenti rispetto a qualsiasi polo è nulla: <strong>\u03a3M = 0</strong> (equilibrio alla rotazione)</li>
+            <li>La risultante di tutte le forze è nulla: <strong>Fris = 0</strong> (equilibrio alla traslazione)</li>
+            <li>La somma di tutti i momenti rispetto a qualsiasi polo è nulla: <strong>Mris = 0</strong> (equilibrio alla rotazione)</li>
           </ol>
-          <div class="theory-formula-block">\u03a3F = 0   e   \u03a3M = 0</div>
+          <div class="theory-formula-block">Fris = 0   e   Mris = 0</div>
           <div class="theory-example-block">Un'asta lunga 2 m con fulcro al centro:
 F1 = 30 N a sinistra (distanza 1 m dal fulcro)
 F2 = ? a destra (distanza 1 m dal fulcro)
-\u03a3M = 0 \u2192 F1 \u00b7 1 = F2 \u00b7 1 \u2192 F2 = 30 N</div>
+Mris = 0 \u2192 F1 \u00b7 1 = F2 \u00b7 1 \u2192 F2 = 30 N</div>
         </div>
       </div>
 
