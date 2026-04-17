@@ -113,7 +113,7 @@ export function calcTriangle(angleDeg) {
 }
 
 export function drawTriangle(sceneManager, tri, isLight, angleLabel, options = {}) {
-  const { showSideLabels = true } = options;
+  const { showSideLabels = true, showVertexB = true } = options;
   const { A, B, C, angleRad } = tri;
   const isFlat = Math.abs(angleRad) < 0.01;
 
@@ -177,7 +177,7 @@ export function drawTriangle(sceneManager, tri, isLight, angleLabel, options = {
 
   // Labels
   addTextLabel(sceneManager, 'A', A.x + 0.5, A.y - 0.5, '#4fc3f7');
-  addTextLabel(sceneManager, 'B', B.x - 0.5, B.y + 0.5, '#4fc3f7');
+  if (showVertexB) addTextLabel(sceneManager, 'B', B.x - 0.5, B.y + 0.5, '#4fc3f7');
   addTextLabel(sceneManager, 'C', C.x - 0.5, C.y - 0.5, '#4fc3f7');
   addTextLabel(sceneManager, angleLabel || '\u03B1', A.x - 1.5, A.y + 0.4, '#66bb6a');
   if (showSideLabels) {
