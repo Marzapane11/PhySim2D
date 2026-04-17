@@ -159,12 +159,20 @@ export function renderPulley(sceneManager, state, visibility) {
     m1: state.m1, m2: state.m2, angleDeg: state.angleDeg, mu: state.mu,
   });
 
-  // === Carrucola sospesa sopra il vertice B (stile textbook) ===
-  // La fune da m1 sale dalla sua parte superiore fino alla carrucola, quella
-  // di m2 scende verticalmente. m2 resta ben fuori dal triangolo.
-  const pulleyR = 0.35;
-  const pulleyX = B.x;
-  const pulleyY = B.y + 1.3;
+  // === m1 sul piano (piu' grande) ===
+  const boxW = 1.2, boxH = 0.9;
+  const boxT = 0.5;
+  const boxBx = A.x + boxT * (B.x - A.x);
+  const boxBy = A.y + boxT * (B.y - A.y);
+  const m1Center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
+
+  // === Carrucola: centro all'altezza del centro del box m1 (boxH/2 dal piano) + r sulla normale
+  // Cosi' la retta parallela al piano passante per m1Center e' tangente alla puleggia,
+  // e la fune da m1Center al tangente e' perfettamente parallela all'ipotenusa.
+  const pulleyR = 0.4;
+  const pulleyOffsetN = boxH / 2 + pulleyR;
+  const pulleyX = B.x + pulleyOffsetN * nd.x;
+  const pulleyY = B.y + pulleyOffsetN * nd.y;
 
   const wheel = new THREE.Mesh(
     new THREE.RingGeometry(pulleyR - 0.08, pulleyR, 32),
@@ -193,26 +201,15 @@ export function renderPulley(sceneManager, state, visibility) {
   // Etichetta B al vertice del triangolo (dove e' davvero B)
   addTextLabel(sceneManager, 'B', B.x - 0.5, B.y + 0.4, '#4fc3f7');
 
-  // === m1 sul piano (piu' grande) ===
-  const boxW = 1.2, boxH = 0.9;
-  const boxT = 0.5;
-  const boxBx = A.x + boxT * (B.x - A.x);
-  const boxBy = A.y + boxT * (B.y - A.y);
-  const m1Center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
-
   // Punto di attacco fune su m1: centro del box (come nella foto di riferimento)
   const ropeAttachX = m1Center.x;
   const ropeAttachY = m1Center.y;
 
-  // Tangente vera: rope da m1 top a pulley tocca la circonferenza tangenzialmente
-  const tan = tangentPoint(
-    { x: ropeAttachX, y: ropeAttachY },
-    { x: pulleyX, y: pulleyY },
-    pulleyR,
-    1,
-  );
-  const ropeSlopeEndX = tan.x;
-  const ropeSlopeEndY = tan.y;
+  // Tangente esatta: il punto sulla puleggia piu' vicino al piano (centro - r*nd)
+  // si trova esattamente sulla retta parallela al piano a quota boxH/2 (dove sta m1Center),
+  // quindi la fune e' perfettamente parallela all'ipotenusa.
+  const ropeSlopeEndX = pulleyX - pulleyR * nd.x;
+  const ropeSlopeEndY = pulleyY - pulleyR * nd.y;
   const ropeVertEndX = pulleyX - pulleyR;          // tangente verticale a sinistra
   const ropeVertEndY = pulleyY;
 
