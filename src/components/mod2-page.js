@@ -38,7 +38,7 @@ N = Py</div>
           <p>Per l'equilibrio sul piano inclinato con attrito:</p>
           <div class="theory-formula-block">Px = Fa   \u2192   m \u00b7 g \u00b7 sin(\u03b1) = \u03bcs \u00b7 m \u00b7 g \u00b7 cos(\u03b1)
 tan(\u03b1) = \u03bcs</div>
-          <p>La <strong>forza risultante lungo il piano</strong> <span class="vec-arrow">F</span>ris (mostrata nel simulatore) indica se il corpo scivola o resta fermo:</p>
+          <p>La <strong>forza risultante lungo il piano</strong> Fris (mostrata nel simulatore) indica se il corpo scivola o resta fermo:</p>
           <div class="theory-formula-block">|Px| \u2264 \u03bc\u00b7N  \u2192  Fris = 0 (equilibrio)
 |Px| >  \u03bc\u00b7N  \u2192  Fris = Px \u2212 sign(Px)\u00b7Fa (scivola)</div>
           <div class="theory-example-block">m = 5 kg, \u03b1 = 20\u00b0, \u03bcs = 0.4

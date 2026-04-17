@@ -143,7 +143,7 @@ export const THEORY_TOPICS = {
 <p>La forza peso <span class="vec-arrow">P</span> si scompone in due componenti:</p>
 <p><strong>Px</strong> (componente parallela al piano): tende a far scivolare il corpo verso il basso.</p>
 <p><strong>Py</strong> (componente perpendicolare al piano): viene equilibrata dalla forza normale.</p>
-<p>La <strong>forza risultante lungo il piano</strong>, indicata nel simulatore con <span class="vec-arrow">F</span>ris, è la somma netta delle forze parallele al piano (Px meno l'attrito Fa):</p>
+<p>La <strong>forza risultante lungo il piano</strong>, indicata nel simulatore con Fris, è la somma netta delle forze parallele al piano (Px meno l'attrito Fa):</p>
 <ul><li>Se |Px| \u2264 Fa_max = \u03bc\u00b7N \u2192 <strong>equilibrio statico</strong>, Fris = 0 (l'attrito si adatta)</li>
 <li>Altrimenti il corpo <strong>scivola</strong> e Fris = Px \u2212 sign(Px)\u00b7Fa</li></ul>`,
     formula: 'Px = P \u00b7 sin(\u03b1) = m \u00b7 g \u00b7 sin(\u03b1)\nPy = P \u00b7 cos(\u03b1) = m \u00b7 g \u00b7 cos(\u03b1)\nN = Py = m \u00b7 g \u00b7 cos(\u03b1)\nFa = \u03bc \u00b7 N\nFris = Px \u2212 Fa   (se |Px| > Fa)\nFris = 0            (se |Px| \u2264 Fa, equilibrio)',
