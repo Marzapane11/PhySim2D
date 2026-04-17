@@ -83,7 +83,24 @@ export function createInclinedPlaneSolver() {
         if (Fa == null && mu != null && N != null) Fa = mu * N;
         else if (mu == null && Fa != null && N != null && N > 0) mu = Fa / N;
 
-        if (Fris == null && Px != null && Fa != null) Fris = Px - Fa;
+        // Fris (risultante lungo il piano) con gestione corretta dell'attrito statico
+        // Se |Px| <= Fa_max (= μN) → equilibrio statico, Fris = 0
+        // Altrimenti → il corpo scivola e Fris = Px - sign(Px) * Fa
+        if (Fris == null && Px != null && Fa != null) {
+          if (Math.abs(Px) <= Fa + 1e-9) Fris = 0;
+          else Fris = Px - Math.sign(Px) * Fa;
+        }
+        // Formule inverse di Fris
+        else if (Px == null && Fris != null && Fa != null) {
+          // Se Fris = 0 non e' determinabile univocamente (qualsiasi |Px|<=Fa), lasciamo null
+          if (Math.abs(Fris) > 1e-9) Px = Fris + Math.sign(Fris) * Fa;
+        }
+        else if (Fa == null && Fris != null && Px != null) {
+          if (Math.abs(Fris) > 1e-9 && Math.sign(Px) === Math.sign(Fris)) {
+            Fa = Math.abs(Px) - Math.abs(Fris);
+            if (Fa < 0) Fa = 0;
+          }
+        }
       }
 
       return { m, alpha, mu, l, h, b, P, Px, Py, N, Fa, Fris };

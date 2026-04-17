@@ -23,6 +23,8 @@ export function createSpringSolver() {
       { id: 'P', label: 'Peso (<span class="vec-arrow">P</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Px', label: 'Px (lungo piano)', unit: 'N', defaultValue: 0, mode: 'output',
         visibleIf: (v) => v.alpha == null || Math.abs(v.alpha) >= 0.5 },
+      { id: 'Py', label: 'Py (perpendicolare)', unit: 'N', defaultValue: 0, mode: 'output',
+        visibleIf: (v) => v.alpha == null || Math.abs(v.alpha) >= 0.5 },
       { id: 'N', label: 'Normale (<span class="vec-arrow">N</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Fa', label: 'Attrito (<span class="vec-arrow">F</span>a)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'Fe', label: '<span class="vec-arrow">F</span>e (elastica)', unit: 'N', defaultValue: 0, mode: 'output' },
@@ -41,6 +43,7 @@ export function createSpringSolver() {
       let dx = has('dx') ? vals.dx : null;
       let P = has('P') ? vals.P : null;
       let Px = has('Px') ? vals.Px : null;
+      let Py = has('Py') ? vals.Py : null;
       let N = has('N') ? vals.N : null;
       let Fa = has('Fa') ? vals.Fa : null;
       let Fe = has('Fe') ? vals.Fe : null;
@@ -76,8 +79,12 @@ export function createSpringSolver() {
 
         if (P != null) {
           if (Px == null) Px = P * Math.sin(rad);
-          if (N == null) N = P * Math.cos(rad);
+          if (Py == null) Py = P * Math.cos(rad);
         }
+
+        // N e' lo stesso valore di Py (modulo perpendicolare) — sincronizzati in entrambi i versi
+        if (N == null && Py != null) N = Py;
+        else if (Py == null && N != null) Py = N;
 
         if (Fa == null && mu != null && N != null) Fa = mu * N;
         else if (mu == null && Fa != null && N != null && N > 0) mu = Fa / N;
@@ -88,7 +95,7 @@ export function createSpringSolver() {
       else if (dx == null && Fe != null && k != null && k > 0) dx = Fe / k;
       else if (k == null && Fe != null && dx != null && dx !== 0) k = Fe / Math.abs(dx);
 
-      return { m, alpha, mu, l, h, b, k, dx, P, Px, N, Fa, Fe };
+      return { m, alpha, mu, l, h, b, k, dx, P, Px, Py, N, Fa, Fe };
     }
   });
 }

@@ -7,7 +7,12 @@ const G = 9.81;
  * Compute per-custom-force contributions along the up-slope direction
  * and along the outward normal direction.
  *
- * Custom angle is relative to Px (down-slope). World angle = customAngle - alpha.
+ * Convenzione dell'angolo delle forze personalizzate:
+ *   - 0°   = giu' lungo il piano (direzione di Px)
+ *   - 90°  = perpendicolare, uscente dalla superficie (direzione di N)
+ *   - 180° = su lungo il piano (direzione opposta a Px)
+ *   - 270° = dentro la superficie (direzione opposta a N)
+ * In coordinate world, questo corrisponde a un angolo (customAngleDeg - alphaDeg).
  */
 export function projectCustomForces(customForces, alphaDeg) {
   const rad = (alphaDeg * Math.PI) / 180;
