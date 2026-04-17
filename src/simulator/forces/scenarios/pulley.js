@@ -176,55 +176,85 @@ export function renderPulley(sceneManager, state, visibility) {
   const m2HangX = pulleyX;
   const m2HangY = pulleyY - 2.3;
 
-  // Staffa triangolare sotto la carrucola (come nella foto di riferimento)
-  const bracketColor = isLight ? 0xc44438 : 0xd04438;
-  const bracketMat = new THREE.LineBasicMaterial({ color: bracketColor });
-  const bApex = { x: pulleyX, y: pulleyY - pulleyR };
-  const bL = { x: pulleyX - 0.22, y: pulleyY - pulleyR - 0.35 };
-  const bR = { x: pulleyX + 0.1, y: pulleyY - pulleyR - 0.35 };
-  const bC = { x: pulleyX - 0.06, y: pulleyY - pulleyR - 0.2 };
-  sceneManager.objects.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(bApex.x, bApex.y, 0.01),
-      new THREE.Vector3(bL.x, bL.y, 0.01),
-      new THREE.Vector3(bR.x, bR.y, 0.01),
-      new THREE.Vector3(bApex.x, bApex.y, 0.01),
-    ]),
-    bracketMat,
-  ));
-  // Piccola linea interna per dare spessore visivo
-  sceneManager.objects.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(bApex.x, bApex.y, 0.015),
-      new THREE.Vector3(bC.x, bC.y, 0.015),
-    ]),
-    bracketMat,
-  ));
+  // Staffa: asta semplice dal vertice B all'asse della carrucola
+  const bracketColor = isLight ? 0x555555 : 0xb0b0b0;
+  const bracketThickness = 0.08;
+  // Rettangolo da B a pulleyCenter
+  const bdx = pulleyX - B.x;
+  const bdy = pulleyY - B.y;
+  const bLen = Math.sqrt(bdx * bdx + bdy * bdy);
+  const bux = bdx / bLen;
+  const buy = bdy / bLen;
+  const bpx = -buy * bracketThickness / 2;
+  const bpy = bux * bracketThickness / 2;
+  const bracketShape = new THREE.Shape();
+  bracketShape.moveTo(B.x + bpx, B.y + bpy);
+  bracketShape.lineTo(B.x - bpx, B.y - bpy);
+  bracketShape.lineTo(pulleyX - bpx, pulleyY - bpy);
+  bracketShape.lineTo(pulleyX + bpx, pulleyY + bpy);
+  bracketShape.closePath();
+  const bracketMesh = new THREE.Mesh(
+    new THREE.ShapeGeometry(bracketShape),
+    new THREE.MeshBasicMaterial({ color: bracketColor, side: THREE.DoubleSide })
+  );
+  bracketMesh.position.z = 0.015;
+  sceneManager.objects.add(bracketMesh);
 
-  // Puleggia: disco pieno con bordo
+  // === Puleggia realistica: cerchio esterno + raggi + asse centrale ===
+  const wheelFillColor = isLight ? 0xe0e0e0 : 0xd0d0d0;
+  const wheelEdgeColor = isLight ? 0x333333 : 0x1a1a2e;
+
+  // Cerchio esterno pieno (ruota)
   const wheelFill = new THREE.Mesh(
     new THREE.CircleGeometry(pulleyR, 32),
-    new THREE.MeshBasicMaterial({ color: isLight ? 0x8080c8 : 0x9e9ee0 })
+    new THREE.MeshBasicMaterial({ color: wheelFillColor })
   );
   wheelFill.position.set(pulleyX, pulleyY, 0.02);
   sceneManager.objects.add(wheelFill);
+
+  // Bordo esterno scuro
   const wheelEdge = new THREE.Mesh(
     new THREE.RingGeometry(pulleyR - 0.025, pulleyR, 32),
-    new THREE.MeshBasicMaterial({ color: isLight ? 0x2a2a4a : 0x1a1a2e })
+    new THREE.MeshBasicMaterial({ color: wheelEdgeColor })
   );
   wheelEdge.position.set(pulleyX, pulleyY, 0.025);
   sceneManager.objects.add(wheelEdge);
 
+  // Raggi della puleggia (4 raggi)
+  const spokeMat = new THREE.LineBasicMaterial({ color: wheelEdgeColor });
+  const hubR = pulleyR * 0.2;
+  const spokeCount = 4;
+  for (let i = 0; i < spokeCount; i++) {
+    const ang = (i / spokeCount) * Math.PI * 2 + Math.PI / 4;
+    const x0 = pulleyX + hubR * Math.cos(ang);
+    const y0 = pulleyY + hubR * Math.sin(ang);
+    const x1 = pulleyX + (pulleyR - 0.04) * Math.cos(ang);
+    const y1 = pulleyY + (pulleyR - 0.04) * Math.sin(ang);
+    sceneManager.objects.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(x0, y0, 0.026),
+        new THREE.Vector3(x1, y1, 0.026),
+      ]),
+      spokeMat,
+    ));
+  }
+
+  // Mozzo centrale (hub)
+  const hub = new THREE.Mesh(
+    new THREE.CircleGeometry(hubR, 20),
+    new THREE.MeshBasicMaterial({ color: wheelEdgeColor })
+  );
+  hub.position.set(pulleyX, pulleyY, 0.027);
+  sceneManager.objects.add(hub);
+
   // Etichetta B al vertice del triangolo
   addTextLabel(sceneManager, 'B', B.x - 0.4, B.y + 0.3, '#4fc3f7');
 
-  // Punti di attacco fune:
-  // m1: centro del lato superiore del box (top-center)
-  const ropeAttachM1X = boxBx + boxH * nd.x;
-  const ropeAttachM1Y = boxBy + boxH * nd.y;
-  // m2: centro del lato superiore del box
+  // Punti di attacco fune: centro delle masse (come nella foto)
+  const ropeAttachM1X = m1Center.x;
+  const ropeAttachM1Y = m1Center.y;
   const ropeAttachM2X = m2HangX;
-  const ropeAttachM2Y = m2HangY + m2H / 2;
+  const ropeAttachM2Y = m2HangY;
 
   // Fune: entrambe terminano al bordo esterno della carrucola nella direzione giusta
   // m1 side: punto sulla circonferenza verso m1
