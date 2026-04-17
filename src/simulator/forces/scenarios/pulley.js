@@ -166,14 +166,14 @@ export function renderPulley(sceneManager, state, visibility) {
   const boxBy = A.y + boxT * (B.y - A.y);
   const m1Center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
 
-  // === Carrucola: posizionata lungo la retta parallela al piano passante per m1Center,
-  // spostata di (boxH/2 + r) lungo la normale, cosi' la fune m1 → carrucola e' PARALLELA
-  // all'ipotenusa del triangolo. Pulley shiftata leggermente a sinistra di B.
+  // === Carrucola: abbassata sotto la retta della fune, cosi' la corda passa SOPRA la puleggia.
+  // La retta parallela al piano passante per m1Center (offset boxH/2 dal piano) rimane la
+  // retta della fune; il centro della puleggia sta boxH/2 - r dal piano (sotto la fune di r).
+  // La tangente superiore della puleggia = pulleyCenter + r*nd si trova sulla retta fune.
   const pulleyR = 0.3;
   const boxHalf = boxH / 2;
-  const pulleyOffsetN = boxHalf + pulleyR;
+  const pulleyOffsetN = boxHalf - pulleyR;
   const shiftLeftFromB = -0.25; // vogliamo pulleyX = B.x + shiftLeftFromB
-  // t lungo sd tale che pulleyX risulti = B.x + shiftLeftFromB
   let tParam = (shiftLeftFromB - pulleyOffsetN * nd.x) / sd.x;
   if (tParam < 0) tParam = 0;
 
@@ -266,9 +266,9 @@ export function renderPulley(sceneManager, state, visibility) {
   const ropeAttachM2Y = m2HangY;
 
   // Tangenti esatte sulla puleggia
-  // m1 side: punto sulla circonferenza piu' vicino al piano (sulla retta parallela a quota boxH/2)
-  const ropeSlopeEndX = pulleyX - pulleyR * nd.x;
-  const ropeSlopeEndY = pulleyY - pulleyR * nd.y;
+  // m1 side: tangente SUPERIORE (la corda passa sopra la puleggia)
+  const ropeSlopeEndX = pulleyX + pulleyR * nd.x;
+  const ropeSlopeEndY = pulleyY + pulleyR * nd.y;
   // m2 side: tangente verticale a sinistra della puleggia
   const ropeVertEndX = pulleyX - pulleyR;
   const ropeVertEndY = pulleyY;
