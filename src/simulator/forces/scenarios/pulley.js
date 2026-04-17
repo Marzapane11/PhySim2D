@@ -6,6 +6,21 @@ import { calcTriangle, drawTriangle, drawBox, addTextLabel } from './inclined-pl
 
 const G = 9.81;
 
+// Punto di tangenza sulla circonferenza dal punto esterno P (quello "sopra" se sign=1)
+function tangentPoint(P, O, r, sign) {
+  const dx = P.x - O.x;
+  const dy = P.y - O.y;
+  const d = Math.sqrt(dx * dx + dy * dy);
+  if (d <= r) return { x: O.x, y: O.y };
+  const cosA = r / d;
+  const sinA = Math.sqrt(1 - cosA * cosA);
+  const ux = dx / d;
+  const uy = dy / d;
+  const tx = ux * cosA - uy * sinA * sign;
+  const ty = uy * cosA + ux * sinA * sign;
+  return { x: O.x + r * tx, y: O.y + r * ty };
+}
+
 function drawRope(sceneManager, p1, p2, color) {
   const dx = p2.x - p1.x;
   const dy = p2.y - p1.y;
@@ -173,13 +188,16 @@ export function renderPulley(sceneManager, state, visibility) {
   const ropeAttachX = boxBx + (boxW / 2) * sd.x + (boxH / 2) * nd.x;
   const ropeAttachY = boxBy + (boxW / 2) * sd.y + (boxH / 2) * nd.y;
 
-  // Estremita' della fune sulla carrucola: sulla circonferenza nel punto piu' vicino a m2
-  // (approssimazione tangenziale: va bene visivamente)
-  const dxm = pulleyX - ropeAttachX;
-  const dym = pulleyY - ropeAttachY;
-  const distM = Math.sqrt(dxm * dxm + dym * dym);
-  const ropeSlopeEndX = pulleyX - (dxm / distM) * pulleyR;
-  const ropeSlopeEndY = pulleyY - (dym / distM) * pulleyR;
+  // Tangente VERA: rope m2 → pulley tocca la circonferenza tangenzialmente
+  // sign=1 = tangente superiore (rope si avvolge sopra la puleggia)
+  const tan = tangentPoint(
+    { x: ropeAttachX, y: ropeAttachY },
+    { x: pulleyX, y: pulleyY },
+    pulleyR,
+    1,
+  );
+  const ropeSlopeEndX = tan.x;
+  const ropeSlopeEndY = tan.y;
   const ropeVertEndX = pulleyX - pulleyR;          // tangente verticale a sinistra
   const ropeVertEndY = pulleyY;
 
@@ -217,10 +235,10 @@ export function renderPulley(sceneManager, state, visibility) {
     addTextLabel(sceneManager, 'm\u2081', m1HangX, m1HangY, '#ff7043');
     addTextLabel(sceneManager, 'm\u2082', m2Center.x, m2Center.y, '#ff7043');
 
-    // μ sul piano (tra m2 e il vertice B, spostato fuori dal piano)
-    const muT = 0.25; // 25% da B verso A
-    const muX = B.x + muT * (A.x - B.x) + nd.x * 0.5;
-    const muY = B.y + muT * (A.y - B.y) + nd.y * 0.5;
+    // μ sul piano, dal lato opposto alla fune (tra m2 e A, poco sopra la superficie)
+    const muT = 0.25; // 25% da A verso B
+    const muX = A.x + muT * (B.x - A.x) + nd.x * 0.35;
+    const muY = A.y + muT * (B.y - A.y) + nd.y * 0.35;
     addTextLabel(sceneManager, '\u03BC', muX, muY, '#66bb6a');
 
     if (visibility.forceArrows) {
