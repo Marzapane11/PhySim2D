@@ -1,131 +1,263 @@
 import * as THREE from 'three';
-import { pulleySystem } from '../../../math/force-math.js';
-import { createArrow } from '../../vector-renderer.js';
+import { createArrow, scaleForceVector } from '../../vector-renderer.js';
 import { getState } from '../../../state.js';
 import { createSolver } from '../../dynamic-solver.js';
+import { calcTriangle, drawTriangle, drawBox, addTextLabel } from './inclined-plane.js';
 
-export function computePulley(params) { return pulleySystem(params); }
+const G = 9.81;
+
+/**
+ * Carrucola con piano inclinato.
+ * m1 appesa in verticale; m2 sul piano inclinato (angolo θ, attrito μ).
+ * La fune, di massa trascurabile, passa su carrucola ideale in cima al piano.
+ * Convenzione: a > 0 significa che m2 sale lungo il piano (m1 scende).
+ */
+export function computePulleyIncline({ m1, m2, angleDeg, mu }) {
+  const rad = (angleDeg * Math.PI) / 180;
+  const P1 = m1 * G;
+  const P2 = m2 * G;
+  const P2x = P2 * Math.sin(rad);   // componente di P2 lungo il piano (diretta in giu)
+  const N = P2 * Math.cos(rad);     // normale sul piano
+  const FaMax = mu * N;             // attrito statico massimo
+  const driving = P1 - P2x;         // forza netta (>0 se m1 vince e tira m2 su)
+
+  let a = 0;
+  let T = 0;
+  let Fa = 0;
+  let status;
+  let frictionDir = 0;              // +1 = lungo pendenza verso B (su), -1 = verso A (giu)
+
+  if (Math.abs(driving) <= FaMax + 1e-9) {
+    // Equilibrio statico: attrito si adatta per bilanciare
+    a = 0;
+    T = P1;
+    Fa = Math.abs(driving);
+    status = 'Equilibrio';
+    frictionDir = driving >= 0 ? -1 : 1;
+  } else if (driving > 0) {
+    // m1 vince: m2 sale, m1 scende
+    a = (driving - FaMax) / (m1 + m2);
+    T = m1 * (G - a);
+    Fa = FaMax;
+    status = 'm\u2082 sale';
+    frictionDir = -1;               // attrito oppone il moto = giu lungo il piano
+  } else {
+    // m2 vince: m2 scende, m1 sale
+    a = (-driving - FaMax) / (m1 + m2);
+    T = m1 * (G + a);
+    Fa = FaMax;
+    status = 'm\u2082 scende';
+    frictionDir = 1;                // attrito oppone il moto = su lungo il piano
+  }
+
+  return { P1, P2, P2x, N, Fa, T, a, status, frictionDir, driving, FaMax };
+}
+
+// Backwards-compat wrapper per eventuali chiamate legacy
+export function computePulley(params) { return computePulleyIncline(params); }
 
 export function createPulleySolver() {
   return createSolver({
     variables: [
-      { id: 'm1', label: 'Massa 1 (m\u2081)', unit: 'kg', defaultValue: 10, mode: 'input' },
+      { id: 'm1', label: 'Massa 1 (m\u2081)', unit: 'kg', defaultValue: 3, mode: 'input' },
       { id: 'm2', label: 'Massa 2 (m\u2082)', unit: 'kg', defaultValue: 5, mode: 'input' },
+      { id: 'alpha', label: 'Angolo (\u03B8)', unit: '\u00B0', defaultValue: 30, mode: 'input' },
+      { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.2, mode: 'input' },
       { id: 'P1', label: 'Peso 1 (<span class="vec-arrow">P</span>\u2081)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'P2', label: 'Peso 2 (<span class="vec-arrow">P</span>\u2082)', unit: 'N', defaultValue: 0, mode: 'output' },
-      { id: 'a', label: 'Accelerazione (a)', unit: 'm/s\u00B2', defaultValue: 0, mode: 'output' },
+      { id: 'P2x', label: 'P2x (lungo piano)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'N', label: 'Normale (<span class="vec-arrow">N</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'Fa', label: 'Attrito (<span class="vec-arrow">F</span>a)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'T', label: 'Tensione (<span class="vec-arrow">T</span>)', unit: 'N', defaultValue: 0, mode: 'output' },
+      { id: 'a', label: 'Accelerazione (a)', unit: 'm/s\u00B2', defaultValue: 0, mode: 'output' },
     ],
     solve(vals, inputIds) {
-      const G = 9.81;
       const has = (id) => inputIds.includes(id);
-      let { m1, m2, P1, P2, a, T } = vals;
+      let m1 = has('m1') ? vals.m1 : null;
+      let m2 = has('m2') ? vals.m2 : null;
+      let alpha = has('alpha') ? vals.alpha : null;
+      let mu = has('mu') ? vals.mu : null;
+      let P1 = has('P1') ? vals.P1 : null;
+      let P2 = has('P2') ? vals.P2 : null;
 
-      if (has('m1')) P1 = m1 * G;
-      else if (has('P1')) m1 = P1 / G;
+      // Formule inverse peso <-> massa
+      if (m1 == null && P1 != null) m1 = P1 / G;
+      if (P1 == null && m1 != null) P1 = m1 * G;
+      if (m2 == null && P2 != null) m2 = P2 / G;
+      if (P2 == null && m2 != null) P2 = m2 * G;
 
-      if (has('m2')) P2 = m2 * G;
-      else if (has('P2')) m2 = P2 / G;
-
-      const totalMass = m1 + m2;
-      if (totalMass > 0) {
-        if (has('a')) {
-          T = m1 * (G - a);
-          if (!has('m1') && has('T')) m1 = T / (G - a);
-          if (!has('m2') && has('T')) m2 = T / (G + a);
-        } else {
-          a = (G * Math.abs(m1 - m2)) / totalMass;
-          T = (2 * m1 * m2 * G) / totalMass;
-        }
+      if (m1 != null && m2 != null && alpha != null && mu != null) {
+        const s = computePulleyIncline({ m1, m2, angleDeg: alpha, mu });
+        return {
+          m1, m2, alpha, mu,
+          P1: m1 * G, P2: m2 * G,
+          P2x: s.P2x, N: s.N, Fa: s.Fa, T: s.T, a: s.a,
+        };
       }
 
-      return { m1, m2, P1, P2, a, T };
-    }
+      return { m1, m2, alpha, mu, P1, P2, P2x: 0, N: 0, Fa: 0, T: 0, a: 0 };
+    },
   });
 }
 
 export function getPulleyConfig() {
-  return { id: 'pulley', label: 'Carrucola', defaults: { mass1: 10, mass2: 5 } };
+  return { id: 'pulley', label: 'Carrucola', defaults: { m1: 3, m2: 5, angleDeg: 30, frictionCoeff: 0.2 } };
 }
 
 export function renderPulley(sceneManager, state, visibility) {
   const isLight = getState().theme === 'light';
-  const calc = computePulley(state);
-  const scale = 0.02;
+  const tri = calcTriangle(state.angleDeg);
+  const { A, B, sd, nd } = tri;
 
-  // Wheel
-  const wheel = new THREE.Mesh(new THREE.RingGeometry(0.6, 0.7, 32), new THREE.MeshBasicMaterial({ color: 0x4fc3f7, side: THREE.DoubleSide }));
-  wheel.position.set(0, 4, 0);
+  drawTriangle(sceneManager, tri, isLight, '\u03B8');
+
+  const calc = computePulleyIncline({
+    m1: state.m1, m2: state.m2, angleDeg: state.angleDeg, mu: state.mu,
+  });
+
+  // === Carrucola in cima al piano (vertice B) ===
+  const pulleyR = 0.35;
+  const pulleyOffset = pulleyR + 0.1;
+  const pulleyX = B.x;
+  const pulleyY = B.y + pulleyOffset;
+
+  const wheel = new THREE.Mesh(
+    new THREE.RingGeometry(pulleyR - 0.08, pulleyR, 32),
+    new THREE.MeshBasicMaterial({ color: 0x4fc3f7, side: THREE.DoubleSide })
+  );
+  wheel.position.set(pulleyX, pulleyY, 0.02);
   sceneManager.objects.add(wheel);
 
-  // Axle
-  const axle = new THREE.Mesh(new THREE.CircleGeometry(0.1, 16), new THREE.MeshBasicMaterial({ color: 0xe0e0e0 }));
-  axle.position.set(0, 4, 0.01);
+  const axle = new THREE.Mesh(
+    new THREE.CircleGeometry(0.06, 16),
+    new THREE.MeshBasicMaterial({ color: isLight ? 0x333333 : 0xe0e0e0 })
+  );
+  axle.position.set(pulleyX, pulleyY, 0.025);
   sceneManager.objects.add(axle);
 
-  // Support
-  const supportMat = new THREE.LineBasicMaterial({ color: isLight ? 0x8090a0 : 0x6a6a8a });
-  sceneManager.objects.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(-2, 5, 0.01), new THREE.Vector3(2, 5, 0.01)
-  ]), supportMat));
-  sceneManager.objects.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(0, 5, 0.01), new THREE.Vector3(0, 4.7, 0.01)
-  ]), supportMat));
+  // Supporto carrucola (piccola asta verso il vertice B)
+  const supMat = new THREE.LineBasicMaterial({ color: isLight ? 0x667788 : 0x8090a0 });
+  sceneManager.objects.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(B.x, B.y, 0.01),
+      new THREE.Vector3(pulleyX, pulleyY - pulleyR, 0.01),
+    ]),
+    supMat,
+  ));
 
-  // Ropes
-  const ropeMat = new THREE.LineBasicMaterial({ color: 0xc0c0c0 });
-  sceneManager.objects.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(-0.65, 4, 0.01), new THREE.Vector3(-0.65, 0, 0.01)
-  ]), ropeMat));
-  sceneManager.objects.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(0.65, 4, 0.01), new THREE.Vector3(0.65, 1, 0.01)
-  ]), ropeMat));
+  // === m2 sul piano ===
+  const boxW = 1.2, boxH = 0.9;
+  const boxT = 0.45;
+  const boxBx = A.x + boxT * (B.x - A.x);
+  const boxBy = A.y + boxT * (B.y - A.y);
+  const m2Center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
+
+  // Punto di attacco fune: lato della scatola rivolto verso B
+  const ropeAttachX = boxBx + (boxW / 2) * sd.x + (boxH / 2) * nd.x;
+  const ropeAttachY = boxBy + (boxW / 2) * sd.y + (boxH / 2) * nd.y;
+
+  // === Fune ===
+  // Punti di tangenza carrucola (approssimato): lato destro del bordo (verso m2) e lato sinistro (verso m1)
+  const ropeTangentSlopeX = pulleyX + pulleyR * sd.x;
+  const ropeTangentSlopeY = pulleyY + pulleyR * sd.y;
+  const ropeTangentVertX = pulleyX - pulleyR;
+  const ropeTangentVertY = pulleyY;
+
+  const ropeMat = new THREE.LineBasicMaterial({ color: isLight ? 0x555555 : 0xc0c0c0 });
+  // Tratto m2 → carrucola (lungo il piano)
+  sceneManager.objects.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(ropeAttachX, ropeAttachY, 0.015),
+      new THREE.Vector3(ropeTangentSlopeX, ropeTangentSlopeY, 0.015),
+    ]),
+    ropeMat,
+  ));
+
+  // === m1 sospesa a sinistra della carrucola ===
+  const m1W = 1.0, m1H = 1.0;
+  const m1HangX = ropeTangentVertX;
+  const m1HangY = pulleyY - 2.5;
+
+  // Tratto carrucola → m1 (verticale)
+  sceneManager.objects.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(ropeTangentVertX, ropeTangentVertY, 0.015),
+      new THREE.Vector3(m1HangX, m1HangY + m1H / 2, 0.015),
+    ]),
+    ropeMat,
+  ));
 
   if (visibility.body) {
-    // Mass 1 (2D ShapeGeometry)
-    const box1W = 1;
-    const box1H = 1;
-    const box1Shape = new THREE.Shape();
-    box1Shape.moveTo(-0.65 - box1W / 2, -1);
-    box1Shape.lineTo(-0.65 + box1W / 2, -1);
-    box1Shape.lineTo(-0.65 + box1W / 2, -1 + box1H);
-    box1Shape.lineTo(-0.65 - box1W / 2, -1 + box1H);
-    box1Shape.closePath();
-    const box1Mesh = new THREE.Mesh(
-      new THREE.ShapeGeometry(box1Shape),
-      new THREE.MeshBasicMaterial({ color: 0xff7043, side: THREE.DoubleSide })
-    );
-    box1Mesh.position.z = 0.01;
-    sceneManager.objects.add(box1Mesh);
+    // Disegna m1 come rettangolo (stile simile a drawBox)
+    const m1Corners = [
+      { x: m1HangX - m1W / 2, y: m1HangY - m1H / 2 },
+      { x: m1HangX + m1W / 2, y: m1HangY - m1H / 2 },
+      { x: m1HangX + m1W / 2, y: m1HangY + m1H / 2 },
+      { x: m1HangX - m1W / 2, y: m1HangY + m1H / 2 },
+    ];
+    for (let i = 0; i < 4; i++) {
+      const a0 = m1Corners[i];
+      const b0 = m1Corners[(i + 1) % 4];
+      sceneManager.objects.add(new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(a0.x, a0.y, 0.03),
+          new THREE.Vector3(b0.x, b0.y, 0.03),
+        ]),
+        new THREE.LineBasicMaterial({ color: 0xff7043 }),
+      ));
+    }
 
-    // Mass 2 (2D ShapeGeometry)
-    const box2W = 0.8;
-    const box2H = 0.8;
-    const box2Shape = new THREE.Shape();
-    box2Shape.moveTo(0.65 - box2W / 2, 0.2);
-    box2Shape.lineTo(0.65 + box2W / 2, 0.2);
-    box2Shape.lineTo(0.65 + box2W / 2, 0.2 + box2H);
-    box2Shape.lineTo(0.65 - box2W / 2, 0.2 + box2H);
-    box2Shape.closePath();
-    const box2Mesh = new THREE.Mesh(
-      new THREE.ShapeGeometry(box2Shape),
-      new THREE.MeshBasicMaterial({ color: 0x66bb6a, side: THREE.DoubleSide })
-    );
-    box2Mesh.position.z = 0.01;
-    sceneManager.objects.add(box2Mesh);
+    // Etichette
+    addTextLabel(sceneManager, 'm\u2081', m1HangX, m1HangY, '#ff7043');
+    addTextLabel(sceneManager, 'm\u2082', m2Center.x, m2Center.y, '#ff7043');
+
+    // μ sul piano (vicino al vertice A)
+    const muT = 0.82;
+    const muX = A.x + muT * (B.x - A.x) + nd.x * 0.6;
+    const muY = A.y + muT * (B.y - A.y) + nd.y * 0.6;
+    addTextLabel(sceneManager, '\u03BC', muX, muY, '#66bb6a');
 
     if (visibility.forceArrows) {
-      const box1CenterY = -1 + box1H / 2;
-      const box2CenterY = 0.2 + box2H / 2;
+      // === Forze su m2 ===
+      // P2 — peso verso il basso
+      const p2Vec = scaleForceVector(0, -calc.P2);
+      const p2A = createArrow(m2Center, p2Vec, 0x4fc3f7, 'P\u2082');
+      if (p2A) sceneManager.objects.add(p2A);
 
-      const w1 = createArrow({ x: -0.65, y: box1CenterY }, { x: 0, y: -calc.weight1 * scale }, 0xff4444, 'P\u2081');
-      if (w1) sceneManager.objects.add(w1);
-      const w2 = createArrow({ x: 0.65, y: box2CenterY }, { x: 0, y: -calc.weight2 * scale }, 0xff4444, 'P\u2082');
-      if (w2) sceneManager.objects.add(w2);
-      const t1 = createArrow({ x: -0.65, y: box1CenterY }, { x: 0, y: calc.tension * scale }, 0x4fc3f7, 'T');
-      if (t1) sceneManager.objects.add(t1);
-      const t2 = createArrow({ x: 0.65, y: box2CenterY }, { x: 0, y: calc.tension * scale }, 0x4fc3f7, 'T');
-      if (t2) sceneManager.objects.add(t2);
+      // N — normale (fuori dalla superficie)
+      const nVec = scaleForceVector(nd.x * calc.N, nd.y * calc.N);
+      const nA = createArrow(m2Center, nVec, 0x66bb6a, 'N');
+      if (nA) sceneManager.objects.add(nA);
+
+      // T su m2 — su lungo il piano (verso B)
+      if (calc.T > 0.01) {
+        const tVec = scaleForceVector(sd.x * calc.T, sd.y * calc.T);
+        const tA = createArrow(m2Center, tVec, 0x9575cd, 'T');
+        if (tA) sceneManager.objects.add(tA);
+      }
+
+      // Fa su m2 — direzione dipende dal moto
+      if (calc.Fa > 0.01) {
+        const dir = calc.frictionDir; // +1 verso B, -1 verso A
+        const faVec = scaleForceVector(dir * sd.x * calc.Fa, dir * sd.y * calc.Fa, 0.28);
+        const faA = createArrow(m2Center, faVec, 0xffff00, 'Fa');
+        if (faA) sceneManager.objects.add(faA);
+      }
+
+      // === Forze su m1 ===
+      const m1Center = { x: m1HangX, y: m1HangY };
+
+      // P1 — peso verso il basso
+      const p1Vec = scaleForceVector(0, -calc.P1);
+      const p1A = createArrow(m1Center, p1Vec, 0x4fc3f7, 'P\u2081');
+      if (p1A) sceneManager.objects.add(p1A);
+
+      // T su m1 — verticale verso l'alto
+      if (calc.T > 0.01) {
+        const t1Vec = scaleForceVector(0, calc.T);
+        const t1A = createArrow(m1Center, t1Vec, 0x9575cd, 'T');
+        if (t1A) sceneManager.objects.add(t1A);
+      }
     }
   }
 }

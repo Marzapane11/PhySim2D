@@ -12,7 +12,7 @@ import { magnitude, direction } from '../../math/vector-math.js';
 
 import { renderInclinedPlane, getInclinedPlaneConfig, computeInclinedPlane, createInclinedPlaneSolver } from './scenarios/inclined-plane.js';
 import { renderSpring, getSpringConfig, computeSpring, createSpringSolver } from './scenarios/spring.js';
-import { renderPulley, getPulleyConfig, computePulley, createPulleySolver } from './scenarios/pulley.js';
+import { renderPulley, getPulleyConfig, computePulley, computePulleyIncline, createPulleySolver } from './scenarios/pulley.js';
 import { renderDynamicPanel } from '../dynamic-panel.js';
 import { computeInclinedPlaneState, computeSpringEquilibriumDx } from './physics.js';
 
@@ -134,7 +134,7 @@ export function renderForcesPage(container) {
       case 'pulley': {
         scenarioState.solver.solve();
         const puv = scenarioState.solver.getValues();
-        renderPulley(sceneManager, { mass1: puv.m1, mass2: puv.m2 }, vis);
+        renderPulley(sceneManager, { m1: puv.m1, m2: puv.m2, angleDeg: puv.alpha, mu: puv.mu }, vis);
         break;
       }
     }
@@ -174,6 +174,22 @@ export function renderForcesPage(container) {
             stato = '<span style="color:var(--danger);font-weight:600;">Scivola gi\u00F9</span>';
           } else {
             stato = '<span style="color:var(--warning);font-weight:600;">Sale</span>';
+          }
+          statusHtml = `<div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
+        } else if (activeScenario === 'pulley') {
+          const pr = computePulleyIncline({
+            m1: solverVals.m1 || 0,
+            m2: solverVals.m2 || 0,
+            angleDeg: solverVals.alpha || 0,
+            mu: solverVals.mu || 0,
+          });
+          let stato;
+          if (pr.status === 'Equilibrio') {
+            stato = '<span style="color:var(--success);font-weight:600;">Equilibrio</span>';
+          } else if (pr.status === 'm\u2082 sale') {
+            stato = '<span style="color:var(--warning);font-weight:600;">m\u2082 sale</span>';
+          } else {
+            stato = '<span style="color:var(--danger);font-weight:600;">m\u2082 scende</span>';
           }
           statusHtml = `<div class="panel-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);"><span class="panel-row-label">Stato</span><span class="panel-row-value">${stato}</span></div>`;
         }
