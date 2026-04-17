@@ -90,6 +90,58 @@
   white-space: pre-wrap;
 }
 
+/* Data table responsive: grid on desktop, cards on mobile */
+.data-table {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 12px 0;
+  background: var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.data-row {
+  display: grid;
+  background: var(--bg-surface);
+  padding: 8px 10px;
+  gap: 8px;
+}
+
+.data-table-3col .data-row {
+  grid-template-columns: 2fr 2fr 1fr;
+}
+
+.data-header {
+  background: var(--bg-tertiary);
+  color: var(--text-accent);
+  font-weight: 600;
+}
+
+.data-row > div[data-label]::before {
+  content: none;
+}
+
+@media (max-width: 600px) {
+  .data-header {
+    display: none;
+  }
+
+  .data-table-3col .data-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 10px 12px;
+  }
+
+  .data-row > div[data-label]::before {
+    content: attr(data-label) ": ";
+    color: var(--text-accent);
+    font-weight: 600;
+    margin-right: 4px;
+  }
+}
+
 /* Vector notation: real arrow above letter to indicate vector quantity */
 .vec-arrow {
   position: relative;

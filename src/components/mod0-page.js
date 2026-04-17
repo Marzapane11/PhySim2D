@@ -15,34 +15,46 @@ export function renderMod0Page(container) {
         <div class="theory-card-title">Le grandezze fondamentali</div>
         <div class="theory-card-content" style="display:block">
           <p>Il <strong>Sistema Internazionale</strong> (S.I.) definisce 7 grandezze fondamentali:</p>
-          <div class="table-scroll"><table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;min-width:360px;">
-            <tr style="border-bottom:1px solid var(--border-color);">
-              <th style="text-align:left;padding:6px;color:var(--text-accent);">Grandezza</th>
-              <th style="text-align:left;padding:6px;color:var(--text-accent);">Unità</th>
-              <th style="text-align:left;padding:6px;color:var(--text-accent);">Simbolo</th>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border-color);">
-              <td style="padding:6px;">Lunghezza</td><td style="padding:6px;">metro</td><td style="padding:6px;">m</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border-color);">
-              <td style="padding:6px;">Massa</td><td style="padding:6px;">kilogrammo</td><td style="padding:6px;">kg</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border-color);">
-              <td style="padding:6px;">Tempo</td><td style="padding:6px;">secondo</td><td style="padding:6px;">s</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border-color);">
-              <td style="padding:6px;">Corrente elettrica</td><td style="padding:6px;">ampere</td><td style="padding:6px;">A</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border-color);">
-              <td style="padding:6px;">Temperatura</td><td style="padding:6px;">kelvin</td><td style="padding:6px;">K</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border-color);">
-              <td style="padding:6px;">Quantità di sostanza</td><td style="padding:6px;">mole</td><td style="padding:6px;">mol</td>
-            </tr>
-            <tr>
-              <td style="padding:6px;">Intensità luminosa</td><td style="padding:6px;">candela</td><td style="padding:6px;">cd</td>
-            </tr>
-          </table></div>
+          <div class="data-table data-table-3col">
+            <div class="data-row data-header">
+              <div>Grandezza</div><div>Unità</div><div>Simbolo</div>
+            </div>
+            <div class="data-row">
+              <div data-label="Grandezza">Lunghezza</div>
+              <div data-label="Unità">metro</div>
+              <div data-label="Simbolo">m</div>
+            </div>
+            <div class="data-row">
+              <div data-label="Grandezza">Massa</div>
+              <div data-label="Unità">kilogrammo</div>
+              <div data-label="Simbolo">kg</div>
+            </div>
+            <div class="data-row">
+              <div data-label="Grandezza">Tempo</div>
+              <div data-label="Unità">secondo</div>
+              <div data-label="Simbolo">s</div>
+            </div>
+            <div class="data-row">
+              <div data-label="Grandezza">Corrente elettrica</div>
+              <div data-label="Unità">ampere</div>
+              <div data-label="Simbolo">A</div>
+            </div>
+            <div class="data-row">
+              <div data-label="Grandezza">Temperatura</div>
+              <div data-label="Unità">kelvin</div>
+              <div data-label="Simbolo">K</div>
+            </div>
+            <div class="data-row">
+              <div data-label="Grandezza">Quantità di sostanza</div>
+              <div data-label="Unità">mole</div>
+              <div data-label="Simbolo">mol</div>
+            </div>
+            <div class="data-row">
+              <div data-label="Grandezza">Intensità luminosa</div>
+              <div data-label="Unità">candela</div>
+              <div data-label="Simbolo">cd</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -50,28 +62,36 @@ export function renderMod0Page(container) {
         <div class="theory-card-title">Grandezze derivate</div>
         <div class="theory-card-content" style="display:block">
           <p>Le <strong>grandezze derivate</strong> si ottengono combinando le grandezze fondamentali:</p>
-          <div class="table-scroll"><table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;min-width:360px;">
-            <tr style="border-bottom:1px solid var(--border-color);">
-              <th style="text-align:left;padding:6px;color:var(--text-accent);">Grandezza</th>
-              <th style="text-align:left;padding:6px;color:var(--text-accent);">Formula</th>
-              <th style="text-align:left;padding:6px;color:var(--text-accent);">Unità S.I.</th>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border-color);">
-              <td style="padding:6px;">Velocità</td><td style="padding:6px;">v = s/t</td><td style="padding:6px;">m/s</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border-color);">
-              <td style="padding:6px;">Accelerazione</td><td style="padding:6px;">a = v/t</td><td style="padding:6px;">m/s²</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border-color);">
-              <td style="padding:6px;">Forza</td><td style="padding:6px;"><span class="vec-arrow">F</span> = m·<span class="vec-arrow">a</span></td><td style="padding:6px;">N (Newton)</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border-color);">
-              <td style="padding:6px;">Pressione</td><td style="padding:6px;">p = F/A</td><td style="padding:6px;">Pa (Pascal)</td>
-            </tr>
-            <tr>
-              <td style="padding:6px;">Energia/Lavoro</td><td style="padding:6px;">L = F·s</td><td style="padding:6px;">J (Joule)</td>
-            </tr>
-          </table></div>
+          <div class="data-table data-table-3col">
+            <div class="data-row data-header">
+              <div>Grandezza</div><div>Formula</div><div>Unità S.I.</div>
+            </div>
+            <div class="data-row">
+              <div data-label="Grandezza">Velocità</div>
+              <div data-label="Formula">v = s/t</div>
+              <div data-label="Unità S.I.">m/s</div>
+            </div>
+            <div class="data-row">
+              <div data-label="Grandezza">Accelerazione</div>
+              <div data-label="Formula">a = v/t</div>
+              <div data-label="Unità S.I.">m/s²</div>
+            </div>
+            <div class="data-row">
+              <div data-label="Grandezza">Forza</div>
+              <div data-label="Formula"><span class="vec-arrow">F</span> = m·<span class="vec-arrow">a</span></div>
+              <div data-label="Unità S.I.">N (Newton)</div>
+            </div>
+            <div class="data-row">
+              <div data-label="Grandezza">Pressione</div>
+              <div data-label="Formula">p = F/A</div>
+              <div data-label="Unità S.I.">Pa (Pascal)</div>
+            </div>
+            <div class="data-row">
+              <div data-label="Grandezza">Energia/Lavoro</div>
+              <div data-label="Formula">L = F·s</div>
+              <div data-label="Unità S.I.">J (Joule)</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
