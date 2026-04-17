@@ -6,6 +6,7 @@ import { LabelManager } from '../label-renderer.js';
 import { renderToolbar } from '../toolbar.js';
 import { renderPropertiesPanel, createPropertyRow, createInputRow } from '../properties-panel.js';
 import { renderVisibilityMenu } from '../visibility-menu.js';
+import { renderTutorialButton } from '../tutorial.js';
 import { renderContextualTip } from '../../theory/contextual-tip.js';
 import { getState, subscribe } from '../../state.js';
 import { magnitude, direction } from '../../math/vector-math.js';
@@ -261,6 +262,7 @@ export function renderForcesPage(container) {
       'pulley':         ['body', 'forceArrows', 'grid'],
     };
     const visKeys = visKeysPerScenario[activeScenario] || ['body', 'forceArrows', 'grid'];
+    renderTutorialButton(rightPanel, activeScenario);
     renderVisibilityMenu(rightPanel, visKeys);
 
     if (scenarioState._wireEvents) {

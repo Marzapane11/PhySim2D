@@ -7,6 +7,7 @@ import { LabelManager } from '../label-renderer.js';
 import { renderToolbar } from '../toolbar.js';
 import { renderPropertiesPanel, createPropertyRow, createInputRow } from '../properties-panel.js';
 import { renderVisibilityMenu } from '../visibility-menu.js';
+import { renderTutorialButton } from '../tutorial.js';
 import { addVectors, subtractVectors, scalarMultiply, magnitude, direction } from '../../math/vector-math.js';
 import { getState, subscribe } from '../../state.js';
 import { renderContextualTip } from '../../theory/contextual-tip.js';
@@ -309,6 +310,7 @@ export function renderVectorsPage(container) {
     sections.push({ title: 'Teoria', content: renderContextualTip(tipTopicId) });
 
     renderPropertiesPanel(rightPanel, sections);
+    renderTutorialButton(rightPanel, 'vectors');
     // Visibility dinamica: nei vettori mostra solo corpo/vettore, componenti e griglia
     renderVisibilityMenu(rightPanel, ['body', 'components', 'grid']);
 
