@@ -200,9 +200,9 @@ export function renderPulley(sceneManager, state, visibility) {
   const boxBy = A.y + boxT * (B.y - A.y);
   const m1Center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
 
-  // Punto di attacco fune su m1: centro del lato superiore (top)
-  const ropeAttachX = boxBx + boxH * nd.x;
-  const ropeAttachY = boxBy + boxH * nd.y;
+  // Punto di attacco fune su m1: centro del box (come nella foto di riferimento)
+  const ropeAttachX = m1Center.x;
+  const ropeAttachY = m1Center.y;
 
   // Tangente vera: rope da m1 top a pulley tocca la circonferenza tangenzialmente
   const tan = tangentPoint(
@@ -224,7 +224,7 @@ export function renderPulley(sceneManager, state, visibility) {
   // Fune disegnata come rettangolo sottile per essere ben visibile
   const ropeColor = isLight ? 0x444444 : 0xd0d0d0;
   drawRope(sceneManager, { x: ropeAttachX, y: ropeAttachY }, { x: ropeSlopeEndX, y: ropeSlopeEndY }, ropeColor);
-  drawRope(sceneManager, { x: ropeVertEndX, y: ropeVertEndY }, { x: m2HangX, y: m2HangY + m2H / 2 }, ropeColor);
+  drawRope(sceneManager, { x: ropeVertEndX, y: ropeVertEndY }, { x: m2HangX, y: m2HangY }, ropeColor);
 
   if (visibility.body) {
     // Disegna m2 come rettangolo
