@@ -98,8 +98,8 @@ export function computePulley(params) { return computePulleyIncline(params); }
 export function createPulleySolver() {
   return createSolver({
     variables: [
-      { id: 'm1', label: 'Massa 1 (m\u2081)', unit: 'kg', defaultValue: 3, mode: 'input' },
-      { id: 'm2', label: 'Massa 2 (m\u2082)', unit: 'kg', defaultValue: 5, mode: 'input' },
+      { id: 'm1', label: 'Massa 1 (m\u2081)', unit: 'kg', defaultValue: 5, mode: 'input' },
+      { id: 'm2', label: 'Massa 2 (m\u2082)', unit: 'kg', defaultValue: 3, mode: 'input' },
       { id: 'alpha', label: 'Angolo (\u03B8)', unit: '\u00B0', defaultValue: 30, mode: 'input' },
       { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.2, mode: 'input' },
       { id: 'P1', label: 'Peso 1 (<span class="vec-arrow">P</span>\u2081)', unit: 'N', defaultValue: 0, mode: 'output' },
@@ -140,7 +140,7 @@ export function createPulleySolver() {
 }
 
 export function getPulleyConfig() {
-  return { id: 'pulley', label: 'Carrucola', defaults: { m1: 3, m2: 5, angleDeg: 30, frictionCoeff: 0.2 } };
+  return { id: 'pulley', label: 'Carrucola', defaults: { m1: 5, m2: 3, angleDeg: 30, frictionCoeff: 0.2 } };
 }
 
 export function renderPulley(sceneManager, state, visibility) {
@@ -177,8 +177,8 @@ export function renderPulley(sceneManager, state, visibility) {
   // Etichetta B (in alto a sinistra della carrucola, vicino al vertice)
   addTextLabel(sceneManager, 'B', pulleyX - pulleyR - 0.3, pulleyY + 0.3, '#4fc3f7');
 
-  // === m2 sul piano ===
-  const boxW = 1.2, boxH = 0.9;
+  // === m2 sul piano (piu' piccolo di m1) ===
+  const boxW = 0.9, boxH = 0.7;
   const boxT = 0.5;
   const boxBx = A.x + boxT * (B.x - A.x);
   const boxBy = A.y + boxT * (B.y - A.y);
@@ -201,10 +201,10 @@ export function renderPulley(sceneManager, state, visibility) {
   const ropeVertEndX = pulleyX - pulleyR;          // tangente verticale a sinistra
   const ropeVertEndY = pulleyY;
 
-  // === m1 sospesa direttamente sotto il tangente verticale della carrucola ===
-  const m1W = 0.6, m1H = 0.6;
-  const m1HangX = ropeVertEndX;
-  const m1HangY = pulleyY - 1.6;
+  // === m1 sospesa: piu' grande di m2, spostata a sinistra per non intersecare il lato del triangolo ===
+  const m1W = 1.1, m1H = 1.1;
+  const m1HangX = Math.min(ropeVertEndX, B.x - m1W / 2 - 0.1);
+  const m1HangY = pulleyY - 1.8;
 
   // Fune disegnata come rettangolo sottile per essere ben visibile
   const ropeColor = isLight ? 0x444444 : 0xd0d0d0;
@@ -231,9 +231,12 @@ export function renderPulley(sceneManager, state, visibility) {
       ));
     }
 
-    // Etichette masse (dentro le scatole)
-    addTextLabel(sceneManager, 'm\u2081', m1HangX, m1HangY, '#ff7043');
-    addTextLabel(sceneManager, 'm\u2082', m2Center.x, m2Center.y, '#ff7043');
+    // Etichette masse (fuori dalle scatole)
+    // m1: a sinistra del box m1
+    addTextLabel(sceneManager, 'm\u2081', m1HangX - m1W / 2 - 0.4, m1HangY, '#ff7043');
+    // m2: sopra il box m2 (lato normale esterno al piano)
+    const m2LabelOffset = boxH / 2 + 0.45;
+    addTextLabel(sceneManager, 'm\u2082', m2Center.x + m2LabelOffset * nd.x, m2Center.y + m2LabelOffset * nd.y, '#ff7043');
 
     // μ sul piano, dal lato opposto alla fune (tra m2 e A, poco sopra la superficie)
     const muT = 0.25; // 25% da A verso B
