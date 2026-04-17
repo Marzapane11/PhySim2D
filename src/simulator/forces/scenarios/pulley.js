@@ -179,11 +179,10 @@ export function renderPulley(sceneManager, state, visibility) {
   const ropeVertEndX = pulleyX - pulleyR;          // tangente verticale sul lato sinistro
   const ropeVertEndY = pulleyY;
 
-  // === m1 sospesa: spostata a sinistra per stare fuori dal triangolo ===
-  const m1W = 0.7, m1H = 0.7;
-  const m1ShiftLeft = 0.35;
-  const m1HangX = ropeVertEndX - m1ShiftLeft;
-  const m1HangY = pulleyY - 2.5;
+  // === m1 sospesa direttamente sotto il tangente verticale della carrucola ===
+  const m1W = 0.6, m1H = 0.6;
+  const m1HangX = ropeVertEndX;
+  const m1HangY = pulleyY - 1.6;
 
   // Fune disegnata come rettangolo sottile per essere ben visibile
   const ropeColor = isLight ? 0x444444 : 0xd0d0d0;
