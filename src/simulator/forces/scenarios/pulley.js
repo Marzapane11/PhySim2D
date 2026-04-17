@@ -115,11 +115,10 @@ export function renderPulley(sceneManager, state, visibility) {
     m1: state.m1, m2: state.m2, angleDeg: state.angleDeg, mu: state.mu,
   });
 
-  // === Carrucola tangente al piano nel vertice B ===
-  // Centro: B spostato lungo la normale nd di pulleyR → slope e' tangente al cerchio in B
-  const pulleyR = 0.45;
-  const pulleyX = B.x + pulleyR * nd.x;
-  const pulleyY = B.y + pulleyR * nd.y;
+  // === Carrucola appena sopra il vertice B ===
+  const pulleyR = 0.4;
+  const pulleyX = B.x;
+  const pulleyY = B.y + pulleyR * 1.15;
 
   const wheel = new THREE.Mesh(
     new THREE.RingGeometry(pulleyR - 0.08, pulleyR, 32),
@@ -142,37 +141,36 @@ export function renderPulley(sceneManager, state, visibility) {
   const boxBy = A.y + boxT * (B.y - A.y);
   const m2Center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
 
-  // Punto di attacco fune: spigolo anteriore di m2 sul piano (lato verso B)
+  // Punto di attacco fune su m2: spigolo anteriore sul piano (lato verso B)
   const ropeAttachX = boxBx + (boxW / 2) * sd.x;
   const ropeAttachY = boxBy + (boxW / 2) * sd.y;
 
-  // === Fune ===
-  // Lato slope: tangente al cerchio nel punto B (il cerchio e' tangente alla retta del piano)
-  // Lato verticale: tangente a sinistra della carrucola a quota pulleyY
-  const ropeTangentSlopeX = B.x;
-  const ropeTangentSlopeY = B.y;
-  const ropeTangentVertX = pulleyX - pulleyR;
-  const ropeTangentVertY = pulleyY;
+  // === Fune: punti di tangenza sulla carrucola ===
+  // Lato slope: tangente nella direzione che va dal centro verso m2 (cioe' -sd)
+  const ropeSlopeEndX = pulleyX - pulleyR * sd.x;
+  const ropeSlopeEndY = pulleyY - pulleyR * sd.y;
+  // Lato verticale: tangente a sinistra della carrucola
+  const ropeVertEndX = pulleyX - pulleyR;
+  const ropeVertEndY = pulleyY;
+
+  // === m1 sospesa chiaramente fuori dal triangolo ===
+  const m1W = 0.8, m1H = 0.8;
+  const m1HangX = ropeVertEndX - 0.55; // offset a sinistra per stare fuori dal triangolo
+  const m1HangY = pulleyY - 2.7;
 
   const ropeMat = new THREE.LineBasicMaterial({ color: isLight ? 0x555555 : 0xc0c0c0 });
-  // Tratto m2 → B (lungo il piano, sul bordo superiore della pendenza)
+  // Tratto m2 → carrucola (quasi lungo il piano)
   sceneManager.objects.add(new THREE.Line(
     new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(ropeAttachX, ropeAttachY, 0.015),
-      new THREE.Vector3(ropeTangentSlopeX, ropeTangentSlopeY, 0.015),
+      new THREE.Vector3(ropeSlopeEndX, ropeSlopeEndY, 0.015),
     ]),
     ropeMat,
   ));
-
-  // === m1 sospesa in verticale dal tangente della carrucola ===
-  const m1W = 1.0, m1H = 1.0;
-  const m1HangX = ropeTangentVertX;
-  const m1HangY = pulleyY - 2.6;
-
-  // Tratto carrucola → m1 (verticale)
+  // Tratto carrucola → m1 (quasi verticale)
   sceneManager.objects.add(new THREE.Line(
     new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(ropeTangentVertX, ropeTangentVertY, 0.015),
+      new THREE.Vector3(ropeVertEndX, ropeVertEndY, 0.015),
       new THREE.Vector3(m1HangX, m1HangY + m1H / 2, 0.015),
     ]),
     ropeMat,
