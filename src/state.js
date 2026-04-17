@@ -3,13 +3,10 @@ const listeners = new Set();
 const state = {
   theme: localStorage.getItem('theme') || 'dark',
   visibility: {
-    forceNames: true,
-    forceValues: true,
-    forceArrows: true,
     body: true,
-    grid: true,
-    angles: true,
+    forceArrows: true,
     components: true,
+    grid: true,
   },
 };
 

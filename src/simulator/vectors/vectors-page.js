@@ -309,7 +309,8 @@ export function renderVectorsPage(container) {
     sections.push({ title: 'Teoria', content: renderContextualTip(tipTopicId) });
 
     renderPropertiesPanel(rightPanel, sections);
-    renderVisibilityMenu(rightPanel);
+    // Visibility dinamica: nei vettori mostra solo corpo/vettore, componenti e griglia
+    renderVisibilityMenu(rightPanel, ['body', 'components', 'grid']);
 
     // Wire dynamic panel events
     if (_panelWireEvents) {

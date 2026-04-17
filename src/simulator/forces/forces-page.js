@@ -1,7 +1,7 @@
 import '../../styles/simulator.css';
 import { createSimulatorLayout } from '../simulator-layout.js';
 import { SceneManager } from '../scene-manager.js';
-import { createGrid, setAxesVisible } from '../grid.js';
+import { createGrid, setAxesVisible, setGridVisible } from '../grid.js';
 import { LabelManager } from '../label-renderer.js';
 import { renderToolbar } from '../toolbar.js';
 import { renderPropertiesPanel, createPropertyRow, createInputRow } from '../properties-panel.js';
@@ -140,6 +140,7 @@ export function renderForcesPage(container) {
     labelManager.clear();
 
     const vis = getState().visibility;
+    setGridVisible(gridGroup, vis.grid !== false);
     updateSpringEquilibrium();
     // After solver.solve() runs in renderDynamicPanel, override with real values
     // But updateScene is called before panel is rendered, so solve here
@@ -252,7 +253,15 @@ export function renderForcesPage(container) {
     sections.push({ title: 'Teoria', content: renderContextualTip(tipId) });
 
     renderPropertiesPanel(rightPanel, sections);
-    renderVisibilityMenu(rightPanel);
+
+    // Visibility dinamica: solo i toggle sensati per lo scenario corrente
+    const visKeysPerScenario = {
+      'inclined-plane': ['body', 'forceArrows', 'components', 'grid'],
+      'spring':         ['body', 'forceArrows', 'components', 'grid'],
+      'pulley':         ['body', 'forceArrows', 'grid'],
+    };
+    const visKeys = visKeysPerScenario[activeScenario] || ['body', 'forceArrows', 'grid'];
+    renderVisibilityMenu(rightPanel, visKeys);
 
     if (scenarioState._wireEvents) {
       scenarioState._wireEvents(rightPanel);
