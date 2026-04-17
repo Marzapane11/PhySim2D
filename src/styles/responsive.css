@@ -1,0 +1,133 @@
+/* ============================================
+   Tablet (<= 1024px)
+   ============================================ */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 180px;
+    --panel-width: 260px;
+  }
+}
+
+/* ============================================
+   Tablet piccolo / Mobile grande (<= 768px)
+   Sidebar ridotta a icone, pannello laterale sotto
+   ============================================ */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 64px;
+    --toolbar-height: 56px;
+  }
+
+  .sidebar {
+    padding: 12px 0;
+  }
+
+  .sidebar-title {
+    display: none;
+  }
+
+  .sidebar-link span {
+    display: none;
+  }
+
+  .sidebar-link {
+    justify-content: center;
+    padding: 12px 8px;
+  }
+
+  .sidebar-link svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Home: card in colonna singola */
+  .home-card {
+    grid-column: span 2 !important;
+  }
+
+  /* Simulatore: pannello proprietà sotto al canvas */
+  .simulator-layout {
+    flex-direction: column;
+  }
+
+  .right-panel {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-height: 45vh;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .canvas-area {
+    min-height: 55vh;
+  }
+}
+
+/* ============================================
+   Smartphone (<= 480px)
+   ============================================ */
+@media (max-width: 480px) {
+  :root {
+    --sidebar-width: 56px;
+    --toolbar-height: 52px;
+  }
+
+  html, body {
+    font-size: 13px;
+  }
+
+  .sidebar-link {
+    padding: 10px 6px;
+  }
+
+  .sidebar-link svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .right-panel {
+    max-height: 50vh;
+  }
+
+  .panel-section {
+    padding: 10px;
+  }
+
+  .panel-input {
+    width: 64px;
+  }
+
+  .toolbar {
+    padding: 0 6px;
+    gap: 2px;
+  }
+
+  .toolbar-btn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .toolbar-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Padding pagine teoria/home ridotto */
+  [class*="padding: 40px"],
+  [style*="padding: 40px"] {
+    padding: 20px !important;
+  }
+}
+
+/* ============================================
+   Layout landscape mobile (bassa altezza)
+   ============================================ */
+@media (max-height: 500px) and (max-width: 900px) {
+  :root {
+    --toolbar-height: 48px;
+  }
+
+  .right-panel {
+    max-height: 100%;
+  }
+}
