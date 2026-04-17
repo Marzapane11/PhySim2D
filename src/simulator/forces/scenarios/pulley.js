@@ -30,7 +30,7 @@ function drawRope(sceneManager, p1, p2, color) {
   const uy = dy / len;
   const perpX = -uy;
   const perpY = ux;
-  const w = 0.05;
+  const w = 0.025;
   const shape = new THREE.Shape();
   shape.moveTo(p1.x + perpX * w / 2, p1.y + perpY * w / 2);
   shape.lineTo(p1.x - perpX * w / 2, p1.y - perpY * w / 2);
@@ -39,7 +39,12 @@ function drawRope(sceneManager, p1, p2, color) {
   shape.closePath();
   const mesh = new THREE.Mesh(
     new THREE.ShapeGeometry(shape),
-    new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide })
+    new THREE.MeshBasicMaterial({
+      color,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.7,
+    })
   );
   mesh.position.z = 0.015;
   sceneManager.objects.add(mesh);
