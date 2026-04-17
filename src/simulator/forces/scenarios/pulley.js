@@ -174,29 +174,38 @@ export function renderPulley(sceneManager, state, visibility) {
   const pulleyX = B.x + pulleyOffsetN * nd.x;
   const pulleyY = B.y + pulleyOffsetN * nd.y;
 
-  const wheel = new THREE.Mesh(
-    new THREE.RingGeometry(pulleyR - 0.08, pulleyR, 32),
-    new THREE.MeshBasicMaterial({ color: 0x4fc3f7, side: THREE.DoubleSide })
-  );
-  wheel.position.set(pulleyX, pulleyY, 0.02);
-  sceneManager.objects.add(wheel);
-
-  const axle = new THREE.Mesh(
-    new THREE.CircleGeometry(0.06, 16),
-    new THREE.MeshBasicMaterial({ color: isLight ? 0x333333 : 0xe0e0e0 })
-  );
-  axle.position.set(pulleyX, pulleyY, 0.025);
-  sceneManager.objects.add(axle);
-
-  // Staffa di supporto: linea sottile dal vertice B alla carrucola
-  const bracketMat = new THREE.LineBasicMaterial({ color: isLight ? 0x667788 : 0x8090a0 });
+  // Staffa triangolare di supporto (sotto la puleggia, come nella foto)
+  const bracketColor = isLight ? 0xa94438 : 0xd04438;
+  const bracketMat = new THREE.LineBasicMaterial({ color: bracketColor });
+  // Base della staffa attaccata al vertice B e al punto (B.x + 0.4, B.y)
+  const bracketBase1 = { x: B.x, y: B.y };
+  const bracketBase2 = { x: B.x + 0.5, y: B.y };
+  const bracketApex = { x: pulleyX, y: pulleyY - pulleyR * 0.2 };
   sceneManager.objects.add(new THREE.Line(
     new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(B.x, B.y, 0.01),
-      new THREE.Vector3(pulleyX, pulleyY - pulleyR, 0.01),
+      new THREE.Vector3(bracketBase1.x, bracketBase1.y, 0.01),
+      new THREE.Vector3(bracketApex.x, bracketApex.y, 0.01),
+      new THREE.Vector3(bracketBase2.x, bracketBase2.y, 0.01),
+      new THREE.Vector3(bracketBase1.x, bracketBase1.y, 0.01),
     ]),
     bracketMat,
   ));
+
+  // Puleggia: disco pieno con bordo (come nella foto)
+  const wheelFill = new THREE.Mesh(
+    new THREE.CircleGeometry(pulleyR, 32),
+    new THREE.MeshBasicMaterial({ color: isLight ? 0x9e9eff : 0x8585c8 })
+  );
+  wheelFill.position.set(pulleyX, pulleyY, 0.02);
+  sceneManager.objects.add(wheelFill);
+
+  // Bordo scuro della puleggia
+  const wheelEdge = new THREE.Mesh(
+    new THREE.RingGeometry(pulleyR - 0.03, pulleyR, 32),
+    new THREE.MeshBasicMaterial({ color: isLight ? 0x333355 : 0x1a1a2e })
+  );
+  wheelEdge.position.set(pulleyX, pulleyY, 0.025);
+  sceneManager.objects.add(wheelEdge);
 
   // Etichetta B al vertice del triangolo (dove e' davvero B)
   addTextLabel(sceneManager, 'B', B.x - 0.5, B.y + 0.4, '#4fc3f7');
