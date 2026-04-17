@@ -142,9 +142,12 @@ export const THEORY_TOPICS = {
     content: `<p>Il <strong>piano inclinato</strong> è una superficie piana che forma un angolo \u03b1 con l'orizzontale.</p>
 <p>La forza peso <span class="vec-arrow">P</span> si scompone in due componenti:</p>
 <p><strong>Px</strong> (componente parallela al piano): tende a far scivolare il corpo verso il basso.</p>
-<p><strong>Py</strong> (componente perpendicolare al piano): viene equilibrata dalla forza normale.</p>`,
-    formula: 'Px = P \u00b7 sin(\u03b1) = m \u00b7 g \u00b7 sin(\u03b1)\nPy = P \u00b7 cos(\u03b1) = m \u00b7 g \u00b7 cos(\u03b1)\nN = Py = m \u00b7 g \u00b7 cos(\u03b1)',
-    example: 'm = 10 kg, \u03b1 = 30\u00b0\nP = 10 \u00b7 9.81 = 98.1 N\nPx = 98.1 \u00b7 sin(30\u00b0) = 49.05 N\nPy = 98.1 \u00b7 cos(30\u00b0) = 84.96 N',
+<p><strong>Py</strong> (componente perpendicolare al piano): viene equilibrata dalla forza normale.</p>
+<p>La <strong>forza risultante lungo il piano</strong>, indicata nel simulatore con <span class="vec-arrow">F</span>ris, è la somma netta delle forze parallele al piano (Px meno l'attrito Fa):</p>
+<ul><li>Se |Px| \u2264 Fa_max = \u03bc\u00b7N \u2192 <strong>equilibrio statico</strong>, Fris = 0 (l'attrito si adatta)</li>
+<li>Altrimenti il corpo <strong>scivola</strong> e Fris = Px \u2212 sign(Px)\u00b7Fa</li></ul>`,
+    formula: 'Px = P \u00b7 sin(\u03b1) = m \u00b7 g \u00b7 sin(\u03b1)\nPy = P \u00b7 cos(\u03b1) = m \u00b7 g \u00b7 cos(\u03b1)\nN = Py = m \u00b7 g \u00b7 cos(\u03b1)\nFa = \u03bc \u00b7 N\nFris = Px \u2212 Fa   (se |Px| > Fa)\nFris = 0            (se |Px| \u2264 Fa, equilibrio)',
+    example: 'm = 10 kg, \u03b1 = 30\u00b0, \u03bc = 0.2\nP = 10 \u00b7 9.81 = 98.1 N\nPx = 98.1 \u00b7 sin(30\u00b0) = 49.05 N\nPy = 98.1 \u00b7 cos(30\u00b0) = 84.96 N\nFa_max = 0.2 \u00b7 84.96 = 16.99 N\nPx > Fa_max \u2192 scivola\nFris = 49.05 \u2212 16.99 = 32.06 N',
   },
 
   'force-tension': {
