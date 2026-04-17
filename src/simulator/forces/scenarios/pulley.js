@@ -169,9 +169,9 @@ export function renderPulley(sceneManager, state, visibility) {
   const boxBy = A.y + boxT * (B.y - A.y);
   const m2Center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
 
-  // Punto di attacco fune su m2: spigolo SUPERIORE verso B (alto, fuori dal piano)
-  const ropeAttachX = boxBx + (boxW / 2) * sd.x + boxH * nd.x;
-  const ropeAttachY = boxBy + (boxW / 2) * sd.y + boxH * nd.y;
+  // Punto di attacco fune su m2: centro del lato rivolto verso B
+  const ropeAttachX = boxBx + (boxW / 2) * sd.x + (boxH / 2) * nd.x;
+  const ropeAttachY = boxBy + (boxW / 2) * sd.y + (boxH / 2) * nd.y;
 
   // Estremita' della fune sulla carrucola: sulla circonferenza nel punto piu' vicino a m2
   // (approssimazione tangenziale: va bene visivamente)
