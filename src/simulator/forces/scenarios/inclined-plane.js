@@ -112,7 +112,8 @@ export function calcTriangle(angleDeg) {
   return { A, B, C, sd, nd, angleRad, base, height };
 }
 
-export function drawTriangle(sceneManager, tri, isLight, angleLabel) {
+export function drawTriangle(sceneManager, tri, isLight, angleLabel, options = {}) {
+  const { showSideLabels = true } = options;
   const { A, B, C, angleRad } = tri;
   const isFlat = Math.abs(angleRad) < 0.01;
 
@@ -179,13 +180,15 @@ export function drawTriangle(sceneManager, tri, isLight, angleLabel) {
   addTextLabel(sceneManager, 'B', B.x - 0.5, B.y + 0.5, '#4fc3f7');
   addTextLabel(sceneManager, 'C', C.x - 0.5, C.y - 0.5, '#4fc3f7');
   addTextLabel(sceneManager, angleLabel || '\u03B1', A.x - 1.5, A.y + 0.4, '#66bb6a');
-  addTextLabel(sceneManager, 'h', C.x - 0.7, (C.y + B.y) / 2, '#66bb6a');
-  addTextLabel(sceneManager, 'b', (C.x + A.x) / 2, C.y - 0.5, '#4fc3f7');
-  // l label (italic) on the hypotenuse, close to the line, away from box
-  const lT = 0.15;
-  const lx = A.x + lT * (B.x - A.x) + tri.nd.x * 0.3;
-  const ly = A.y + lT * (B.y - A.y) + tri.nd.y * 0.3;
-  addItalicLabel(sceneManager, 'l', lx, ly, '#ff7043');
+  if (showSideLabels) {
+    addTextLabel(sceneManager, 'h', C.x - 0.7, (C.y + B.y) / 2, '#66bb6a');
+    addTextLabel(sceneManager, 'b', (C.x + A.x) / 2, C.y - 0.5, '#4fc3f7');
+    // l label (italic) on the hypotenuse, close to the line, away from box
+    const lT = 0.15;
+    const lx = A.x + lT * (B.x - A.x) + tri.nd.x * 0.3;
+    const ly = A.y + lT * (B.y - A.y) + tri.nd.y * 0.3;
+    addItalicLabel(sceneManager, 'l', lx, ly, '#ff7043');
+  }
 }
 
 export function drawBox(sceneManager, bx, by, sd, nd, boxW, boxH) {

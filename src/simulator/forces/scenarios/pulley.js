@@ -109,17 +109,17 @@ export function renderPulley(sceneManager, state, visibility) {
   const tri = calcTriangle(state.angleDeg);
   const { A, B, sd, nd } = tri;
 
-  drawTriangle(sceneManager, tri, isLight, '\u03B8');
+  drawTriangle(sceneManager, tri, isLight, '\u03B8', { showSideLabels: false });
 
   const calc = computePulleyIncline({
     m1: state.m1, m2: state.m2, angleDeg: state.angleDeg, mu: state.mu,
   });
 
-  // === Carrucola in cima al piano (vertice B) ===
-  const pulleyR = 0.35;
-  const pulleyOffset = pulleyR + 0.1;
-  const pulleyX = B.x;
-  const pulleyY = B.y + pulleyOffset;
+  // === Carrucola tangente al piano nel vertice B ===
+  // Centro: B spostato lungo la normale nd di pulleyR → slope e' tangente al cerchio in B
+  const pulleyR = 0.45;
+  const pulleyX = B.x + pulleyR * nd.x;
+  const pulleyY = B.y + pulleyR * nd.y;
 
   const wheel = new THREE.Mesh(
     new THREE.RingGeometry(pulleyR - 0.08, pulleyR, 32),
@@ -129,42 +129,33 @@ export function renderPulley(sceneManager, state, visibility) {
   sceneManager.objects.add(wheel);
 
   const axle = new THREE.Mesh(
-    new THREE.CircleGeometry(0.06, 16),
+    new THREE.CircleGeometry(0.07, 16),
     new THREE.MeshBasicMaterial({ color: isLight ? 0x333333 : 0xe0e0e0 })
   );
   axle.position.set(pulleyX, pulleyY, 0.025);
   sceneManager.objects.add(axle);
 
-  // Supporto carrucola (piccola asta verso il vertice B)
-  const supMat = new THREE.LineBasicMaterial({ color: isLight ? 0x667788 : 0x8090a0 });
-  sceneManager.objects.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(B.x, B.y, 0.01),
-      new THREE.Vector3(pulleyX, pulleyY - pulleyR, 0.01),
-    ]),
-    supMat,
-  ));
-
   // === m2 sul piano ===
   const boxW = 1.2, boxH = 0.9;
-  const boxT = 0.45;
+  const boxT = 0.5;
   const boxBx = A.x + boxT * (B.x - A.x);
   const boxBy = A.y + boxT * (B.y - A.y);
   const m2Center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
 
-  // Punto di attacco fune: lato della scatola rivolto verso B
-  const ropeAttachX = boxBx + (boxW / 2) * sd.x + (boxH / 2) * nd.x;
-  const ropeAttachY = boxBy + (boxW / 2) * sd.y + (boxH / 2) * nd.y;
+  // Punto di attacco fune: spigolo anteriore di m2 sul piano (lato verso B)
+  const ropeAttachX = boxBx + (boxW / 2) * sd.x;
+  const ropeAttachY = boxBy + (boxW / 2) * sd.y;
 
   // === Fune ===
-  // Punti di tangenza carrucola (approssimato): lato destro del bordo (verso m2) e lato sinistro (verso m1)
-  const ropeTangentSlopeX = pulleyX + pulleyR * sd.x;
-  const ropeTangentSlopeY = pulleyY + pulleyR * sd.y;
+  // Lato slope: tangente al cerchio nel punto B (il cerchio e' tangente alla retta del piano)
+  // Lato verticale: tangente a sinistra della carrucola a quota pulleyY
+  const ropeTangentSlopeX = B.x;
+  const ropeTangentSlopeY = B.y;
   const ropeTangentVertX = pulleyX - pulleyR;
   const ropeTangentVertY = pulleyY;
 
   const ropeMat = new THREE.LineBasicMaterial({ color: isLight ? 0x555555 : 0xc0c0c0 });
-  // Tratto m2 → carrucola (lungo il piano)
+  // Tratto m2 → B (lungo il piano, sul bordo superiore della pendenza)
   sceneManager.objects.add(new THREE.Line(
     new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(ropeAttachX, ropeAttachY, 0.015),
@@ -173,10 +164,10 @@ export function renderPulley(sceneManager, state, visibility) {
     ropeMat,
   ));
 
-  // === m1 sospesa a sinistra della carrucola ===
+  // === m1 sospesa in verticale dal tangente della carrucola ===
   const m1W = 1.0, m1H = 1.0;
   const m1HangX = ropeTangentVertX;
-  const m1HangY = pulleyY - 2.5;
+  const m1HangY = pulleyY - 2.6;
 
   // Tratto carrucola → m1 (verticale)
   sceneManager.objects.add(new THREE.Line(
@@ -207,14 +198,14 @@ export function renderPulley(sceneManager, state, visibility) {
       ));
     }
 
-    // Etichette
+    // Etichette masse (dentro le scatole)
     addTextLabel(sceneManager, 'm\u2081', m1HangX, m1HangY, '#ff7043');
     addTextLabel(sceneManager, 'm\u2082', m2Center.x, m2Center.y, '#ff7043');
 
-    // μ sul piano (vicino al vertice A)
-    const muT = 0.82;
-    const muX = A.x + muT * (B.x - A.x) + nd.x * 0.6;
-    const muY = A.y + muT * (B.y - A.y) + nd.y * 0.6;
+    // μ sul piano (tra m2 e il vertice B, spostato fuori dal piano)
+    const muT = 0.25; // 25% da B verso A
+    const muX = B.x + muT * (A.x - B.x) + nd.x * 0.5;
+    const muY = B.y + muT * (A.y - B.y) + nd.y * 0.5;
     addTextLabel(sceneManager, '\u03BC', muX, muY, '#66bb6a');
 
     if (visibility.forceArrows) {
