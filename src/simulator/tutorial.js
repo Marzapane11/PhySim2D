@@ -17,10 +17,10 @@ const TUTORIAL_CONTENT = {
     how: `
       <p>Nel pannello a destra trovi tutte le variabili. Per ogni variabile:</p>
       <ul>
-        <li>Pallino <strong>●</strong> = input (modificabile dall'utente); pallino <strong>○</strong> = output (calcolato automaticamente).</li>
-        <li>Clicca il pallino per trasformare una variabile da input a output e viceversa.</li>
-        <li>Scrivi un valore nell'input: gli output si aggiornano in tempo reale usando formule dirette e inverse.</li>
+        <li>Pallino <strong>●</strong> = input (lo scrivi tu); pallino <strong>○</strong> = output (lo calcola il simulatore).</li>
       </ul>
+      <p><strong>Come cambiare input/output:</strong> clicca il pallino accanto al nome della variabile — se era ● diventa ○ (e viceversa). Inserisci il valore nell'input e gli output si aggiornano in tempo reale usando formule dirette e inverse.</p>
+      <p><strong>Esempio:</strong> di default m è input (●) e P è output (○), quindi scrivi la massa e il simulatore calcola il peso. Se invece vuoi partire dal peso: clicca ● di m (diventa ○) e clicca ○ di P (diventa ●). Ora scrivi P = 98 N e il simulatore ti dice m ≈ 10 kg.</p>
       <p>Nella sezione <strong>Forze personalizzate</strong> puoi aggiungere altre forze (F1, F2…) con modulo e angolo rispetto a Px: 0° giù per il piano, 90° perpendicolare, 180° su per il piano.</p>
       <p>Sotto c'è lo <strong>Stato</strong> (Equilibrio / Scivola giù / Sale). Il menu <strong>Visibilità</strong> permette di nascondere corpo, frecce, componenti Px/Py o griglia.</p>
     `,
@@ -37,9 +37,11 @@ const TUTORIAL_CONTENT = {
       <p>Funziona come nel Piano inclinato. In più hai:</p>
       <ul>
         <li><strong>k</strong>: costante elastica della molla (N/m);</li>
-        <li><strong>Δx</strong>: deformazione della molla. Quando è in output la calcola il simulatore per ottenere l'equilibrio.</li>
+        <li><strong>Δx</strong>: deformazione della molla;</li>
         <li><strong>Fe</strong>: forza elastica (= k·Δx).</li>
       </ul>
+      <p><strong>Come cambiare input/output:</strong> clicca sul pallino <strong>●</strong> (input) o <strong>○</strong> (output) accanto a ciascuna variabile per scambiarne la modalità. Scrivi il valore negli input, il simulatore fa il resto.</p>
+      <p><strong>Esempio (posizione di equilibrio):</strong> con Δx in output (<strong>○</strong>), il simulatore trova da solo la deformazione che equilibra il corpo sulla molla. Se invece metti Δx in input (<strong>●</strong>) e scrivi 0.1 m, vedrai Fe = k·0.1 e lo stato (sale, scende, equilibrio).</p>
       <p>Anche qui puoi aggiungere <strong>Forze personalizzate</strong> (stessa convenzione di angolo del piano inclinato).</p>
     `,
   },
@@ -58,7 +60,8 @@ const TUTORIAL_CONTENT = {
     how: `
       <p>Nella barra a destra imposta massa delle due masse (m₁, m₂), angolo θ, coefficiente di attrito μ.</p>
       <p>Il simulatore calcola peso P₁ e P₂, componente lungo piano P₁x, normale N, attrito Fa, tensione T, accelerazione a e mostra lo <strong>Stato</strong>.</p>
-      <p>I pallini <strong>●/○</strong> funzionano come negli altri scenari per cambiare input↔output.</p>
+      <p><strong>Come cambiare input/output:</strong> clicca il pallino <strong>●</strong>/<strong>○</strong> accanto al nome della variabile per scambiarla tra input e output.</p>
+      <p><strong>Esempio:</strong> di default m₁ e m₂ sono input e T (tensione) è output, quindi scrivi le masse e ottieni T. Se invece ti interessa trovare quale m₂ serve per avere una certa T: clicca ● di m₂ (→ ○) e ○ di T (→ ●), scrivi T = 30 N e il simulatore ti dice m₂.</p>
     `,
   },
 
@@ -71,8 +74,10 @@ const TUTORIAL_CONTENT = {
     `,
     how: `
       <p>Scegli lo strumento dalla barra in basso (Crea / Somma / Differenza / Scomponi / Moltiplica).</p>
-      <p>Nel pannello a destra: per ogni vettore puoi impostare 2 grandezze qualsiasi come input (pallino <strong>●</strong>) e vedere le altre 2 calcolate come output (<strong>○</strong>).</p>
-      <p>La <strong>Risultante</strong> o il vettore scomposto vengono aggiornati automaticamente.</p>
+      <p>Nel pannello a destra, ogni vettore ha 4 parametri collegati: <strong>x</strong>, <strong>y</strong>, <strong>|V|</strong>, <strong>θ</strong>. Puoi sceglierne 2 come input (pallino <strong>●</strong>) e gli altri 2 diventano output (<strong>○</strong>) calcolati automaticamente.</p>
+      <p><strong>Come cambiare input/output:</strong> clicca il pallino accanto a ciascun parametro. Se era ● (input) diventa ○ (output) e viceversa.</p>
+      <p><strong>Esempio:</strong> di default x e y sono input (●), |V| e θ sono output (○). Scrivi x=3, y=4: ottieni |V|=5 e θ≈53°. Se invece vuoi partire da modulo e angolo: clicca ● di x e y (→ ○) e ○ di |V| e θ (→ ●), scrivi |V|=10 e θ=30°, vedrai x=8.66 e y=5.</p>
+      <p>La <strong>Risultante</strong> (in Somma/Differenza) o il vettore scomposto vengono aggiornati automaticamente.</p>
     `,
   },
 };
