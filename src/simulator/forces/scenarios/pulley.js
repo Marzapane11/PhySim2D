@@ -159,31 +159,39 @@ export function renderPulley(sceneManager, state, visibility) {
     m1: state.m1, m2: state.m2, angleDeg: state.angleDeg, mu: state.mu,
   });
 
-  // === Carrucola tangente alla retta parallela al piano a quota boxH/2 ===
-  // Cosi' la fune da m1 (attaccata al centro del lato, a quota boxH/2 dal piano)
-  // giace perfettamente parallela al piano.
-  const pulleyR = 0.5;
-  const boxH_ref = 0.9; // stessa altezza del box m1 sul piano
-  const pulleyOffsetN = boxH_ref / 2 + pulleyR;
-  const pulleyX = B.x + pulleyOffsetN * nd.x;
-  const pulleyY = B.y + pulleyOffsetN * nd.y;
+  // === Carrucola sospesa sopra il vertice B (stile textbook) ===
+  // La fune da m1 sale dalla sua parte superiore fino alla carrucola, quella
+  // di m2 scende verticalmente. m2 resta ben fuori dal triangolo.
+  const pulleyR = 0.35;
+  const pulleyX = B.x;
+  const pulleyY = B.y + 1.3;
 
   const wheel = new THREE.Mesh(
-    new THREE.RingGeometry(pulleyR - 0.1, pulleyR, 32),
+    new THREE.RingGeometry(pulleyR - 0.08, pulleyR, 32),
     new THREE.MeshBasicMaterial({ color: 0x4fc3f7, side: THREE.DoubleSide })
   );
   wheel.position.set(pulleyX, pulleyY, 0.02);
   sceneManager.objects.add(wheel);
 
   const axle = new THREE.Mesh(
-    new THREE.CircleGeometry(0.08, 16),
+    new THREE.CircleGeometry(0.06, 16),
     new THREE.MeshBasicMaterial({ color: isLight ? 0x333333 : 0xe0e0e0 })
   );
   axle.position.set(pulleyX, pulleyY, 0.025);
   sceneManager.objects.add(axle);
 
-  // Etichetta B (in alto a sinistra della carrucola, vicino al vertice)
-  addTextLabel(sceneManager, 'B', pulleyX - pulleyR - 0.3, pulleyY + 0.3, '#4fc3f7');
+  // Staffa di supporto: linea sottile dal vertice B alla carrucola
+  const bracketMat = new THREE.LineBasicMaterial({ color: isLight ? 0x667788 : 0x8090a0 });
+  sceneManager.objects.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(B.x, B.y, 0.01),
+      new THREE.Vector3(pulleyX, pulleyY - pulleyR, 0.01),
+    ]),
+    bracketMat,
+  ));
+
+  // Etichetta B al vertice del triangolo (dove e' davvero B)
+  addTextLabel(sceneManager, 'B', B.x - 0.5, B.y + 0.4, '#4fc3f7');
 
   // === m1 sul piano (piu' grande) ===
   const boxW = 1.2, boxH = 0.9;
@@ -192,15 +200,19 @@ export function renderPulley(sceneManager, state, visibility) {
   const boxBy = A.y + boxT * (B.y - A.y);
   const m1Center = drawBox(sceneManager, boxBx, boxBy, sd, nd, boxW, boxH);
 
-  // Punto di attacco fune su m1: centro del lato rivolto verso B
-  const ropeAttachX = boxBx + (boxW / 2) * sd.x + (boxH / 2) * nd.x;
-  const ropeAttachY = boxBy + (boxW / 2) * sd.y + (boxH / 2) * nd.y;
+  // Punto di attacco fune su m1: centro del lato superiore (top)
+  const ropeAttachX = boxBx + boxH * nd.x;
+  const ropeAttachY = boxBy + boxH * nd.y;
 
-  // Tangente: la retta parallela al piano offset boxH/2 e' tangente al cerchio
-  // nel punto pulley_center - r*nd (punto piu' vicino al piano sulla pulleg.)
-  // Cosi' la fune da m1 giace esattamente parallela al piano.
-  const ropeSlopeEndX = pulleyX - pulleyR * nd.x;
-  const ropeSlopeEndY = pulleyY - pulleyR * nd.y;
+  // Tangente vera: rope da m1 top a pulley tocca la circonferenza tangenzialmente
+  const tan = tangentPoint(
+    { x: ropeAttachX, y: ropeAttachY },
+    { x: pulleyX, y: pulleyY },
+    pulleyR,
+    1,
+  );
+  const ropeSlopeEndX = tan.x;
+  const ropeSlopeEndY = tan.y;
   const ropeVertEndX = pulleyX - pulleyR;          // tangente verticale a sinistra
   const ropeVertEndY = pulleyY;
 
