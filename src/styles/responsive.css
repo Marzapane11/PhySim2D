@@ -19,25 +19,15 @@
   padding: 12px;
   box-sizing: border-box;
 }
-.wip-overlay-canvas { inset: 0; }
-.wip-overlay-panel  {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: var(--panel-width);
-}
+.wip-overlay-canvas,
+.wip-overlay-panel { inset: 0; }
+
 @media (max-width: 768px) {
-  /* Pannello sotto al canvas su mobile: l'overlay diventa fascia in fondo */
-  .wip-overlay-panel {
-    top: auto;
-    left: 0;
-    right: 0;
-    width: auto;
-    height: 45vh;
-  }
   .wip-overlay-canvas > div[style*="56px"] { font-size: 40px !important; }
   .wip-overlay-canvas > div[style*="42px"] { font-size: 28px !important; }
   .wip-overlay-canvas > div[style*="16px"] { font-size: 13px !important; }
+  .wip-overlay-panel > div[style*="36px"] { font-size: 28px !important; }
+  .wip-overlay-panel > div[style*="18px"] { font-size: 14px !important; }
 
   /* Tutorial overlay su mobile: padding ridotto, font piu' piccoli */
   .tutorial-overlay > div {

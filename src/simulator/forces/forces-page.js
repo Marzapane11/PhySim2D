@@ -63,23 +63,25 @@ export function renderForcesPage(container) {
   });
 
   // Overlay "In lavorazione" quando e' attivo lo scenario carrucola.
-  // - Overlay canvas: attaccato a canvasContainer (non scrolla).
-  // - Overlay pannello destro: attaccato al layout-root cosi' non viene mai
-  //   cancellato dal rebuild del pannello ne' tagliato dallo scroll interno.
+  // Usa due overlay (canvas + pannello) attaccati RISPETTIVAMENTE a canvasContainer
+  // e rightPanel. Per evitare che lo scroll del pannello scopra l'overlay, mentre
+  // lo scenario e' attivo blocchiamo l'overflow del pannello (overflow:hidden).
   function updateWipOverlay() {
+    // Rimuovi eventuali overlay legacy attaccati al layout-root
     const layoutRoot = container.querySelector('#simulator-layout');
-    if (layoutRoot && getComputedStyle(layoutRoot).position === 'static') {
-      layoutRoot.style.position = 'relative';
+    if (layoutRoot) {
+      const legacy = layoutRoot.querySelector(':scope > .wip-overlay-panel');
+      if (legacy) legacy.remove();
     }
-    // Rimuovi qualsiasi overlay legacy dentro al rightPanel (da versioni precedenti)
-    const legacyInsidePanel = rightPanel.querySelector(':scope > .wip-overlay');
-    if (legacyInsidePanel) legacyInsidePanel.remove();
 
     if (getComputedStyle(canvasContainer).position === 'static') {
       canvasContainer.style.position = 'relative';
     }
+    if (getComputedStyle(rightPanel).position === 'static') {
+      rightPanel.style.position = 'relative';
+    }
 
-    // Overlay CANVAS (stili da responsive.css)
+    // Overlay CANVAS
     let canvasOverlay = canvasContainer.querySelector(':scope > .wip-overlay-canvas');
     if (activeScenario === 'pulley') {
       if (!canvasOverlay) {
@@ -92,17 +94,19 @@ export function renderForcesPage(container) {
       canvasOverlay.remove();
     }
 
-    // Overlay PANNELLO: attaccato al layoutRoot (stili responsive in responsive.css)
-    let panelOverlay = layoutRoot && layoutRoot.querySelector(':scope > .wip-overlay-panel');
+    // Overlay PANNELLO (dentro al pannello, blocca lo scroll per essere davvero full-panel)
+    let panelOverlay = rightPanel.querySelector(':scope > .wip-overlay-panel');
     if (activeScenario === 'pulley') {
-      if (!panelOverlay && layoutRoot) {
+      rightPanel.style.overflow = 'hidden';
+      if (!panelOverlay) {
         panelOverlay = document.createElement('div');
         panelOverlay.className = 'wip-overlay-panel';
         panelOverlay.innerHTML = '<div style="font-size:36px;margin-bottom:8px;">\u{1F6A7}</div><div style="font-size:18px;">IN LAVORAZIONE</div>';
-        layoutRoot.appendChild(panelOverlay);
+        rightPanel.appendChild(panelOverlay);
       }
-    } else if (panelOverlay) {
-      panelOverlay.remove();
+    } else {
+      rightPanel.style.overflow = '';
+      if (panelOverlay) panelOverlay.remove();
     }
   }
 
