@@ -275,6 +275,9 @@ export function renderForcesPage(container) {
     }
 
     wireUpEvents();
+    // Re-applica l'overlay "In lavorazione" dopo ogni ricostruzione del pannello
+    // (renderPropertiesPanel pulisce l'innerHTML del rightPanel rimuovendo l'overlay).
+    updateWipOverlay();
   }
 
   function wireUpEvents() {
