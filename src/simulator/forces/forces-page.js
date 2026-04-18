@@ -63,31 +63,48 @@ export function renderForcesPage(container) {
   });
 
   // Overlay "In lavorazione" quando e' attivo lo scenario carrucola.
-  // Due overlay separati: uno sul canvas, uno sul pannello. La toolbar resta cliccabile.
+  // - Overlay canvas: attaccato a canvasContainer (non scrolla).
+  // - Overlay pannello destro: attaccato al layout-root cosi' non viene mai
+  //   cancellato dal rebuild del pannello ne' tagliato dallo scroll interno.
   function updateWipOverlay() {
-    // Rimuovi overlay vecchi dal layout root (da versioni precedenti)
-    const oldRootOverlay = container.querySelector('#simulator-layout > .wip-overlay');
-    if (oldRootOverlay) oldRootOverlay.remove();
+    const layoutRoot = container.querySelector('#simulator-layout');
+    if (layoutRoot && getComputedStyle(layoutRoot).position === 'static') {
+      layoutRoot.style.position = 'relative';
+    }
+    // Rimuovi qualsiasi overlay legacy dentro al rightPanel (da versioni precedenti)
+    const legacyInsidePanel = rightPanel.querySelector(':scope > .wip-overlay');
+    if (legacyInsidePanel) legacyInsidePanel.remove();
 
-    for (const target of [canvasContainer, rightPanel]) {
-      if (getComputedStyle(target).position === 'static') {
-        target.style.position = 'relative';
+    if (getComputedStyle(canvasContainer).position === 'static') {
+      canvasContainer.style.position = 'relative';
+    }
+
+    // Overlay CANVAS
+    let canvasOverlay = canvasContainer.querySelector(':scope > .wip-overlay-canvas');
+    if (activeScenario === 'pulley') {
+      if (!canvasOverlay) {
+        canvasOverlay = document.createElement('div');
+        canvasOverlay.className = 'wip-overlay-canvas';
+        canvasOverlay.style.cssText = 'position:absolute;inset:0;background:rgba(10,15,30,0.82);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;color:#ffd166;font-weight:700;letter-spacing:2px;backdrop-filter:blur(3px);pointer-events:auto;text-align:center;padding:12px;';
+        canvasOverlay.innerHTML = '<div style="font-size:56px;margin-bottom:12px;">\u{1F6A7}</div><div style="font-size:42px;">IN LAVORAZIONE</div><div style="font-size:16px;font-weight:400;color:#c0c0c0;margin-top:12px;letter-spacing:normal;">Scenario non ancora disponibile</div>';
+        canvasContainer.appendChild(canvasOverlay);
       }
-      let overlay = target.querySelector(':scope > .wip-overlay');
-      if (activeScenario === 'pulley') {
-        if (!overlay) {
-          overlay = document.createElement('div');
-          overlay.className = 'wip-overlay';
-          overlay.style.cssText = 'position:absolute;inset:0;background:rgba(10,15,30,0.82);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;color:#ffd166;font-weight:700;letter-spacing:2px;backdrop-filter:blur(3px);pointer-events:auto;text-align:center;padding:12px;';
-          const isCanvas = target === canvasContainer;
-          overlay.innerHTML = isCanvas
-            ? '<div style="font-size:56px;margin-bottom:12px;">\u{1F6A7}</div><div style="font-size:42px;">IN LAVORAZIONE</div><div style="font-size:16px;font-weight:400;color:#c0c0c0;margin-top:12px;letter-spacing:normal;">Scenario non ancora disponibile</div>'
-            : '<div style="font-size:36px;margin-bottom:8px;">\u{1F6A7}</div><div style="font-size:18px;">IN LAVORAZIONE</div>';
-          target.appendChild(overlay);
-        }
-      } else if (overlay) {
-        overlay.remove();
+    } else if (canvasOverlay) {
+      canvasOverlay.remove();
+    }
+
+    // Overlay PANNELLO DESTRO (attaccato al layoutRoot, non dentro il pannello)
+    let panelOverlay = layoutRoot && layoutRoot.querySelector(':scope > .wip-overlay-panel');
+    if (activeScenario === 'pulley') {
+      if (!panelOverlay && layoutRoot) {
+        panelOverlay = document.createElement('div');
+        panelOverlay.className = 'wip-overlay-panel';
+        panelOverlay.style.cssText = 'position:absolute;top:0;right:0;bottom:0;width:var(--panel-width);background:rgba(10,15,30,0.82);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;color:#ffd166;font-weight:700;letter-spacing:2px;backdrop-filter:blur(3px);pointer-events:auto;text-align:center;padding:12px;';
+        panelOverlay.innerHTML = '<div style="font-size:36px;margin-bottom:8px;">\u{1F6A7}</div><div style="font-size:18px;">IN LAVORAZIONE</div>';
+        layoutRoot.appendChild(panelOverlay);
       }
+    } else if (panelOverlay) {
+      panelOverlay.remove();
     }
   }
 
