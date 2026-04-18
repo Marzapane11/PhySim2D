@@ -11,7 +11,7 @@ export function createInclinedPlaneSolver() {
     variables: [
       { id: 'm', label: 'Massa (m)', unit: 'kg', defaultValue: 4, mode: 'input' },
       { id: 'alpha', label: 'Angolo (\u03B1)', unit: '\u00B0', defaultValue: 30, mode: 'input', min: 0, max: 89 },
-      { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.5774, mode: 'input' },
+      { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.5774, mode: 'input', min: 0 },
       { id: 'l', label: 'Ipotenusa (l)', unit: 'm', defaultValue: 5, mode: 'input',
         visibleIf: (v) => v.alpha == null || Math.abs(v.alpha) >= 0.5 },
       { id: 'h', label: 'Altezza (h)', unit: 'm', defaultValue: 0, mode: 'output',

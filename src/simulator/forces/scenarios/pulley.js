@@ -106,7 +106,7 @@ export function createPulleySolver() {
       { id: 'm1', label: 'Massa 1 (m\u2081, sul piano)', unit: 'kg', defaultValue: 5, mode: 'input' },
       { id: 'm2', label: 'Massa 2 (m\u2082, appesa)', unit: 'kg', defaultValue: 3, mode: 'input' },
       { id: 'alpha', label: 'Angolo (\u03B8)', unit: '\u00B0', defaultValue: 30, mode: 'input' },
-      { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.2, mode: 'input' },
+      { id: 'mu', label: 'Coeff. attrito (\u03BC)', unit: '', defaultValue: 0.2, mode: 'input', min: 0 },
       { id: 'P1', label: 'Peso 1 (<span class="vec-arrow">P</span>\u2081)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'P2', label: 'Peso 2 (<span class="vec-arrow">P</span>\u2082)', unit: 'N', defaultValue: 0, mode: 'output' },
       { id: 'P1x', label: 'P1x (lungo piano)', unit: 'N', defaultValue: 0, mode: 'output' },
