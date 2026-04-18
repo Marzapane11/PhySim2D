@@ -88,7 +88,7 @@ function createTutorialOverlay(entry) {
   overlay.style.cssText = [
     'position:fixed', 'inset:0',
     'background:rgba(0,0,0,0.65)',
-    'z-index:5000',
+    'z-index:20000',
     'display:flex', 'align-items:center', 'justify-content:center',
     'padding:20px',
     'backdrop-filter:blur(3px)',
