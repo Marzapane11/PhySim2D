@@ -16,11 +16,13 @@ export function renderDynamicPanel(solver, onChange, options = {}) {
     const toggleBtn = `<span class="param-toggle" data-id="${v.id}" title="${isInput ? 'Clicca per calcolare' : 'Clicca per inserire manualmente'}">${icon}</span>`;
 
     if (isInput) {
+      const minAttr = v.min != null ? `min="${v.min}"` : '';
+      const maxAttr = v.max != null ? `max="${v.max}"` : '';
       html += `<div class="panel-row" style="align-items:center;">
         ${toggleBtn}
         <span class="panel-row-label" style="flex:1;">${v.label}</span>
         <span>
-          <input class="panel-input" type="number" id="dp-${v.id}" value="${displayValue}" step="any" style="width:70px;text-align:right;" />
+          <input class="panel-input" type="number" id="dp-${v.id}" value="${displayValue}" step="any" ${minAttr} ${maxAttr} style="width:70px;text-align:right;" />
           <span class="panel-row-label" style="font-size:11px;margin-left:4px;">${v.unit}</span>
         </span>
       </div>`;
@@ -47,7 +49,11 @@ export function renderDynamicPanel(solver, onChange, options = {}) {
         const input = container.querySelector(`#dp-${v.id}`);
         if (input) {
           input.addEventListener('change', (e) => {
-            solver.setValue(v.id, parseFloat(e.target.value) || 0);
+            let val = parseFloat(e.target.value) || 0;
+            if (v.min != null && val < v.min) val = v.min;
+            if (v.max != null && val > v.max) val = v.max;
+            e.target.value = val;
+            solver.setValue(v.id, val);
             solver.solve();
             onChange();
           });
