@@ -244,9 +244,10 @@ export function renderForcesPage(container) {
           });
           forcesHtml += `<button id="btn-add-custom-force" style="width:100%;padding:8px;background:var(--accent);color:white;border-radius:var(--radius-sm);font-size:13px;font-weight:600;">+ Aggiungi forza</button>`;
           forcesHtml += `<div style="margin-top:10px;padding:8px 10px;background:rgba(255,167,38,0.12);border-left:3px solid var(--warning);border-radius:var(--radius-sm);font-size:11px;line-height:1.5;color:var(--text-secondary);">
-              <strong style="color:var(--warning);">Beta.</strong> La gestione delle forze personalizzate è ancora in fase di collaudo: i risultati potrebbero non essere pienamente accurati per mancanza di verifica sperimentale. Si consiglia di confrontare sempre con il calcolo manuale.
+              <strong style="color:var(--warning);">Avviso.</strong> La gestione delle forze personalizzate è ancora in fase di collaudo: i risultati potrebbero non essere pienamente accurati per mancanza di verifica sperimentale. Si consiglia di confrontare sempre con il calcolo manuale.
             </div>`;
-          sections.push({ title: 'Forze personalizzate', content: forcesHtml });
+          const customForcesTitle = `Forze personalizzate <span style="display:inline-flex;align-items:center;gap:4px;margin-left:8px;padding:1px 7px;background:rgba(255,167,38,0.18);color:var(--warning);border-radius:10px;font-size:10px;font-weight:700;letter-spacing:0.5px;vertical-align:middle;"><span style="width:6px;height:6px;border-radius:50%;background:var(--warning);display:inline-block;"></span>BETA</span>`;
+          sections.push({ title: customForcesTitle, content: forcesHtml });
         }
         break;
       }
