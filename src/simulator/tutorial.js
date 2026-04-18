@@ -73,7 +73,7 @@ const TUTORIAL_CONTENT = {
       <p>Ogni vettore ha 4 parametri collegati: componenti x e y, modulo |<span class="vec-arrow">V</span>| e angolo θ.</p>
     `,
     how: `
-      <p>Scegli lo strumento dalla barra in basso (Crea / Somma / Differenza / Scomponi / Moltiplica).</p>
+      <p>Scegli lo strumento dalla barra in basso (Crea / Somma / Differenza / Scomponi).</p>
       <p>Nel pannello a destra, ogni vettore ha 4 parametri collegati: <strong>x</strong>, <strong>y</strong>, <strong>|V|</strong>, <strong>θ</strong>. Puoi sceglierne 2 come input (pallino <strong>●</strong>) e gli altri 2 diventano output (<strong>○</strong>) calcolati automaticamente.</p>
       <p><strong>Come cambiare input/output:</strong> clicca il pallino accanto a ciascun parametro. Se era ● (input) diventa ○ (output) e viceversa.</p>
       <p><strong>Esempio:</strong> di default x e y sono input (●), |V| e θ sono output (○). Scrivi x=3, y=4: ottieni |V|=5 e θ≈53°. Se invece vuoi partire da modulo e angolo: clicca ● di x e y (→ ○) e ○ di |V| e θ (→ ●), scrivi |V|=10 e θ=30°, vedrai x=8.66 e y=5.</p>
