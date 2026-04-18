@@ -1,4 +1,60 @@
 /* ============================================
+   Overlay "IN LAVORAZIONE" — layout e responsive
+   ============================================ */
+.wip-overlay-canvas,
+.wip-overlay-panel {
+  position: absolute;
+  background: rgba(10, 15, 30, 0.82);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  color: #ffd166;
+  font-weight: 700;
+  letter-spacing: 2px;
+  backdrop-filter: blur(3px);
+  pointer-events: auto;
+  text-align: center;
+  padding: 12px;
+  box-sizing: border-box;
+}
+.wip-overlay-canvas { inset: 0; }
+.wip-overlay-panel  {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--panel-width);
+}
+@media (max-width: 768px) {
+  /* Pannello sotto al canvas su mobile: l'overlay diventa fascia in fondo */
+  .wip-overlay-panel {
+    top: auto;
+    left: 0;
+    right: 0;
+    width: auto;
+    height: 45vh;
+  }
+  .wip-overlay-canvas > div[style*="56px"] { font-size: 40px !important; }
+  .wip-overlay-canvas > div[style*="42px"] { font-size: 28px !important; }
+  .wip-overlay-canvas > div[style*="16px"] { font-size: 13px !important; }
+
+  /* Tutorial overlay su mobile: padding ridotto, font piu' piccoli */
+  .tutorial-overlay > div {
+    padding: 18px 16px !important;
+    font-size: 13px !important;
+    max-height: 90vh !important;
+  }
+  .tutorial-overlay h2 { font-size: 18px !important; }
+  .tutorial-overlay h3 { font-size: 13px !important; }
+
+  /* Il titolo "Forze personalizzate" con la pill BETA puo' andare a capo */
+  .panel-section-title {
+    line-height: 1.4;
+  }
+}
+
+/* ============================================
    Tablet (<= 1024px)
    ============================================ */
 @media (max-width: 1024px) {

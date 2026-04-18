@@ -79,13 +79,12 @@ export function renderForcesPage(container) {
       canvasContainer.style.position = 'relative';
     }
 
-    // Overlay CANVAS
+    // Overlay CANVAS (stili da responsive.css)
     let canvasOverlay = canvasContainer.querySelector(':scope > .wip-overlay-canvas');
     if (activeScenario === 'pulley') {
       if (!canvasOverlay) {
         canvasOverlay = document.createElement('div');
         canvasOverlay.className = 'wip-overlay-canvas';
-        canvasOverlay.style.cssText = 'position:absolute;inset:0;background:rgba(10,15,30,0.82);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;color:#ffd166;font-weight:700;letter-spacing:2px;backdrop-filter:blur(3px);pointer-events:auto;text-align:center;padding:12px;';
         canvasOverlay.innerHTML = '<div style="font-size:56px;margin-bottom:12px;">\u{1F6A7}</div><div style="font-size:42px;">IN LAVORAZIONE</div><div style="font-size:16px;font-weight:400;color:#c0c0c0;margin-top:12px;letter-spacing:normal;">Scenario non ancora disponibile</div>';
         canvasContainer.appendChild(canvasOverlay);
       }
@@ -93,13 +92,12 @@ export function renderForcesPage(container) {
       canvasOverlay.remove();
     }
 
-    // Overlay PANNELLO DESTRO (attaccato al layoutRoot, non dentro il pannello)
+    // Overlay PANNELLO: attaccato al layoutRoot (stili responsive in responsive.css)
     let panelOverlay = layoutRoot && layoutRoot.querySelector(':scope > .wip-overlay-panel');
     if (activeScenario === 'pulley') {
       if (!panelOverlay && layoutRoot) {
         panelOverlay = document.createElement('div');
         panelOverlay.className = 'wip-overlay-panel';
-        panelOverlay.style.cssText = 'position:absolute;top:0;right:0;bottom:0;width:var(--panel-width);background:rgba(10,15,30,0.82);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;color:#ffd166;font-weight:700;letter-spacing:2px;backdrop-filter:blur(3px);pointer-events:auto;text-align:center;padding:12px;';
         panelOverlay.innerHTML = '<div style="font-size:36px;margin-bottom:8px;">\u{1F6A7}</div><div style="font-size:18px;">IN LAVORAZIONE</div>';
         layoutRoot.appendChild(panelOverlay);
       }
